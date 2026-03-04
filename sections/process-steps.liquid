@@ -1,0 +1,461 @@
+{% comment %}
+  Process Steps (swipeable, one-step paging, no arrows)
+{% endcomment %}
+
+<section
+  class="process-steps color-{{ section.settings.color_scheme }}"
+  style="
+    --ps-bg: {{ section.settings.bg_color }};
+    --ps-pad-y-desktop: {{ section.settings.pad_y_desktop }}px;
+    --ps-pad-y-mobile: {{ section.settings.pad_y_mobile }}px;
+    --ps-max-width: {{ section.settings.max_width }}px;
+    --ps-slide-w-mobile: {{ section.settings.slide_width_mobile }}px;
+    --ps-slide-w-desktop: {{ section.settings.slide_width_desktop }}px;
+    --ps-gap: {{ section.settings.slide_gap }}px;
+    --ps-img-size-mobile: {{ section.settings.image_size_mobile }}px;
+    --ps-img-size-desktop: {{ section.settings.image_size_desktop }}px;
+  "
+>
+  <div class="process-steps__inner" style="max-width: var(--ps-max-width);">
+    {% if section.settings.kicker != blank or section.settings.heading != blank %}
+      <header class="process-steps__header">
+        {% if section.settings.kicker != blank %}
+          <p class="process-steps__kicker">{{ section.settings.kicker }}</p>
+        {% endif %}
+
+        {% if section.settings.heading != blank %}
+          <h2 class="process-steps__heading">
+            {{ section.settings.heading }}
+            {% if section.settings.heading_highlight != blank %}
+              <span class="process-steps__heading-highlight">{{ section.settings.heading_highlight }}</span>
+            {% endif %}
+          </h2>
+        {% endif %}
+      </header>
+    {% endif %}
+
+    <process-steps class="process-steps__carousel" data-process-steps>
+      <div class="process-steps__scroller" data-ps-scroller>
+        {% for block in section.blocks %}
+          <article class="process-steps__slide" {{ block.shopify_attributes }}>
+            <div class="process-steps__card">
+              {% if block.settings.image != blank %}
+                <div class="process-steps__image">
+                  {{
+                    block.settings.image
+                    | image_url: width: 1200
+                    | image_tag:
+                      loading: 'lazy',
+                      widths: '240, 320, 400, 500, 640, 800, 1000, 1200',
+                      sizes: '(min-width: 1024px) var(--ps-img-size-desktop), var(--ps-img-size-mobile)'
+                  }}
+                </div>
+              {% endif %}
+
+              <div class="process-steps__meta">
+                <span class="process-steps__step">
+                  {% if block.settings.step_label != blank %}
+                    {{ block.settings.step_label }}
+                  {% else %}
+                    Step {{ forloop.index }}
+                  {% endif %}
+                </span>
+
+                {% if block.settings.title != blank %}
+                  <h3 class="process-steps__title">{{ block.settings.title }}</h3>
+                {% endif %}
+
+                {% if block.settings.text != blank %}
+                  <div class="process-steps__text rte">{{ block.settings.text }}</div>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </process-steps>
+    {% if section.settings.show_buttons != false %}
+      {% if section.settings.button_1_label != blank or section.settings.button_2_label != blank %}
+        <div class="process-steps__buttons">
+          {% if section.settings.button_1_label != blank and section.settings.button_1_link != blank %}
+            <a class="process-steps__btn process-steps__btn--primary" href="{{ section.settings.button_1_link }}">
+              {{ section.settings.button_1_label }}
+            </a>
+          {% endif %}
+
+          {% if section.settings.button_2_label != blank and section.settings.button_2_link != blank %}
+            <a class="process-steps__btn process-steps__btn--secondary" href="{{ section.settings.button_2_link }}">
+              {{ section.settings.button_2_label }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Process steps (swipe)",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "OUR PROCESS" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "We’re on a mission to grow, process and provide the best functional mushrooms available — while unearthing the history, science and powerful potential of" },
+    { "type": "text", "id": "heading_highlight", "label": "Highlighted ending", "default": "the fungi we grow and love." },
+
+    { "type": "color", "id": "bg_color", "label": "Background", "default": "#f5f6ef" },
+    { "type": "range", "id": "pad_y_desktop", "label": "Padding Y (desktop)", "min": 40, "max": 180, "step": 4, "default": 128 },
+    { "type": "range", "id": "pad_y_mobile", "label": "Padding Y (mobile)", "min": 24, "max": 120, "step": 4, "default": 64 },
+    { "type": "range", "id": "max_width", "label": "Max width", "min": 900, "max": 1400, "step": 20, "default": 1100 },
+
+    { "type": "range", "id": "slide_width_mobile", "label": "Slide width (mobile)", "min": 200, "max": 320, "step": 4, "default": 232 },
+    { "type": "range", "id": "slide_width_desktop", "label": "Slide width (desktop)", "min": 240, "max": 420, "step": 4, "default": 300 },
+    { "type": "range", "id": "slide_gap", "label": "Gap between slides", "min": 8, "max": 40, "step": 2, "default": 18 },
+
+    { "type": "range", "id": "image_size_mobile", "label": "Image size (mobile)", "min": 160, "max": 320, "step": 4, "default": 220 },
+    { "type": "range", "id": "image_size_desktop", "label": "Image size (desktop)", "min": 200, "max": 380, "step": 4, "default": 260 },
+
+    { "type": "header", "content": "Buttons"},
+    { "type": "checkbox", "id": "show_buttons", "label": "Show buttons", "default": false},
+    { "type": "text", "id": "button_1_label", "label": "Button 1 label", "default": "Our Approach", "visible_if": "{{ section.settings.show_buttons == true }}"  },
+    { "type": "url", "id": "button_1_link", "label": "Button 1 link", "visible_if": "{{ section.settings.show_buttons == true }}" },
+    { "type": "text", "id": "button_2_label", "label": "Button 2 label", "default": "The Science of Mushrooms", "visible_if": "{{ section.settings.show_buttons == true }}" },
+    { "type": "url", "id": "button_2_link", "label": "Button 2 link", "visible_if": "{{ section.settings.show_buttons == true }}" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Step image" },
+        { "type": "text", "id": "step_label", "label": "Step label (optional)", "default": "STEP 1" },
+        { "type": "text", "id": "title", "label": "Title", "default": "FORAGED" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Your step description here.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Process steps (swipe)",
+      "blocks": [{ "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" }]
+    }
+  ]
+}
+{% endschema %}
+
+{% stylesheet %}
+.process-steps {
+  background: var(--ps-bg, #f5f6ef);
+  padding: var(--ps-pad-y-mobile, 64px) 0;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .process-steps {
+    padding: var(--ps-pad-y-desktop, 128px) 0;
+  }
+}
+
+.process-steps__inner {
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.process-steps__header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+@media (min-width: 1024px) {
+  .process-steps__header {
+    margin-bottom: 40px;
+  }
+}
+
+.process-steps__kicker {
+  margin: 0 0 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #ad724f;
+}
+
+@media (min-width: 1024px) {
+  .process-steps__kicker {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+}
+
+.process-steps__heading {
+  margin: 0;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: #5b3615;
+  font-size: 26px;
+}
+
+@media (min-width: 1024px) {
+  .process-steps__heading {
+    font-size: 40px;
+  }
+}
+
+.process-steps__heading-highlight {
+  color: #8da05e;
+}
+
+/* Swipe row (one-step paging) */
+.process-steps__scroller {
+  display: flex;
+  gap: var(--ps-gap, 18px);
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 6px 2px 2px;
+
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+@media screen and (min-width:830px) {
+    .process-steps__scroller {
+        justify-content:center;
+    }
+}
+.process-steps__scroller::-webkit-scrollbar { display: none; }
+.process-steps__scroller:active { cursor: grabbing; }
+.process-steps__scroller.is-dragging { user-select: none; }
+
+.process-steps__slide {
+  flex: 0 0 auto;
+  width: var(--ps-slide-w-mobile, 232px);
+}
+
+@media (min-width: 1024px) {
+  .process-steps__slide {
+    width: var(--ps-slide-w-desktop, 300px);
+  }
+}
+
+.process-steps__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.process-steps__image {
+  width: var(--ps-img-size-mobile, 220px);
+  height: var(--ps-img-size-mobile, 220px);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 1024px) {
+  .process-steps__image {
+    width: var(--ps-img-size-desktop, 260px);
+    height: var(--ps-img-size-desktop, 260px);
+    margin-bottom: 22px;
+  }
+}
+
+.process-steps__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.process-steps__step {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  color: #ad724f;
+  font-size: 12px;
+}
+
+.process-steps__title {
+  margin: 6px 0 0;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #163a5a;
+  font-size: 20px;
+}
+
+.process-steps__text {
+  margin-top: 10px;
+  color: #163a5a;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* Buttons under the steps */
+.process-steps__buttons {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .process-steps__buttons {
+    margin-top: 44px;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.process-steps__btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.process-steps__btn--primary {
+  background: #c9876d;
+  color: #1b1b1b;
+}
+
+.process-steps__btn--secondary {
+  background: transparent;
+  border: 1px solid rgba(0,0,0,.3);
+  color: #1b1b1b;
+}
+{% endstylesheet %}
+
+<script>
+  class ProcessSteps extends HTMLElement {
+    connectedCallback() {
+      this.scroller = this.querySelector('[data-ps-scroller]');
+      if (!this.scroller) return;
+
+      this.slides = Array.from(this.scroller.querySelectorAll('.process-steps__slide'));
+      if (!this.slides.length) return;
+
+      this.thresholdPx = 35;
+
+      this._recalcPositions();
+      this._bindTouchPaging();
+      this._bindMouseDragPaging();
+
+      window.addEventListener('resize', () => this._recalcPositions());
+    }
+
+    _recalcPositions() {
+      this.positions = this.slides.map((el) => el.offsetLeft);
+    }
+
+    _closestIndex() {
+      const x = this.scroller.scrollLeft;
+      let best = 0;
+      let bestDist = Infinity;
+
+      for (let i = 0; i < this.positions.length; i++) {
+        const d = Math.abs(this.positions[i] - x);
+        if (d < bestDist) {
+          bestDist = d;
+          best = i;
+        }
+      }
+      return best;
+    }
+
+    _scrollToIndex(i) {
+      const idx = Math.max(0, Math.min(i, this.positions.length - 1));
+      this.scroller.scrollTo({ left: this.positions[idx], behavior: 'smooth' });
+    }
+
+    _bindTouchPaging() {
+      let startX = 0;
+      let startIndex = 0;
+
+      this.scroller.addEventListener('touchstart', (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        startX = e.touches[0].clientX;
+        startIndex = this._closestIndex();
+      }, { passive: true });
+
+      this.scroller.addEventListener('touchend', (e) => {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        const endX = e.changedTouches[0].clientX;
+        const dx = endX - startX;
+
+        let target = startIndex;
+        if (Math.abs(dx) >= this.thresholdPx) {
+          target = dx < 0 ? startIndex + 1 : startIndex - 1;
+        }
+        this._scrollToIndex(target);
+      }, { passive: true });
+    }
+
+    _bindMouseDragPaging() {
+      let isDown = false;
+      let startX = 0;
+      let startScrollLeft = 0;
+      let startIndex = 0;
+
+      const onPointerDown = (e) => {
+        if (e.pointerType !== 'mouse') return;
+        if (e.button !== 0) return;
+
+        isDown = true;
+        startX = e.clientX;
+        startScrollLeft = this.scroller.scrollLeft;
+        startIndex = this._closestIndex();
+
+        this.scroller.classList.add('is-dragging');
+        this.scroller.setPointerCapture?.(e.pointerId);
+        e.preventDefault();
+      };
+
+      const onPointerMove = (e) => {
+        if (!isDown) return;
+
+        const dx = e.clientX - startX;
+        this.scroller.scrollLeft = startScrollLeft - dx;
+
+        const maxScroll = this.scroller.scrollWidth - this.scroller.clientWidth;
+        if (this.scroller.scrollLeft < 0) this.scroller.scrollLeft = 0;
+        if (this.scroller.scrollLeft > maxScroll) this.scroller.scrollLeft = maxScroll;
+      };
+
+      const end = () => {
+        if (!isDown) return;
+        isDown = false;
+        this.scroller.classList.remove('is-dragging');
+
+        const delta = this.scroller.scrollLeft - startScrollLeft;
+        let target = startIndex;
+
+        if (Math.abs(delta) >= this.thresholdPx) {
+          target = delta > 0 ? startIndex + 1 : startIndex - 1;
+        }
+        this._scrollToIndex(target);
+      };
+
+      this.scroller.addEventListener('pointerdown', onPointerDown);
+      this.scroller.addEventListener('pointermove', onPointerMove);
+      this.scroller.addEventListener('pointerup', end);
+      this.scroller.addEventListener('pointercancel', end);
+      this.scroller.addEventListener('pointerleave', end);
+    }
+  }
+
+  customElements.define('process-steps', ProcessSteps);
+</script>

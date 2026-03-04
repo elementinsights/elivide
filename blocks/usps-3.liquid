@@ -1,0 +1,126 @@
+{%- liquid
+  assign block_settings = block.settings
+
+  assign p = closest.product | default: product | default: card_product
+
+  assign u1 = ''
+  assign u2 = ''
+  assign u3 = ''
+
+  if p != blank
+    assign u1 = p.metafields.custom.usp_1.value | default: '' | strip | strip_newlines
+    assign u2 = p.metafields.custom.usp_2.value | default: '' | strip | strip_newlines
+    assign u3 = p.metafields.custom.usp_3.value | default: '' | strip | strip_newlines
+  endif
+-%}
+
+{%- if u1 != blank or u2 != blank or u3 != blank -%}
+  {%- comment -%}
+    CSS is printed only when this block renders, and it's placed BEFORE the <ul>
+    to avoid first-paint default <ul>/<li> styles causing layout shift.
+  {%- endcomment -%}
+  <style>
+    .product-card__usps{
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      font-size: var(--usp-font-size, 12px);
+      padding-top: var(--usp-padding-top, 4px);
+      padding-bottom: var(--usp-padding-bottom, 4px);
+    }
+
+    .product-card__usps li{
+      position: relative;
+      padding-left: 18px; /* reserves space for the icon to prevent shifting */
+    }
+
+    .product-card__usps li::before{
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      display: block;
+      background-color: currentColor;
+
+      -webkit-mask-image: url("{{ 'icon-plus.svg' | asset_url }}");
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: 100% 100%;
+
+      mask-image: url("{{ 'icon-plus.svg' | asset_url }}");
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: 100% 100%;
+    }
+  </style>
+
+  <ul
+    class="product-card__usps product-card__usps--{{ block_settings.layout }}"
+    style="
+        --usp-font-size: {{ block_settings.font_size }}px;
+        --usp-padding-top: {{ block_settings.padding_top }}px;
+        --usp-padding-bottom: {{ block_settings.padding_bottom }}px;
+        "
+    {{ block.shopify_attributes }}
+  >
+    {%- if u1 != blank -%}<li class="product-card__usp">{{ u1 | escape }}</li>{%- endif -%}
+    {%- if u2 != blank -%}<li class="product-card__usp">{{ u2 | escape }}</li>{%- endif -%}
+    {%- if u3 != blank -%}<li class="product-card__usp">{{ u3 | escape }}</li>{%- endif -%}
+  </ul>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "3 USPs",
+  "tag": null,
+  "settings": [
+    {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Padding top",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 4
+    },
+    {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Padding bottom",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 4
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 10,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "default": "stack",
+      "options": [
+        { "value": "stack", "label": "Stack" },
+        { "value": "inline", "label": "Inline" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "3 USPs", "category": "t:categories.product" }
+  ]
+}
+{% endschema %}
+

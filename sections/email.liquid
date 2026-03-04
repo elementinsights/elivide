@@ -1,0 +1,179 @@
+<div class="shopify-section section-wrapper section-email"
+style="
+        --e-bg: {{ section.settings.background_color }};
+        --e-color: {{ section.settings.font_color }};
+        --e-heading-size: {{ section.settings.heading_size }}px;
+        --e-subheading-size: {{ section.settings.subheading_size }}px;
+        --e-padding-top: {{ section.settings.padding_top }}px;
+        --e-padding-bottom: {{ section.settings.padding_bottom }}px;
+        --e-gap: {{ section.settings.gap }}px;
+    "
+>
+  <div class="section section--page-width">
+    <div class="custom-section-content">
+        <h2 class="email__heading">{{ section.settings.heading }}</h2>
+        <p class="email__subheading">{{ section.settings.subheading }}</p>
+        <div class="klaviyo-form-ST9Eq8"></div>
+    </div>
+  </div>
+</div>
+
+
+{% style %}
+    
+    .section-email {
+        min-height:200px;
+        background-color: var(--e-bg);
+        color: var(--e-color);
+        padding-top: var(--e-padding-top);
+        padding-bottom: var(--e-padding-bottom);
+    }
+
+    .section-email * {
+        margin:0;
+    }
+
+    .section-email .custom-section-content {
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        text-align:center;
+        align-items:center;
+        justify-content:center;
+        gap: var(--e-gap);
+    }
+
+    .section-email email__heading {
+        font-size: var(--e-heading-size);
+        text-wrap:balance;
+    }
+
+    .section-email .email__subheading {
+        font-size: var(--e-subheading_size);
+        text-wrap:balance;
+        margin-bottom: calc(var(--e-gap)/2*-1);
+    }
+
+    .section-email .klaviyo-form {
+      width:100%;
+      display:flex;
+      justify-content:center;
+    }
+
+    .section-email .klaviyo-form * {
+        margin:0;
+        padding:0;
+    }
+
+    .section-email .needsclick {
+        column-gap:16px !important;
+    }
+
+    .section-email input {
+        font-size:14px !important;
+        font-family: "Acumin", sans-serif !important;
+    }
+
+    .section-email [data-testid="form-row"] {
+        width:500px !important;
+    }
+
+    @media screen and (max-width:749px) {
+        .section-email [data-testid="form-row"] {
+            width:100% !important;
+        }
+    }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Email",
+  "tag": "div",
+  "class": "section-wrapper",
+  "settings": [
+    {
+        "type": "header",
+        "content": "Design"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#000"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Subheading size",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 12,
+      "max": 99,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 12,
+      "max": 99,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap",
+      "min": 1,
+      "max": 99,
+      "step": 1,
+      "default": 8
+    },
+    {
+        "type": "header",
+        "content": "Copy"
+    },
+    {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading text",
+        "default": "Join Our Elivide Community",
+    },
+    {
+        "type": "textarea",
+        "id": "subheading",
+        "label": "Subheading text",
+        "default": "Be part of 10,000+ enjoying a natural difference.",
+    }
+  ],
+  
+  "presets": [
+    {
+      "name": "Email"
+    }
+  ]
+}
+{% endschema %}

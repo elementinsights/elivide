@@ -1,0 +1,336 @@
+{% liquid
+  assign min_items = section.settings.min_items | default: 10
+
+  assign blocks_count = section.blocks.size
+  assign repeats = 1
+
+  if blocks_count > 0
+    assign repeats = min_items | divided_by: blocks_count
+    assign remainder = min_items | modulo: blocks_count
+    if remainder > 0
+      assign repeats = repeats | plus: 1
+    endif
+  endif
+%}
+
+<section
+  id="UspMarqueeBasic-{{ section.id }}"
+  class="usp-marquee-basic"
+  data-usp-marquee-basic
+  style="
+  --usp-pad-y-desktop: {{ section.settings.padding_y_desktop }}px;
+  --usp-pad-y-mobile:  {{ section.settings.padding_y_mobile }}px;
+  --usp-icon-size:     {{ section.settings.icon_size }}px;
+  --usp-icon-text-gap: {{ section.settings.icon_text_gap }}px;
+  --usp-letter-spacing: {{ section.settings.letter_spacing }}px;
+  --usp-font-size-mobile: {{ section.settings.font_size_mobile }}px;
+  --usp-font-size-desktop: {{ section.settings.font_size_desktop }}px;
+  --usp-gap-desktop: {{ section.settings.gap_desktop }}px;
+  --usp-gap-mobile: {{ section.settings.gap_mobile }}px;
+  --usp-mobile-scroll-speed: {{ section.settings.mobile_scroll_speed }}s;
+  "
+>
+
+  <div class="usp-marquee-basic__viewport" data-usp-viewport>
+    <div class="usp-marquee-basic__track" data-usp-track>
+      {% capture usp_items %}
+        {% if blocks_count == 0 %}
+          <span class="usp-marquee-basic__item">Add blocks</span>
+        {% else %}
+          {% for r in (1..repeats) %}
+            {% for block in section.blocks %}
+              {% liquid
+                assign txt = block.settings.text | default: ''
+                assign icon = block.settings.icon
+              %}
+
+              <span class="usp-marquee-basic__item" {{ block.shopify_attributes }}>
+                {% if icon != blank %}
+                  {%- comment -%}
+                    IMPORTANT: image_picker returns an image object, so use image_url filter.
+                    We render a real <img> so it always shows (no mask/SVG dependency).
+                  {%- endcomment -%}
+                  <img
+                    class="usp-marquee-basic__icon-img"
+                    src="{{ icon | image_url: width: 56 }}"
+                    alt=""
+                    loading="lazy"
+                    width="28"
+                    height="28"
+                  >
+                {% endif %}
+
+                <span class="usp-marquee-basic__text">
+                  {{ txt | escape }}
+                </span>
+              </span>
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+      {% endcapture %}
+
+      <div class="usp-marquee-basic__group" data-usp-group>
+        {{ usp_items }}
+      </div>
+
+      <!-- duplicate group for seamless loop (keep on desktop too for infinite drag) -->
+      <div class="usp-marquee-basic__group" aria-hidden="true">
+        {{ usp_items }}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #UspMarqueeBasic-{{ section.id }} {
+      background: {{ section.settings.bg }};
+      color: {{ section.settings.fg }};
+      overflow: hidden;
+    }
+
+    #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__viewport {
+      overflow: hidden;
+      touch-action: pan-y;
+      cursor: grab;
+      user-select: none;
+      padding: var(--usp-pad-y-mobile) 0;
+    }
+    #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__viewport.is-dragging { cursor: grabbing; }
+
+    #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__track {
+      display: flex;
+      width: max-content;
+      will-change: transform;
+      transform: translate3d(var(--usp-drag-x, 0px), 0, 0);
+    }
+
+    #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__group {
+      display: flex;
+      align-items: center;
+      gap: var(--usp-gap-mobile);
+      padding-right: 28px;
+      width: max-content;
+    }
+
+    #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__item {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--usp-icon-text-gap);
+      white-space: nowrap;
+    }
+
+    #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__icon-img {
+      width: var(--usp-icon-size);
+      height: var(--usp-icon-size);
+      min-width: 28px;
+      min-height: 28px;
+      display: inline-block;
+      object-fit: contain;
+    }
+
+    #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__text {
+      font-size: var(--usp-font-size-mobile);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: var(--usp-letter-spacing);
+      line-height: 14px;
+      color: {{ section.settings.fg }};
+      top:1px;
+      position:relative;
+    }
+
+    /* MOBILE: always moving */
+    @media (max-width: 829px) {
+      #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__track {
+        animation: usp-marquee-basic-{{ section.id }} var(--usp-mobile-scroll-speed, 90s) linear infinite;
+        animation-play-state: var(--usp-play, running);
+      }
+
+      @keyframes usp-marquee-basic-{{ section.id }} {
+        from { transform: translate3d(calc(var(--usp-drag-x, 0px) + 0%), 0, 0); }
+        to   { transform: translate3d(calc(var(--usp-drag-x, 0px) + -50%), 0, 0); }
+      }
+    }
+
+    /* DESKTOP: no auto, but draggable + looping */
+    @media (min-width: 830px) {
+      #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__viewport {
+        padding: var(--usp-pad-y-desktop) 0;
+      }
+
+      #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__track { animation: none !important; }
+
+      #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__group {
+        gap: var(--usp-gap-desktop);
+        padding-right: 48px;
+      }
+
+      #UspMarqueeBasic-{{ section.id }} .usp-marquee-basic__text {
+        font-size: var(--usp-font-size-desktop);
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      var root = document.getElementById('UspMarqueeBasic-{{ section.id }}');
+      if (!root) return;
+
+      var viewport = root.querySelector('[data-usp-viewport]');
+      var group = root.querySelector('[data-usp-group]');
+      if (!viewport || !group) return;
+
+      if (root.__uspBound) return;
+      root.__uspBound = true;
+
+      var isDown = false;
+      var isDragging = false;
+      var startX = 0, startY = 0;
+      var baseX = 0, currentX = 0;
+
+      function px(n) { return (Math.round(n * 100) / 100) + 'px'; }
+
+      function getBaseX() {
+        var v = getComputedStyle(root).getPropertyValue('--usp-drag-x').trim();
+        var num = parseFloat(v || '0');
+        return isFinite(num) ? num : 0;
+      }
+      function setBaseX(x) {
+        baseX = x;
+        root.style.setProperty('--usp-drag-x', px(baseX));
+      }
+
+      function pause(){ root.style.setProperty('--usp-play', 'paused'); }
+      function play(){ root.style.setProperty('--usp-play', 'running'); }
+
+      function normalizeLoop(x) {
+        var w = group.scrollWidth;
+        if (!w) return x;
+        while (x <= -w) x += w;
+        while (x > 0) x -= w;
+        return x;
+      }
+
+      function onDown(e) {
+        isDown = true;
+        isDragging = false;
+        viewport.classList.add('is-dragging');
+
+        var p = e.touches ? e.touches[0] : e;
+        startX = p.clientX;
+        startY = p.clientY;
+
+        baseX = getBaseX();
+        currentX = baseX;
+
+        pause();
+        try { viewport.setPointerCapture && viewport.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+
+      function onMove(e) {
+        if (!isDown) return;
+
+        var p = e.touches ? e.touches[0] : e;
+        var dx = p.clientX - startX;
+        var dy = p.clientY - startY;
+
+        if (!isDragging) {
+          if (Math.abs(dx) < 6) return;
+          if (Math.abs(dy) > Math.abs(dx)) {
+            isDown = false;
+            viewport.classList.remove('is-dragging');
+            play();
+            return;
+          }
+          isDragging = true;
+        }
+
+        if (e.cancelable) e.preventDefault();
+
+        var nextX = normalizeLoop(baseX + dx);
+        currentX = nextX;
+        root.style.setProperty('--usp-drag-x', px(currentX));
+      }
+
+      function onUp() {
+        if (!isDown) return;
+        isDown = false;
+        viewport.classList.remove('is-dragging');
+
+        setBaseX(currentX);
+
+        if (!window.matchMedia('(min-width: 830px)').matches) play();
+      }
+
+      viewport.addEventListener('pointerdown', onDown, { passive: true });
+      viewport.addEventListener('pointermove', onMove, { passive: false });
+      viewport.addEventListener('pointerup', onUp, { passive: true });
+      viewport.addEventListener('pointercancel', onUp, { passive: true });
+      viewport.addEventListener('pointerleave', onUp, { passive: true });
+
+      window.addEventListener('resize', function () {
+        setBaseX(normalizeLoop(getBaseX()));
+        if (window.matchMedia('(min-width: 830px)').matches) pause();
+        else play();
+      });
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "USP Banner (Marquee)",
+  "settings": [
+    { "type": "color", "id": "bg", "label": "Background", "default": "#8da05e" },
+    { "type": "color", "id": "fg", "label": "Text color", "default": "#5b3615" },
+    { "type": "range", "id": "padding_y_desktop", "min": 0, "max": 80, "step": 1, "label": "Padding (desktop)", "default": 16 },
+    { "type": "range", "id": "padding_y_mobile", "min": 0, "max": 80, "step": 1, "label": "Padding (mobile)", "default": 12 },
+    { "type": "range", "id": "icon_size", "min": 12, "max": 64, "step": 1, "label": "Icon size", "default": 28 },
+    { "type": "range", "id": "icon_text_gap", "min": 0, "max": 40, "step": 1, "label": "Icon ↔ text gap", "default": 14 },
+    { "type": "range", "id": "gap_mobile", "min": 0, "max": 100, "step": 1, "label": "Item gap (mobile)", "default": 28 },
+    { "type": "range", "id": "gap_desktop", "min": 0, "max": 100, "step": 1, "label": "Item gap (desktop)", "default": 48 },
+    { "type": "range", "id": "font_size_mobile", "min": 8, "max": 32, "step": 1, "label": "Font size (mobile)", "default": 11 },
+    { "type": "range", "id": "font_size_desktop", "min": 8, "max": 32, "step": 1, "label": "Font size (desktop)", "default": 12 },
+    { "type": "range", "id": "letter_spacing", "min": 0.0, "max": 1, "step": 0.1, "label": "Letter spacing (px)", "default": 1 },
+    {
+      "type": "range",
+      "id": "mobile_scroll_speed",
+      "min": 5,
+      "max": 100,
+      "step": 1,
+      "label": "Mobile scroll speed (px/sec)",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "min_items",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "label": "Minimum repeated items",
+      "default": 10
+    }
+  ],
+  "blocks": [
+    {
+      "type": "usp",
+      "name": "USP item",
+      "settings": [
+        { "type": "image_picker", "id": "icon", "label": "Icon image (PNG/SVG)" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Eco-conscious" }
+      ]
+    }
+  ],
+  "max_blocks": 30,
+  "presets": [
+    {
+      "name": "USP Banner (Marquee)",
+      "blocks": [
+        { "type": "usp", "settings": { "text": "100% Vegan" } },
+        { "type": "usp", "settings": { "text": "Eco-conscious" } },
+        { "type": "usp", "settings": { "text": "Science led" } },
+        { "type": "usp", "settings": { "text": "Community focused" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

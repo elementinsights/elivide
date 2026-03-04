@@ -1,0 +1,245 @@
+{%- comment -%}
+  Snippet: free-shipping-progress-header.liquid
+  Usage:
+    {% render 'free-shipping-progress-header' %}
+
+  Updates:
+    - Removes the “2 lines → 1 line” jump by making the initial Liquid text MATCH the JS-rendered text exactly
+    - Checkmark only appears when threshold is reached
+    - No SVG flashing (JS never overwrites the checkmark container)
+    - JS has access to the SVG via a hidden <template>
+{%- endcomment -%}
+
+{%- liquid
+  assign currency = cart.currency.iso_code | default: shop.currency
+
+  assign threshold_major = settings.free_shipping_threshold_gbp | default: 55
+  if currency == 'EUR'
+    assign threshold_major = settings.free_shipping_threshold_eur | default: 60
+  elsif currency == 'GBP'
+    assign threshold_major = settings.free_shipping_threshold_gbp | default: 55
+  elsif currency == 'USD'
+    assign threshold_major = settings.free_shipping_threshold_usd | default: 70
+  endif
+
+  assign threshold_minor = threshold_major | times: 100
+  assign cart_total_minor = cart.total_price | default: 0
+
+  assign remaining_minor = threshold_minor | minus: cart_total_minor
+  if remaining_minor < 0
+    assign remaining_minor = 0
+  endif
+
+  assign progress_percent = cart_total_minor | times: 100 | divided_by: threshold_minor
+  if progress_percent > 100
+    assign progress_percent = 100
+  endif
+
+  assign is_full = false
+  if remaining_minor == 0
+    assign is_full = true
+  endif
+
+  if settings.currency_code_enabled_cart_items
+    assign remaining_formatted = remaining_minor | money_with_currency
+  else
+    assign remaining_formatted = remaining_minor | money
+  endif
+-%}
+
+<free-shipping-progress
+  class="free-shipping free-shipping--header"
+  data-threshold-cents="{{ threshold_minor }}"
+  data-full="{% if is_full %}true{% else %}false{% endif %}"
+  data-success-text="You’ve unlocked <strong>FREE&nbsp;UK&nbsp;SHIPPING</strong>"
+  data-text-before="Add "
+  data-text-after=" more for <strong>FREE&nbsp;UK&nbsp;SHIPPING</strong>"
+  style="
+    --fs-progress-bar-background-color: {{ settings.progress_bar_background_color }};
+    --fs-progress-bar-fill-color: {{ settings.progress_bar_fill_color }};
+    --fs-progress-bar-fill-color-full: {{ settings.progress_bar_fill_color_full }}
+  "
+>
+  {%- comment -%} Hidden SVG template so JS can always clone it {%- endcomment -%}
+  <template data-check-template>
+    {{ 'icon-shipping-check.svg' | inline_asset_content }}
+  </template>
+
+  <div class="free-shipping__text">
+    <span
+      class="free-shipping__check"
+      aria-hidden="true"
+      data-check-holder
+      {% unless is_full %}hidden{% endunless %}
+    >
+      {%- if is_full -%}
+        {{ 'icon-shipping-check.svg' | inline_asset_content }}
+      {%- endif -%}
+    </span>
+
+    {%- comment -%}
+      ✅ IMPORTANT: This initial Liquid message MUST match what JS will render,
+      otherwise you'll see a quick reflow/jump.
+    {%- endcomment -%}
+    {%- if is_full -%}
+      <span data-message>You’ve unlocked <strong>FREE&nbsp;UK&nbsp;SHIPPING</strong></span>
+    {%- else -%}
+      <span data-message>Add {{ remaining_formatted }} more for <strong>FREE&nbsp;UK&nbsp;SHIPPING</strong></span>
+    {%- endif -%}
+  </div>
+
+  <div
+    class="free-shipping__bar"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="{{ progress_percent }}"
+  >
+    <div class="free-shipping__bar-fill" data-fill style="width: {{ progress_percent }}%;"></div>
+  </div>
+</free-shipping-progress>
+
+{% stylesheet %}
+  .free-shipping--header {
+    padding: 8px 0;
+  }
+
+  /* Allow wrapping in a stable way while keeping "FREE UK SHIPPING" together via &nbsp; */
+  .free-shipping--header .free-shipping__text {
+    font-size: 16px;
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .free-shipping--header .free-shipping__check[hidden] {
+    display: none !important;
+  }
+
+  .free-shipping--header .free-shipping__check svg {
+    width: 15px;
+    height: 15px;
+    margin-top: -1.75px;
+  }
+
+  .free-shipping--header .free-shipping__bar {
+    height: 8px;
+  }
+
+  .free-shipping__bar {
+    width: 100%;
+    border-radius: 999px;
+    background: var(--fs-progress-bar-background-color, #00000014);
+    overflow: hidden;
+  }
+
+  .free-shipping__bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: var(--fs-progress-bar-fill-color, #1e88ff);
+    transition: width 220ms ease, background 220ms ease;
+  }
+
+  free-shipping-progress[data-full="true"] .free-shipping__bar-fill {
+    background: var(--fs-progress-bar-fill-color-full, #dcc257);
+  }
+{% endstylesheet %}
+
+<script>
+  class FreeShippingProgress extends HTMLElement {
+    connectedCallback() {
+      this.messageEl = this.querySelector('[data-message]');
+      this.fillEl = this.querySelector('[data-fill]');
+      this.checkHolder = this.querySelector('[data-check-holder]');
+      this.checkTemplate = this.querySelector('template[data-check-template]');
+
+      this.threshold = parseInt(
+        this.dataset.thresholdCents || this.getAttribute('data-threshold-cents') || '0',
+        10
+      );
+
+      this.successText =
+        this.getAttribute('data-success-text') ||
+        'You’ve unlocked <strong>FREE&nbsp;UK&nbsp;SHIPPING</strong>';
+
+      this.before = this.getAttribute('data-text-before') || 'Add ';
+      this.after =
+        this.getAttribute('data-text-after') ||
+        ' more for <strong>FREE&nbsp;UK&nbsp;SHIPPING</strong>';
+
+      this.updateFromCartObject({{ cart | json }});
+
+      document.addEventListener('cartUpdate', () => this.refresh());
+      document.addEventListener('cart:update', () => this.refresh());
+      document.addEventListener('theme:cart:update', () => this.refresh());
+    }
+
+    async refresh() {
+      try {
+        const res = await fetch('/cart.js', { credentials: 'same-origin' });
+        if (!res.ok) return;
+        const cart = await res.json();
+        this.updateFromCartObject(cart);
+      } catch (e) {}
+    }
+
+    setCheckmarkVisible(isFull) {
+      if (!this.checkHolder) return;
+
+      if (!isFull) {
+        this.checkHolder.hidden = true;
+        this.checkHolder.innerHTML = '';
+        return;
+      }
+
+      this.checkHolder.hidden = false;
+
+      if (!this.checkHolder.innerHTML.trim()) {
+        const svg = this.checkTemplate?.innerHTML?.trim();
+        this.checkHolder.innerHTML = svg ? svg : '✓';
+      }
+    }
+
+    updateFromCartObject(cart) {
+      if (!this.threshold || !this.messageEl || !this.fillEl) return;
+
+      const total = Number(cart?.total_price || 0);
+      const remaining = Math.max(this.threshold - total, 0);
+      const progress = Math.min(Math.round((total / this.threshold) * 100), 100);
+
+      const currency = cart?.currency || '{{ cart.currency.iso_code }}';
+      const formattedRemaining = this.formatMoney(remaining, currency);
+
+      const isFull = remaining === 0;
+
+      this.dataset.full = isFull ? 'true' : 'false';
+      this.setCheckmarkVisible(isFull);
+
+      if (isFull) {
+        this.messageEl.innerHTML = this.successText;
+      } else {
+        this.messageEl.innerHTML = `${this.before}${formattedRemaining}${this.after}`;
+      }
+
+      this.fillEl.style.width = `${progress}%`;
+      this.closest('[role="progressbar"]')?.setAttribute('aria-valuenow', String(progress));
+    }
+
+    formatMoney(cents, currency) {
+      try {
+        return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(cents / 100);
+      } catch (e) {
+        return (cents / 100).toFixed(2);
+      }
+    }
+  }
+
+  if (!customElements.get('free-shipping-progress')) {
+    customElements.define('free-shipping-progress', FreeShippingProgress);
+  }
+</script>

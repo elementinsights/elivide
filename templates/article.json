@@ -1,0 +1,26 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "section": {
+      "type": "main-blog-post",
+      "settings": {
+        "author_credentials": "",
+        "sidebar_product": "",
+        "sidebar_heading": "Products from the article",
+        "show_stars": true,
+        "show_comments": false
+      }
+    }
+  },
+  "order": [
+    "section"
+  ]
+}

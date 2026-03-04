@@ -1,0 +1,463 @@
+{% comment %}
+  blocks/custom-accordion.liquid
+
+  Product metafield:
+  - custom.accordion_items  (List of metaobjects)
+  Metaobject type: accordion_item
+  Fields (handles):
+  - title  (single line text)
+  - text   (rich text)
+  - image  (file: image)
+
+  Features:
+  - Title / text / image only output if not blank
+  - Rich text rendered via metafield_tag
+  - Smooth open/close animation (height transition via WAAPI)
+  - Caret/plus icon flips in sync with open/close (no delayed flip on close)
+  - Optional "single open at a time"
+  - Optional "open first by default"
+  - Self-contained CSS + JS
+{% endcomment %}
+
+{% assign s = block.settings %}
+{% assign items = product.metafields.custom.accordion_items.value %}
+
+<div
+  id="custom-accordion-{{ block.id }}"
+  class="ca ca--icon-{{ s.icon_style }}{% if s.dividers %} ca--dividers{% endif %}"
+  style="
+    --ca-icon-size: {{ s.icon_size }}px;
+    --ca-title-size: {{ s.title_size }}px;
+    --ca-text-size: {{ s.text_size }}px;
+    --ca-gap: {{ s.gap }}px;
+    --ca-anim-ms: 375ms;
+  "
+  {{ block.shopify_attributes }}
+>
+  {% if s.heading != blank %}
+    <div class="ca__heading">{{ s.heading }}</div>
+  {% endif %}
+
+  {% if items != blank and items.size > 0 %}
+    <div class="ca__list" data-ca-root>
+      {% for item in items %}
+        {% assign title = item.title.value | default: item.title %}
+        {% assign img = item.image.value | default: item.image %}
+
+        {% if title != blank or item.text != blank or img != blank %}
+          <details
+            class="ca__item"
+            {% if s.open_first and forloop.first %}open{% endif %}
+            data-ca-details
+          >
+            <summary class="ca__summary" data-ca-summary>
+              <span class="ca__summary-left">
+                {% if s.show_icon %}
+                  <span class="ca__icon" aria-hidden="true">
+                    {{ 'icon-local-library.svg' | inline_asset_content }}
+                  </span>
+                {% endif %}
+
+                {% if title != blank %}
+                  <span class="ca__title">{{ title }}</span>
+                {% endif %}
+              </span>
+
+              <span class="ca__chev" aria-hidden="true">
+                {% if s.icon_style == 'plus' %}
+                  <span class="ca__plus">+</span>
+                {% else %}
+                  <svg class="ca__caret" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.5 7.5L10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                {% endif %}
+              </span>
+            </summary>
+
+            <div class="ca__content" data-ca-content>
+              <div class="ca__content-inner" data-ca-content-inner>
+                {% if item.text != blank %}
+                  <div class="ca__text">{{ item.text | metafield_tag }}</div>
+                {% endif %}
+
+                {% if img != blank %}
+                  <div class="ca__image">
+                    {{
+                      img
+                      | image_url: width: 2000
+                      | image_tag: loading: 'lazy'
+                    }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </details>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .ca { width: 100%; }
+
+  .ca__heading {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  .ca__item { border: none; }
+
+  .ca--dividers .ca__item { border-top: 1px solid rgba(0,0,0,0.10); }
+  .ca--dividers .ca__item:last-child { border-bottom: 1px solid rgba(0,0,0,0.10); }
+
+  .ca__summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 0;
+    user-select: none;
+  }
+  .ca__summary::-webkit-details-marker { display: none; }
+
+  .ca__summary-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .ca__icon {
+    width: var(--ca-icon-size);
+    height: var(--ca-icon-size);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+  .ca__icon svg { width: 100%; height: 100%; }
+
+  .ca__title {
+    font-size: var(--ca-title-size);
+    font-weight: 500;
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+
+  .ca__chev {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+  }
+
+  /* Make icon transition match panel duration for perfect sync */
+  .ca__caret,
+  .ca__plus {
+    transition: transform var(--ca-anim-ms) cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+  }
+
+  .ca__caret {
+    width: 18px;
+    height: 18px;
+  }
+
+  .ca__plus {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  /*
+    Icon state rules:
+    - [open] OR .is-opening => show "open" rotation
+    - .is-closing => show "closed" rotation immediately (while panel animates up)
+  */
+  .ca__item[open] .ca__caret,
+  .ca__item.is-opening .ca__caret { transform: rotate(180deg); }
+
+  .ca__item[open] .ca__plus,
+  .ca__item.is-opening .ca__plus { transform: rotate(45deg); }
+
+  .ca__item.is-closing .ca__caret { transform: rotate(0deg); }
+  .ca__item.is-closing .ca__plus { transform: rotate(0deg); }
+
+  /* Animated content wrapper */
+  .ca__content {
+    overflow: hidden;   /* required for height animation */
+    height: 0;          /* closed state */
+    display: block;
+  }
+
+  /* Put spacing on inner so measurements are accurate */
+  .ca__content-inner {
+    padding: 0 0 16px 0;
+    display: grid;
+    gap: var(--ca-gap);
+  }
+
+  .ca__text {
+    font-size: var(--ca-text-size);
+    line-height: 1.5;
+  }
+
+  .ca__text p {
+    margin: 0 0 12px 0;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  .ca__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+  }
+{% endstylesheet %}
+
+<script>
+  (function () {
+    const root = document.getElementById("custom-accordion-{{ block.id }}");
+    if (!root) return;
+
+    const singleOpen = {{ block.settings.single_open | json }};
+    const duration = 375;
+    const easing = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+
+    // Keep CSS transition duration in sync with JS duration
+    root.style.setProperty("--ca-anim-ms", duration + "ms");
+
+    const detailsEls = Array.from(root.querySelectorAll("[data-ca-details]"));
+
+    function setClosed(details) {
+      const content = details.querySelector("[data-ca-content]");
+      if (!content) return;
+      content.style.height = "0px";
+    }
+
+    function setOpen(details) {
+      const content = details.querySelector("[data-ca-content]");
+      const inner = details.querySelector("[data-ca-content-inner]");
+      if (!content || !inner) return;
+      content.style.height = inner.scrollHeight + "px";
+    }
+
+    function animateOpen(details) {
+      const content = details.querySelector("[data-ca-content]");
+      const inner = details.querySelector("[data-ca-content-inner]");
+      if (!content || !inner) return;
+
+      // State for icon sync
+      details.classList.remove("is-closing");
+      details.classList.add("is-opening");
+
+      details.open = true;
+
+      content.style.height = "0px";
+      const end = inner.scrollHeight;
+
+      if (content.__caAnim) content.__caAnim.cancel();
+
+      const anim = content.animate(
+        [{ height: "0px" }, { height: end + "px" }],
+        { duration, easing }
+      );
+
+      content.__caAnim = anim;
+
+      anim.onfinish = () => {
+        content.style.height = end + "px";
+        details.classList.remove("is-opening");
+        content.__caAnim = null;
+      };
+
+      anim.oncancel = () => {
+        content.__caAnim = null;
+      };
+    }
+
+    function animateClose(details) {
+      const content = details.querySelector("[data-ca-content]");
+      const inner = details.querySelector("[data-ca-content-inner]");
+      if (!content || !inner) return;
+
+      // Flip icon immediately, but keep details.open until animation ends
+      details.classList.remove("is-opening");
+      details.classList.add("is-closing");
+
+      const start = inner.scrollHeight;
+      content.style.height = start + "px";
+
+      if (content.__caAnim) content.__caAnim.cancel();
+
+      const anim = content.animate(
+        [{ height: start + "px" }, { height: "0px" }],
+        { duration, easing }
+      );
+
+      content.__caAnim = anim;
+
+      anim.onfinish = () => {
+        details.open = false;
+        content.style.height = "0px";
+        details.classList.remove("is-closing");
+        content.__caAnim = null;
+      };
+
+      anim.oncancel = () => {
+        content.__caAnim = null;
+      };
+    }
+
+    function closeOthers(opening) {
+      if (!singleOpen) return;
+      detailsEls.forEach((d) => {
+        if (d !== opening && d.open) animateClose(d);
+      });
+    }
+
+    // Init + click handling (prevent native snap open)
+    detailsEls.forEach((details) => {
+      const summary = details.querySelector("[data-ca-summary]");
+      const content = details.querySelector("[data-ca-content]");
+      const inner = details.querySelector("[data-ca-content-inner]");
+      if (!summary || !content || !inner) return;
+
+      if (details.open) setOpen(details);
+      else setClosed(details);
+
+      summary.addEventListener("click", (e) => {
+        e.preventDefault();
+
+        if (details.open) {
+          animateClose(details);
+        } else {
+          closeOthers(details);
+          animateOpen(details);
+        }
+      });
+    });
+
+    // Keep heights correct on resize / image load for open panels
+    const syncOpenHeights = () => {
+      detailsEls.forEach((d) => {
+        if (d.open) setOpen(d);
+      });
+    };
+
+    window.addEventListener("resize", syncOpenHeights);
+
+    root.querySelectorAll("img").forEach((img) => {
+      if (img.complete) return;
+      img.addEventListener("load", syncOpenHeights, { once: true });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Custom accordion",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Optional heading",
+      "default": "heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "dividers",
+      "label": "Show dividers",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "Open first item by default",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "single_open",
+      "label": "Only allow one open at a time",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show left icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Right icon style",
+      "options": [
+        { "value": "caret", "label": "Caret" },
+        { "value": "plus", "label": "Plus" }
+      ],
+      "default": "caret"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Left icon size",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "header",
+      "content": "Typography & spacing"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title font size",
+      "min": 12,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text font size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between text & image",
+      "min": 6,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom accordion"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,129 @@
+{% assign p = product | default: closest.product %}
+{% assign items = p.metafields.custom.product_benefits.value %}
+
+{%- capture fallback_icon -%}
+  {{- 'icon-spa.svg' | inline_asset_content -}}
+{%- endcapture -%}
+
+{% if items != blank %}
+  <div
+    class="product-benefits"
+    style="
+      --pb-pt: {{ block.settings.padding_top }}px;
+      --pb-pb: {{ block.settings.padding_bottom }}px;
+    "
+  >
+    <div class="product-benefits__items">
+      {% for item in items limit: 3 %}
+        {% assign icon = item.icon.value %}
+        {% assign heading = item.heading.value %}
+        {% assign subheading = item.subheading.value %}
+
+        <div class="product-benefits__item">
+          <span class="product-benefits__icon-wrap">
+            {%- if icon != blank and icon.svg != blank -%}
+              {{- icon.svg.value -}}
+            {%- elsif icon != blank and icon.system.handle != blank -%}
+              {{- 'icon-' | append: icon.system.handle | append: '.svg' | inline_asset_content -}}
+            {%- else -%}
+              {{- fallback_icon -}}
+            {%- endif -%}
+          </span>
+
+          <div class="product-benefits__text">
+            {% if heading != blank %}
+              <div class="product-benefits__heading">{{ heading }}</div>
+            {% endif %}
+            {% if subheading != blank %}
+              <div class="product-benefits__subheading">{{ subheading }}</div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+.product-benefits {
+  padding-top: var(--pb-pt, 0);
+  padding-bottom: var(--pb-pb, 0);
+}
+
+.product-benefits__items {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.product-benefits__item {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.product-benefits__icon-wrap {
+  border-radius: 50%;
+  border: 2px solid #000;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-benefits__icon-wrap svg {
+  width: 24px;
+  height: 24px;
+}
+
+.product-benefits__heading {
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.product-benefits__subheading {
+  line-height: 1.3;
+  text-align: center;
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product benefits",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Highlight up to three features or benefits; all settings are optional."
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 10
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product benefits"
+    }
+  ]
+}
+{% endschema %}

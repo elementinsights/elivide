@@ -1,0 +1,22 @@
+{%- comment -%}
+  Renders a specific icon for a given name.
+
+  Accepts:
+  - icon: {string} Icon name (required)
+  - icon_size {string} Icon width and height (optional)
+
+  Usage:
+  {%- render 'component-icon' icon: 'arrow' icon_class: 'icon--class'  -%}
+{%- endcomment -%}
+{% assign icon = icon | replace: ' ', '_' | replace: '-', '_' | downcase %}
+<span
+  class="icon {{ icon_class }}"
+  aria-hidden="true"
+  focusable="false"
+  role="presentation"
+  {% if color_icon and color_icon != '' and color_icon != 'rgba(0,0,0,0)' %}
+    style="color: {{ color_icon }}"
+  {% endif %}
+>
+  {{- icon -}}
+</span>

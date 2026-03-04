@@ -1,0 +1,142 @@
+{%- assign s = block.settings -%}
+{%- assign value_proposition = product.metafields.custom.value_proposition.value | default: '' -%}
+{%- assign banner_bg_image = product.metafields.custom.value_proposition_banner_background | default: '' -%}
+
+{%- assign visibility_class = '' -%}
+{%- if s.visibility == 'hide_desktop' -%}
+  {%- assign visibility_class = ' hide-desktop' -%}
+{%- elsif s.visibility == 'hide_mobile' -%}
+  {%- assign visibility_class = ' hide-mobile' -%}
+{%- endif -%}
+
+<div class="value-proposition{{ visibility_class }}" {{ block.shopify_attributes }}>
+  <div class="value-proposition__inner">
+    <div class="value-proposition__text">
+      {{ value_proposition }}
+    </div>
+  </div>
+</div>
+
+<style>
+  .value-proposition-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 20px 0;
+  }
+
+  .value-proposition__text .margin-bottom-minus-10 {
+    margin-bottom: -10px;
+  }
+
+  .value-proposition-list li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin: 14px 0;
+  }
+
+  .value-proposition-list li::before {
+    content: "";
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+    margin-top: 2px;
+    background: url({{ 'icon-add-task.svg' | asset_url }}) no-repeat center / contain;
+    position: relative;
+    top: -4.5px;
+  }
+
+  .capsules-per-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 14px 0;
+    padding: 10px 20px;
+    font-weight: 600;
+    color: {{ s.banner_text_color }};
+    border-radius: {{ s.banner_border_radius }}px;
+    overflow: hidden;
+    position: relative;
+    {%- if banner_bg_image != blank %}
+      background: url('{{ banner_bg_image | image_url: width: 800 }}') no-repeat center / cover;
+    {%- else %}
+      background: {{ s.banner_bg_color }};
+    {%- endif %}
+  }
+
+  /* Remove the pill icon */
+  .capsules-per-day::before {
+    display: none !important;
+  }
+
+  @media (min-width: 750px) {
+    .value-proposition.hide-desktop {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 749px) {
+    .value-proposition.hide-mobile {
+      display: none !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Value Proposition",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Customizable value proposition, typically used for highlighting key features or unique selling points."
+    },
+    {
+      "type": "header",
+      "content": "Capsules Banner"
+    },
+    {
+      "type": "range",
+      "id": "banner_border_radius",
+      "label": "Banner border radius",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 4,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "banner_bg_color",
+      "label": "Banner background color (fallback)",
+      "default": "#1a1a1a",
+      "info": "Used when no background image metafield is set."
+    },
+    {
+      "type": "color",
+      "id": "banner_text_color",
+      "label": "Banner text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Visibility settings"
+    },
+    {
+      "type": "select",
+      "id": "visibility",
+      "label": "Visibility",
+      "default": "show",
+      "options": [
+        { "value": "show", "label": "Do not hide" },
+        { "value": "hide_desktop", "label": "Hide on desktop" },
+        { "value": "hide_mobile", "label": "Hide on mobile" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Value Proposition"
+    }
+  ]
+}
+{% endschema %}

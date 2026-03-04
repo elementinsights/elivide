@@ -1,0 +1,987 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero_jVaWmY": {
+      "type": "hero",
+      "blocks": {
+        "text_YLPk4p": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h1>Elevated Formulations</h1>",
+            "width": "fit-content",
+            "max_width": "none",
+            "list_style_checkmark": false,
+            "list_to_row": false,
+            "before_stars": false,
+            "checkmark_text_color": "#111111",
+            "checkmark_text_size_desktop": 16,
+            "alignment": "left",
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size_px": 16,
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground-heading)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_BiC8qt": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<p><strong>10,000 orders</strong></p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "list_style_checkmark": false,
+            "list_to_row": false,
+            "before_stars": true,
+            "checkmark_text_color": "#111111",
+            "checkmark_text_size_desktop": 16,
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size_px": 16,
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_3KRkDC": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<p>Zero Additives</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "list_style_checkmark": false,
+            "list_to_row": false,
+            "before_stars": false,
+            "checkmark_text_color": "#111111",
+            "checkmark_text_size_desktop": 16,
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size_px": 16,
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "button_H9gpTf": {
+          "type": "button",
+          "name": "t:names.button",
+          "settings": {
+            "label": "Shop all",
+            "link": "shopify://collections/all",
+            "open_in_new_tab": false,
+            "style_class": "button-secondary",
+            "width": "fit-content",
+            "custom_width": 100,
+            "width_mobile": "fit-content",
+            "custom_width_mobile": 40
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "text_YLPk4p",
+        "text_BiC8qt",
+        "text_3KRkDC",
+        "button_H9gpTf"
+      ],
+      "name": "t:names.hero",
+      "settings": {
+        "media_type_1": "video",
+        "video_1": "shopify://files/videos/ELIVIDE Homepage Formulations.mp4",
+        "media_type_2": "image",
+        "stack_media_on_mobile": false,
+        "custom_mobile_media": false,
+        "media_type_1_mobile": "image",
+        "media_type_2_mobile": "image",
+        "link": "",
+        "open_in_new_tab": false,
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "space-between",
+        "vertical_alignment": "flex-end",
+        "align_baseline": true,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 10,
+        "section_width": "page-width",
+        "section_height": "full-screen",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-2",
+        "toggle_overlay": true,
+        "overlay_color": "#12121266",
+        "overlay_style": "solid",
+        "gradient_direction": "to bottom",
+        "blurred_reflection": false,
+        "reflection_opacity": 75,
+        "padding-block-start": 100,
+        "padding-block-end": 72
+      }
+    },
+    "17702586550faf781d": {
+      "type": "_blocks",
+      "blocks": {
+        "reviews_io_reviewsio_card_carousel_YtgrCR": {
+          "type": "shopify://apps/reviews-io/blocks/reviewsio-card-carousel/92a082e5-b297-4e88-b428-ac96cbc505f9",
+          "settings": {
+            "star": "#f8ce35",
+            "review_type": "company, product",
+            "reviews_shown": 13,
+            "header_bg_colour": "#679992",
+            "header_colour": "#ffffff",
+            "header_star_colour": "#f8ce35",
+            "heading_text_colour": "#372e2e",
+            "heading_font": "sans_serif_n4",
+            "body_text_colour": "#372e2e",
+            "badge_icon_colour": "#679992",
+            "badge_text_colour": "#372e2e",
+            "bg_start_colour": "#fff7ef",
+            "bg_end_colour": "#fff7ef",
+            "item_border_width": "0px",
+            "item_border_colour": "#000000",
+            "item_border_radius": "0px",
+            "item_shadow_size": "10px",
+            "item_shadow_colour": "#000000",
+            "enable_rich_snippets": false,
+            "disable_same_customer": false,
+            "logo_colour": "var(--logo-inverted)"
+          }
+        }
+      },
+      "block_order": [
+        "reviews_io_reviewsio_card_carousel_YtgrCR"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
+    "product_list_fa6P9H": {
+      "type": "product-list",
+      "blocks": {
+        "static-header": {
+          "type": "_product-list-content",
+          "name": "t:names.header",
+          "static": true,
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "center",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_list_text_YFtzcL": {
+              "type": "_product-list-text",
+              "name": "t:names.collection_title",
+              "settings": {
+                "text": "<h3>Shop Best Sellers</h3>",
+                "width": "fit-content",
+                "max_width": "none",
+                "alignment": "left",
+                "type_preset": "h2",
+                "font": "var(--font-heading--family)",
+                "font_size": "2rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_VQMLMX": {
+              "type": "text",
+              "name": "t:names.text",
+              "settings": {
+                "text": "<ul><li>Sustainable made</li><li>Additive free</li><li>Bioavailable forms</li></ul>",
+                "width": "fit-content",
+                "max_width": "none",
+                "list_style_checkmark": true,
+                "list_to_row": true,
+                "before_stars": false,
+                "checkmark_text_color": "#5b3615",
+                "checkmark_text_size_desktop": 14,
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size_px": 12,
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "product_list_text_YFtzcL",
+            "text_VQMLMX"
+          ]
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_card_gallery_677WP3": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "adapt",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "reviews_io_reviewsio_rating_bar_RTbrLc": {
+              "type": "shopify://apps/reviews-io/blocks/reviewsio-rating-bar/92a082e5-b297-4e88-b428-ac96cbc505f9",
+              "settings": {
+                "widget_id": ""
+              }
+            },
+            "product_title_YXxMTj": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "100%",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "custom",
+                "font": "var(--font-body--family)",
+                "font_size": "1.125rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "font_weight": true,
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 4,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "price_JQzVV4": {
+              "type": "price",
+              "name": "t:names.product_price",
+              "settings": {
+                "show_sale_price_first": false,
+                "show_installments": false,
+                "show_tax_info": false,
+                "show_discount": false,
+                "font_weight": true,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "0.875rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "color": "var(--color-foreground)",
+                "padding-block-start": 0,
+                "padding-block-end": 4,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "usps_3_4tQchB": {
+              "type": "usps-3",
+              "name": "3 USPs",
+              "settings": {
+                "padding_top": 4,
+                "padding_bottom": 10,
+                "font_size": 12,
+                "layout": "stack"
+              },
+              "blocks": {}
+            },
+            "buy_buttons_giWnb7": {
+              "type": "buy-buttons",
+              "name": "t:names.product_buy_buttons",
+              "settings": {
+                "stacking": false,
+                "show_pickup_availability": true,
+                "gift_card_form": true,
+                "padding-block-start": 0,
+                "padding-block-end": 20,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "add-to-cart": {
+                  "type": "add-to-cart",
+                  "static": true,
+                  "settings": {
+                    "style_class": "button"
+                  },
+                  "blocks": {}
+                },
+                "accelerated-checkout": {
+                  "type": "accelerated-checkout",
+                  "disabled": true,
+                  "static": true,
+                  "settings": {},
+                  "blocks": {}
+                }
+              },
+              "block_order": []
+            }
+          },
+          "block_order": [
+            "product_card_gallery_677WP3",
+            "reviews_io_reviewsio_rating_bar_RTbrLc",
+            "product_title_YXxMTj",
+            "price_JQzVV4",
+            "usps_3_4tQchB",
+            "buy_buttons_giWnb7"
+          ]
+        }
+      },
+      "name": "Featured collection",
+      "settings": {
+        "collection": "all-products",
+        "layout_type": "carousel",
+        "carousel_on_mobile": false,
+        "max_products": 5,
+        "columns": 4,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 24,
+        "rows_gap": 24,
+        "icons_style": "none",
+        "icons_shape": "none",
+        "section_width": "page-width",
+        "horizontal_alignment": "flex-start",
+        "gap": 28,
+        "color_scheme": "scheme-3",
+        "padding-block-start": 48,
+        "padding-block-end": 48
+      }
+    },
+    "usp_marquee_rALPhd": {
+      "type": "usp-marquee",
+      "blocks": {
+        "usp_AieEqk": {
+          "type": "usp",
+          "settings": {
+            "icon": "shopify://shop_images/ELIVIDE_sustainably_made_supplements.png",
+            "text": "Additive Free"
+          }
+        },
+        "usp_PtaGCm": {
+          "type": "usp",
+          "settings": {
+            "icon": "shopify://shop_images/ELIVIDE_sustainably_made_supplements.png",
+            "text": "Sustainable Made"
+          }
+        },
+        "usp_7EcVnY": {
+          "type": "usp",
+          "settings": {
+            "icon": "shopify://shop_images/ELIVIDE_sustainably_made_supplements.png",
+            "text": "Science led"
+          }
+        },
+        "usp_3qacKV": {
+          "type": "usp",
+          "settings": {
+            "icon": "shopify://shop_images/ELIVIDE_sustainably_made_supplements.png",
+            "text": "Wholefood ingredients"
+          }
+        }
+      },
+      "block_order": [
+        "usp_AieEqk",
+        "usp_PtaGCm",
+        "usp_7EcVnY",
+        "usp_3qacKV"
+      ],
+      "name": "USP Banner (Marquee)",
+      "settings": {
+        "bg": "#679992",
+        "fg": "#fff7ef",
+        "padding_y_desktop": 20,
+        "padding_y_mobile": 16,
+        "icon_size": 28,
+        "icon_text_gap": 14,
+        "gap_mobile": 28,
+        "gap_desktop": 48,
+        "font_size_mobile": 11,
+        "font_size_desktop": 12,
+        "letter_spacing": 1,
+        "mobile_scroll_speed": 90,
+        "min_items": 5
+      }
+    },
+    "process_steps_hqFmMg": {
+      "type": "process-steps",
+      "blocks": {
+        "step_aXCXyh": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/ELIVIDE_Designed_formulations.png",
+            "step_label": "STEP 1",
+            "title": "DESIGNED",
+            "text": "<p>Designed by expert nutritionists</p>"
+          }
+        },
+        "step_wiUJqM": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/ELIVIDE_Sourced_ingredients.png",
+            "step_label": "STEP 2",
+            "title": "SOURCED",
+            "text": "<p>Ingredients from trusted suppliers</p>"
+          }
+        },
+        "step_TAYhqH": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/ELIVIDE_Formulated.png",
+            "step_label": "Step 3",
+            "title": "FORMULATED",
+            "text": "<p>Perfectly mixed and encapsulated</p>"
+          }
+        },
+        "step_KPJ3Mf": {
+          "type": "step",
+          "settings": {
+            "image": "shopify://shop_images/ELIVIDE_Testing_ac97a64b-e2b4-4496-a633-25aae4f54e7b.png",
+            "step_label": "Step 4",
+            "title": "TESTED",
+            "text": "<p>Independently tested for purity </p>"
+          }
+        }
+      },
+      "block_order": [
+        "step_aXCXyh",
+        "step_wiUJqM",
+        "step_TAYhqH",
+        "step_KPJ3Mf"
+      ],
+      "name": "Process steps (swipe)",
+      "settings": {
+        "kicker": "OUR PROCESS",
+        "heading": "We’re on a mission to change the supplement world for the better",
+        "heading_highlight": "",
+        "bg_color": "#fff7ef",
+        "pad_y_desktop": 64,
+        "pad_y_mobile": 48,
+        "max_width": 1400,
+        "slide_width_mobile": 232,
+        "slide_width_desktop": 300,
+        "slide_gap": 18,
+        "image_size_mobile": 220,
+        "image_size_desktop": 260,
+        "show_buttons": false,
+        "button_1_label": "Our Approach",
+        "button_1_link": "#",
+        "button_2_label": "The Science of Mushrooms",
+        "button_2_link": "#"
+      }
+    },
+    "section_RrzbQi": {
+      "type": "section",
+      "blocks": {
+        "image_3UAeqQ": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/Metabolic_Flow_Mitochondrial_Support_Nutrients.png",
+            "link": "",
+            "image_ratio": "adapt",
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "group_VGjdrP": {
+          "type": "group",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "custom",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "text_piHy4h": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<h2>Meet Metabolic Flow</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "list_style_checkmark": false,
+                "list_to_row": false,
+                "before_stars": false,
+                "checkmark_text_color": "#111111",
+                "checkmark_text_size_desktop": 16,
+                "alignment": "left",
+                "type_preset": "h3",
+                "font": "var(--font-body--family)",
+                "font_size_px": 16,
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text_JtnYYx": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Metabolic health is at the core of how our bodies create, distribute, and use energy. Every heartbeat, breath, and thought depends on thousands of coordinated reactions - turning nutrients into usable energy, clearing cellular waste, and maintaining balance between our major systems. </p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "list_style_checkmark": false,
+                "list_to_row": false,
+                "before_stars": false,
+                "checkmark_text_color": "#111111",
+                "checkmark_text_size_desktop": 16,
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size_px": 16,
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "button_7hyXNF": {
+              "type": "button",
+              "settings": {
+                "label": "Shop now",
+                "link": "shopify://products/metabolic-flow-mitochondrial-support",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_piHy4h",
+            "text_JtnYYx",
+            "button_7hyXNF"
+          ]
+        }
+      },
+      "block_order": [
+        "image_3UAeqQ",
+        "group_VGjdrP"
+      ],
+      "name": "t:names.image_with_text",
+      "settings": {
+        "content_direction": "row",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 32,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-1",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
+    },
+    "five_reasons_UAYbpg": {
+      "type": "five-reasons",
+      "name": "5 Reasons",
+      "settings": {
+        "background_color_desktop": "#fff7ef",
+        "background_color_mobile": "#fff7ef",
+        "desktop_image": "shopify://shop_images/eclipse-c-shopify.webp",
+        "mobile_image": "shopify://shop_images/eclipse-c-shopify-3.webp_mobile_2.webp",
+        "heading": "<p><strong>5 Reasons </strong>Why You Should Try ELIVIDE</p>",
+        "reason_one": "<p>Over 10,000 customers <strong>regularly repurchase</strong></p>",
+        "reason_two": "<p>Our formulas only have <strong>science-backed nutrients, with a wholefood heart</strong></p>",
+        "reason_three": "<p>We help people <strong>manage their energy, sleep and performance for the modern world</strong></p>",
+        "reason_four": "<p><strong>100% custom-made formulas</strong> developed by a Nutritional Experts</p>",
+        "reason_five": "<p>You can try our formulas risk-free to see how they work for you - thanks to our <strong>Satisfaction Guarantee</strong></p>",
+        "show_quiz": false,
+        "quiz_title": "Not Sure Where to Start?!",
+        "quiz_description": "<p>Take this free, 3-minute quiz and get a recommendation based on your answers!!</p>",
+        "quiz_button_text": "Take the Quiz!",
+        "quiz_url": "#"
+      }
+    },
+    "section_Ck7ECx": {
+      "type": "section",
+      "blocks": {
+        "text_zY4jUx": {
+          "type": "text",
+          "name": "t:names.heading",
+          "settings": {
+            "text": "<h2><strong>DISCOVERED TOGETHER</strong></h2>",
+            "width": "100%",
+            "max_width": "normal",
+            "list_style_checkmark": false,
+            "list_to_row": false,
+            "before_stars": false,
+            "checkmark_text_color": "#000000",
+            "checkmark_text_size_desktop": 16,
+            "alignment": "center",
+            "type_preset": "custom",
+            "font": "var(--font-subheading--family)",
+            "font_size_px": 36,
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "text_FqnkUx": {
+          "type": "text",
+          "name": "t:names.text",
+          "settings": {
+            "text": "<p>Tag @elividehealth to be featured</p>",
+            "width": "100%",
+            "max_width": "normal",
+            "list_style_checkmark": false,
+            "list_to_row": false,
+            "before_stars": false,
+            "checkmark_text_color": "#000000",
+            "checkmark_text_size_desktop": 16,
+            "alignment": "center",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size_px": 16,
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 5,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "moast_carousel_ncHEKk": {
+          "type": "shopify://apps/moast/blocks/carousel/1ac7547b-5443-446c-868c-7fab4566ee16",
+          "settings": {
+            "dynamic": true,
+            "feed": "default",
+            "feed_usage": "filter",
+            "header": "",
+            "slide_type": "cards",
+            "product_cards": "none",
+            "autoplay_mode": "all",
+            "autoscroll_duration": 0,
+            "slide_size": "200",
+            "border": 0,
+            "border_color": "linear-gradient(to right, #833ab4, #fd1d1d, #fcb045)",
+            "slide_rounding": "20",
+            "slide_spacing": 16,
+            "padding_top": 40,
+            "pagination": "none",
+            "alignment": "center",
+            "click_action": "fullscreen",
+            "float_location": "bottom_right",
+            "float_size": "medium",
+            "show_captions": false,
+            "custom_css": ""
+          }
+        }
+      },
+      "block_order": [
+        "text_zY4jUx",
+        "text_FqnkUx",
+        "moast_carousel_ncHEKk"
+      ],
+      "name": "t:names.custom_section",
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "color_scheme": "scheme-2",
+        "background_media": "none",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_radius": 0,
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "padding-block-start": 50,
+        "padding-block-end": 0
+      }
+    },
+    "email_PHxzPF": {
+      "type": "email",
+      "name": "Email",
+      "settings": {
+        "background_color": "#ffffff",
+        "text_color": "#000000",
+        "heading_size": 32,
+        "subheading_size": 16,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "gap": 32,
+        "heading": "Join Our Elivide Community",
+        "subheading": "Be part of 10,000+ enjoying a natural difference."
+      }
+    },
+    "custom_blog_tCdtyG": {
+      "type": "custom-blog",
+      "name": "Blog carousel (custom)",
+      "settings": {
+        "heading": "Articles",
+        "blog": "news",
+        "limit": 4,
+        "show_meta": false,
+        "show_excerpt": true,
+        "excerpt_chars": 140,
+        "show_view_all": true,
+        "card_width": 360,
+        "gap": 16,
+        "radius": 0,
+        "bg": "#ffffff",
+        "card_bg": "#ffffff",
+        "text": "#000000",
+        "padding_y": 20,
+        "padding_x": 0
+      }
+    }
+  },
+  "order": [
+    "hero_jVaWmY",
+    "17702586550faf781d",
+    "product_list_fa6P9H",
+    "usp_marquee_rALPhd",
+    "process_steps_hqFmMg",
+    "section_RrzbQi",
+    "five_reasons_UAYbpg",
+    "section_Ck7ECx",
+    "email_PHxzPF",
+    "custom_blog_tCdtyG"
+  ]
+}

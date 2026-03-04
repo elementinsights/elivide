@@ -1,0 +1,174 @@
+{%- assign product = closest.product -%}
+{%- if request.visual_preview_mode and product == blank -%}
+  {%- assign product = collections.all.products.first -%}
+{%- endif -%}
+
+{%- if product == blank -%}
+  {% comment %} Nothing to render {% endcomment %}
+{%- else -%}
+  {%- assign variant = product.selected_or_first_available_variant -%}
+  {%- assign product_form_id = 'BuyButtons-ProductForm-' | append: section.id -%}
+
+  <div class="quantity-external-block" {{ block.shopify_attributes }}>
+    <label class="quantity-label" for="Quantity-{{ section.id }}">
+      {{ 'products.product.quantity' | t }}
+    </label>
+
+    <div class="quantity-selector-wrapper">
+      <div class="quantity-selector">
+        <button type="button" class="quantity__button" name="minus" aria-label="Decrease quantity">−</button>
+
+        <input
+          id="Quantity-{{ section.id }}"
+          class="quantity__input"
+          type="number"
+          name="quantity"
+          min="{{ variant.quantity_rule.min | default: 1 }}"
+          step="{{ variant.quantity_rule.increment | default: 1 }}"
+          value="{{ variant.quantity_rule.min | default: 1 }}"
+          form="{{ product_form_id }}"
+        >
+
+        <button type="button" class="quantity__button" name="plus" aria-label="Increase quantity">+</button>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  /* Layout: label left, selector right */
+  .quantity-external-block {
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:16px;
+    width:100%;
+  }
+
+  .quantity-external-block, .quantity-external-block * {
+    outline:none;
+  }
+
+  .quantity-external-block .quantity-label{
+    margin:0;
+    font-size: var(--font-size--md);
+    line-height:1.2;
+    color: rgb(var(--color-foreground-rgb));
+    white-space:nowrap;
+    flex: none;
+    width:auto;
+  }
+
+  /* The rounded quantity box */
+  .quantity-external-block .quantity-selector{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    height:52px;
+    padding:0 8px;
+    border:1px solid #d1d1d1;
+    border-radius:8px;
+    background: rgb(var(--color-background-rgb));
+    box-shadow: none;
+  }
+
+  /* Buttons */
+  .quantity-external-block .quantity__button{
+    width:36px;
+    height:44px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    border:0;
+    background:transparent;
+    color: rgb(var(--color-foreground-rgb));
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .quantity-external-block .quantity__button:active{
+    transform: scale(0.98);
+  }
+
+  .quantity-external-block .quantity__button:focus-visible{
+    outline: none;
+  }
+
+  /* Number input */
+  .quantity-external-block .quantity__input{
+    width:34px;
+    height:44px;
+    padding:0;
+    margin:0 2px;
+
+    border:0;
+    background:transparent;
+
+    text-align:center;
+    font-size:16px;
+    line-height:1;
+    color: rgb(var(--color-foreground-rgb));
+
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  /* Remove spinners (Chrome/Safari) */
+  .quantity-external-block .quantity__input::-webkit-outer-spin-button,
+  .quantity-external-block .quantity__input::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Focus ring on the whole control when input is focused */
+  .quantity-external-block .quantity-selector:focus-within{
+    outline: none;
+    /** box-shadow: 0 0 0 2px rgb(var(--color-foreground-rgb) / 0.12); **/
+  }
+
+  /* Optional: keep the selector from stretching */
+  .quantity-external-block .quantity-selector-wrapper{
+    flex: 0 0 auto;
+  }
+{% endstylesheet %}
+
+
+<script>
+  document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.quantity__button');
+  if (!btn) return;
+
+  const wrap = btn.closest('.quantity-selector, .quantity, .quantity-selector-wrapper');
+  const input = wrap?.querySelector('input[name="quantity"]');
+  if (!input) return;
+
+  const step = parseInt(input.step || '1', 10);
+  const min = parseInt(input.min || '1', 10);
+  const max = input.max ? parseInt(input.max, 10) : Infinity;
+
+  const current = parseInt(input.value || String(min), 10);
+  const next = btn.name === 'plus' ? current + step : current - step;
+
+  input.value = Math.max(min, Math.min(max, next));
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+});
+
+</script>
+
+{% schema %}
+{
+  "name": "Quantity selector",
+  "settings": [
+    
+  ],
+  "presets": [
+    {
+      "name": "Quantity selector"
+    }
+  ]
+}
+{% endschema %}

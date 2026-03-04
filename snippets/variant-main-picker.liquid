@@ -1,0 +1,248 @@
+{%- doc -%}
+  Image-only variant picker.
+
+  - Shows an image for each option value:
+    1) If provided in block settings (custom_image_n), use that image by option value order
+    2) Else use the option value's variant featured media (or combined listing fallback)
+    3) Else fallback to text
+
+  @param {object} product_resource - The product object.
+  @param {object} [block] - The block object
+{%- enddoc -%}
+
+{% assign block_settings = block.settings %}
+
+{% unless product_resource.has_only_default_variant %}
+  <variant-picker
+    class="variant-picker spacing-style"
+    style="
+      --custom-variant-image-size: {{ block_settings.image_size | default: 50 }}px;
+      --custom-variant-image-gap: {{ block_settings.image_gap | default: 10 }}px;
+      {% render 'spacing-style', settings: block_settings %}
+    "
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product_resource.id }}"
+    data-block-id="{{ block.id }}"
+    data-product-url="{{ product_resource.url }}"
+    ref="mainVariantPicker"
+    {% if product.id == product_resource.id %}
+      data-template-product-match="true"
+    {% endif %}
+    {{ block.shopify_attributes }}
+    {% if request.visual_preview_mode %}
+      data-shopify-visual-preview
+    {% endif %}
+  >
+    <form class="variant-picker__form">
+      {%- for product_option in product_resource.options_with_values -%}
+        {%- assign fieldset_index = forloop.index0 -%}
+
+        <fieldset
+          class="variant-option variant-option--images"
+          data-fieldset-index="{{ fieldset_index }}"
+          ref="fieldsets[]"
+        >
+          <legend class="variant-option__legend">
+            Select Type
+          </legend>
+
+          <div class="variant-option__images-grid">
+            {%- for product_option_value in product_option.values -%}
+              {%- liquid
+                # Variant featured media fallback (supports combined listings)
+                assign featured_media = product_option_value.variant.featured_media
+                if featured_media == blank and product_option_value.product_url
+                  assign featured_media = product_option_value.variant.product.featured_media
+                endif
+
+                # Ordered custom image (1st value -> custom_image_1, etc.)
+                assign picked_image = blank
+                assign image_key = 'custom_image_' | append: forloop.index
+                if block_settings[image_key] != blank
+                  assign picked_image = block_settings[image_key]
+                endif
+
+                assign display_image = picked_image
+                if display_image == blank and featured_media != blank
+                  assign display_image = featured_media
+                endif
+              -%}
+
+              <label class="variant-image-tile">
+                <input
+                  type="radio"
+                  name="{{ product_option.name | escape }}-{{ block.id }}-{{ product_resource.id }}"
+                  value="{{ product_option_value | escape }}"
+                  aria-label="{{ product_option_value.name }}"
+                  {% if product_option_value.available == false %}
+                    aria-disabled="true"
+                  {% endif %}
+                  data-previous-checked="false"
+                  data-fieldset-index="{{ fieldset_index }}"
+                  data-input-index="{{ forloop.index0 }}"
+                  data-input-id="{{ product_option.position }}-{{ forloop.index0 }}"
+                  data-option-value-id="{{ product_option_value.id }}"
+                  data-option-available="{{ product_option_value.available }}"
+                  data-connected-product-url="{{ product_option_value.product_url }}"
+                  {% if product_option_value.variant.id %}
+                    data-variant-id="{{ product_option_value.variant.id }}"
+                  {% endif %}
+                  {% if product_option_value.selected %}
+                    data-current-checked="true"
+                    checked
+                  {% else %}
+                    data-current-checked="false"
+                  {% endif %}
+                >
+
+                <span class="variant-image-tile__circle" aria-hidden="true">
+                  {%- if display_image != blank -%}
+                    {{-
+                      display_image
+                      | image_url: width: 200
+                      | image_tag:
+                        loading: 'lazy',
+                        alt: '',
+                        class: 'variant-image-tile__img'
+                    -}}
+                  {%- else -%}
+                    <span class="variant-image-tile__fallback">{{ product_option_value | escape }}</span>
+                  {%- endif -%}
+                </span>
+
+                <span class="variant-image-tile__label">
+                  {{ product_option_value | escape }}
+                </span>
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endfor -%}
+
+      <script type="application/json">
+        {{ product_resource.selected_or_first_available_variant | json }}
+      </script>
+    </form>
+  </variant-picker>
+{% endunless %}
+
+{% stylesheet %}
+  .variant-picker,
+  .variant-picker__form {
+    width: 100%;
+  }
+
+  .variant-option {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .variant-option + .variant-option {
+    margin-top: var(--padding-lg);
+  }
+
+  .variant-option__legend {
+    padding: 0;
+    margin-block-end: var(--margin-xs);
+  }
+
+  .variant-option__images-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--custom-variant-image-gap, 10px);
+    align-items: flex-start;
+  }
+
+  .variant-image-tile {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+  }
+
+  /* hide the input but keep it clickable */
+  .variant-image-tile input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .variant-image-tile__circle {
+    width: var(--custom-variant-image-size, 50px);
+    height: var(--custom-variant-image-size, 50px);
+    border: 1px solid #000; /* normal */
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  /* "10px padding between the circle and the image" -> shrink image inside */
+  .variant-image-tile__img {
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    object-fit: contain;
+    display: block;
+  }
+
+  .variant-image-tile__label {
+    font-size: 12px;
+    line-height: 1.2;
+    text-align: center;
+    max-width:60px;
+    text-wrap:balance;
+  }
+
+  .variant-image-tile__fallback {
+    font-size: 12px;
+    line-height: 1.2;
+    padding: 0 6px;
+    text-align: center;
+  }
+
+  /* ✅ Selected state: scale up + shadow (ring stays 2px) */
+  .variant-image-tile:has(input:checked) .variant-image-tile__circle {
+    border-width: 2px; /* selected */
+  }
+
+  /* Optional: subtle hover */
+  .variant-image-tile:hover .variant-image-tile__circle {
+    box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+  }
+
+  /* Disabled state */
+  .variant-image-tile:has([aria-disabled='true']) {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  fieldset.variant-option.variant-option--images{
+    border: 0 !important;
+    outline: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-inline-size: 0;
+  }
+
+  fieldset.variant-option.variant-option--images{
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  fieldset.variant-option.variant-option--images > legend.variant-option__legend{
+    padding: 0 !important;
+    margin: 0 0 var(--margin-xs) 0 !important;
+    border: 0 !important;
+  }
+
+{% endstylesheet %}

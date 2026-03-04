@@ -1,0 +1,331 @@
+{%- comment -%}
+  Product metafield: custom.benefits_hero_items  (Type: One → Benefits Hero Item metaobject)
+  Metaobject fields: preheading, heading, subheading, background_image (URL), main_image (Image file)
+{%- endcomment -%}
+
+{%- assign benefits_hero_item = product.metafields.custom.benefits_hero_items.value -%}
+
+{%- assign bh_preheading = section.settings.pre_heading -%}
+{%- assign bh_heading    = section.settings.heading -%}
+{%- assign bh_subheading = section.settings.subheading -%}
+{%- assign bh_bg_url     = blank -%}
+{%- assign bh_main_image = section.settings.main_image -%}
+
+{%- if benefits_hero_item != blank -%}
+  {%- if benefits_hero_item.preheading.value != blank -%}
+    {%- assign bh_preheading = benefits_hero_item.preheading.value -%}
+  {%- endif -%}
+
+  {%- if benefits_hero_item.heading.value != blank -%}
+    {%- assign bh_heading = benefits_hero_item.heading.value -%}
+  {%- endif -%}
+
+  {%- if benefits_hero_item.subheading.value != blank -%}
+    {%- assign bh_subheading = benefits_hero_item.subheading.value -%}
+  {%- endif -%}
+
+  {%- if benefits_hero_item.background_image.value != blank -%}
+    {%- assign bh_bg_url = benefits_hero_item.background_image.value -%}
+  {%- endif -%}
+
+  {%- if benefits_hero_item.main_image.value != blank -%}
+    {%- assign bh_main_image = benefits_hero_item.main_image.value -%}
+  {%- endif -%}
+{%- endif -%}
+
+<div
+  class="shopify-section section-wrapper section-benefits-hero"
+  style="
+    --bh-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --bh-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --bh-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --bh-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --bh-padding-side-desktop: {{ section.settings.padding_side_desktop }}px;
+    --bh-padding-side-mobile: {{ section.settings.padding_side_mobile }}px;
+
+    {%- comment -%} Prefer metaobject URL background; else section background image {%- endcomment -%}
+    {%- if bh_bg_url != blank -%}
+      --bh-bg-image: url({{ bh_bg_url }});
+    {%- elsif section.settings.background_image != blank -%}
+      --bh-bg-image: url({{ section.settings.background_image | image_url: width: 2000 }});
+    {%- endif -%}
+
+    --bh-text-color: {{ section.settings.text_color }};
+    --bh-button-background-color: {{ section.settings.button_background_color }};
+    --bh-button-background-hover-color: {{ section.settings.button_background_hover_color }};
+    --bh-button-text-color: {{ section.settings.button_text_color }};
+  "
+>
+  <div class="benefits-hero">
+    <div class="benefits-hero__content{% if bh_main_image == blank %} benefits-hero__content-no-padding{% endif %}">
+      <div class="benefits-hero__text">
+        <h2>{{ bh_preheading }}</h2>
+        <h3>{{ bh_heading }}</h3>
+        <p>{{ bh_subheading }}</p>
+      </div>
+      
+      <div class="benefits-hero__media">
+        {% if bh_main_image != blank %}
+          <img
+            src="{{ bh_main_image | image_url: width: 1200 }}"
+            alt="{{ bh_main_image.alt | escape }}"
+            loading="lazy"
+            width="{{ bh_main_image.width }}"
+            height="{{ bh_main_image.height }}"
+          >
+        {% endif %}
+      </div>
+
+      {% if section.settings.show_button == true %}
+        <a href="#product-section" class="button shop-now--button">
+          <span>{{ section.settings.button_text }}</span>
+          {{ 'icon-arrow-right.svg' | inline_asset_content }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+
+{% style %}
+
+.benefits-hero {
+  position: relative;
+  padding-top: var(--bh-padding-top-desktop, 80px);
+  padding-bottom: var(--bh-padding-bottom-desktop, 80px);
+  padding-left: var(--bh-padding-side-desktop, 20px);
+  padding-right: var(--bh-padding-side-desktop, 20px);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: var(--bh-bg-image);
+  }
+
+.benefits-hero__content {
+  max-width:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:40px;
+}
+
+.benefits-hero__content.benefits-hero__content-no-padding {
+  gap:0;
+}
+
+.benefits-hero__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  width: 100%;
+}
+
+.benefits-hero__text h2 {
+    font-size: 24px;
+    color: var(--bh-text-color, #FFFFFF);
+    margin: 0;
+    line-height: normal;
+    font-weight: 400;
+}
+
+.benefits-hero__text h3 {
+    font-size: 44px;
+    color: var(--bh-text-color, #FFFFFF);
+    margin: 0;
+    line-height: normal;
+}
+
+.benefits-hero__text p, .benefits-hero__media p {
+    font-size: 18px;
+    color: var(--bh-text-color, #FFFFFF);
+    margin: 0;
+    line-height: normal;
+}
+
+.benefits-hero__media {
+    width: 30%;
+    max-width: 100%;
+}
+
+.benefits-hero .shop-now--button {
+    background-color: var(--bh-button-background-color, #1D7879);
+    color: var(--bh-button-text-color, #FFFFFF);
+    padding: 20px 0px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: "Poppins", sans-serif;
+    width: 100%;
+    max-width: 425px;
+}
+
+.benefits-hero .shop-now--button:hover {
+  background-color:var(--bh-button-background-hover-color, #2EA0A1);
+}
+
+.benefits-hero .shop-now--button:hover svg {
+  transform: translateX(14px)
+}
+
+.benefits-hero .shop-now--button svg {
+  transition: transform .3s ease;
+}
+
+@media screen and (max-width:756px) {
+  .benefits-hero {
+    padding-top: var(--bh-padding-top-mobile, 48px);
+    padding-bottom: var(--bh-padding-bottom-mobile, 48px);
+    padding-left: var(--bh--padding-side-mobile, 20px);
+    padding-right: var(--bh-padding-side-mobile, 20px);
+  }
+
+  .benefits-hero__text h2 {
+    font-size:16px;
+  }
+
+  .benefits-hero__text h3 {
+    font-size:26px;
+  }
+
+  .benefits-hero__text p {
+    font-size:14px;
+  }
+
+  .benefits-hero__media {
+    width: 95%;
+  }
+
+  .benefits-hero .shop-now--button {
+    padding: 16px 0px;
+    text-decoration: none;
+    font-size: 16px;
+    width: 100%;
+    max-width: 425px;
+  }
+
+  .benefits-hero .shop-now--button svg {
+    width: 16px;
+    height: auto;
+  }
+
+}
+    
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Benefits hero",
+  "tag": "div",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Padding top desktop",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Padding bottom desktop",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 80
+    },
+        {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top mobile",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom mobile",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 49
+    },
+    {
+      "type": "range",
+      "id": "padding_side_desktop",
+      "label": "Padding side desktop",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_side_mobile",
+      "label": "Padding side mobile",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button background color",
+      "default": "#1D7879",
+      "visible_if": "{{ section.settings.show_button == true }}"
+    },
+    {
+      "type": "color",
+      "id": "button_background_hover_color",
+      "label": "Button background hover color",
+      "default": "#2EA0A1",
+      "visible_if": "{{ section.settings.show_button == true }}"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFF",
+      "visible_if": "{{ section.settings.show_button == true }}"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "SHOP NOW",
+      "visible_if": "{{ section.settings.show_button == true }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits hero"
+    }
+  ]
+}
+{% endschema %}

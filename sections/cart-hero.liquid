@@ -1,0 +1,178 @@
+<div
+  class="shopify-section section-wrapper section-cart-hero cart-hero{% if section.settings.show_bottom_border %} cart-hero--border-bottom{% endif %}"
+  style="
+    --ch-background-color: {{ section.settings.background_color }};
+    --ch-padding-top: {{ section.settings.padding_top }}px;
+    --ch-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --ch-text-align: {{ section.settings.text_align }};
+    --ch-bottom-border-color: {{ section.settings.bottom_border_color }};
+    --ch-heading-padding-bottom: {{ section.settings.heading_padding_bottom }}px;
+    --ch-heading-font-size: {{ section.settings.heading_font_size }}px;
+    --ch-subheading-padding-bottom: {{ section.settings.subheading_padding_bottom }}px;
+    --ch-subheading-font-size: {{ section.settings.subheading_font_size }}px;
+  "
+>
+  <div class="section section--page-width">
+    <h1 class="cart-hero__heading">{{  section.settings.title }}</h1>
+    <p class="cart-hero__subheading">{{  section.settings.subtitle }}</p>
+  </div>
+</div>
+
+{% stylesheet %}
+    .cart-hero {
+    background-color: var(--ch-background-color, #FFF7EF);
+    padding-top: var(--ch-padding-top, 25px);
+    padding-bottom: var(--ch-padding-bottom, 25px);
+    text-align: var(--ch-text-align, center);
+    }
+
+    .cart-hero * {
+    margin: 0;
+    }
+
+    .cart-hero__heading {
+    padding-bottom: var(--ch-heading-padding-bottom, 20px);
+    font-size: var(--ch-heading-font-size, 28px);
+    }
+
+    .cart-hero__subheading {
+        padding-bottom: var(--ch-subheading-padding-bottom, 12px);
+        font-size: var(--ch-subheading-font-size, 16px);
+    }
+
+  /* bottom border when enabled */
+  .cart-hero--border-bottom {
+    border-bottom: 1px solid var(--ch-bottom-border-color, #0000000F);
+  }
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Cart hero",
+  "tag": "div",
+  "class": "section-wrapper",
+  "settings": [
+    {
+        "type": "header",
+        "content": "Section"
+    },
+    {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color",
+        "default": "#FFF7EF"
+    },
+    {
+        "type": "select",
+        "id": "text_align",
+        "label": "Text align",
+        "options": [
+            {
+            "value": "left",
+            "label": "Left"
+            },
+            {
+            "value": "center",
+            "label": "Center"
+            }
+        ],
+        "default": "center"
+    },
+    {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Padding top",
+        "min": 0,
+        "max": 99,
+        "step": 1,
+        "default": 25
+    },
+    {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Padding bottom",
+        "min": 0,
+        "max": 99,
+        "step": 1,
+        "default": 25
+    },
+    {
+        "type": "checkbox",
+        "id": "show_bottom_border",
+        "label": "Show bottom border",
+        "default": true
+    },
+    {
+        "type": "color",
+        "id": "bottom_border_color",
+        "label": "Bottom border color",
+        "default": "#0000000F",
+        "visible_if": "{{ section.settings.show_bottom_border == true }}"
+    },
+    {
+        "type": "header",
+        "content": "Heading"
+    },
+    {
+        "type": "range",
+        "id": "heading_font_size",
+        "label": "Heading font size",
+        "min": 0,
+        "max": 99,
+        "step": 1,
+        "default": 28
+    },
+    {
+        "type": "range",
+        "id": "heading_padding_bottom",
+        "label": "Heading padding bottom",
+        "min": 0,
+        "max": 99,
+        "step": 1,
+        "default": 20
+    },
+    {
+        "type": "range",
+        "id": "subheading_font_size",
+        "label": "Subheading font size",
+        "min": 0,
+        "max": 99,
+        "step": 1,
+        "default": 16
+    },
+    {
+        "type": "range",
+        "id": "subheading_padding_bottom",
+        "label": "Subheading padding bottom",
+        "min": 0,
+        "max": 99,
+        "step": 1,
+        "default": 12
+    },
+    {
+        "type": "header",
+        "content": "content"
+    },
+    {
+        "type": "text",
+        "id": "title",
+        "label": "Title",
+        "default": "YOUR CART"
+    },
+    {
+        "type": "richtext",
+        "id": "subtitle",
+        "label": "Subtitle",
+        "default": "<p><strong>Items are not reserved.</strong> Checkout quickly to make them yours!</p>"
+    },
+
+  ],
+  
+  "presets": [
+    {
+      "name": "Cart hero"
+    }
+  ]
+}
+{% endschema %}

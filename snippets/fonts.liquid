@@ -1,0 +1,38 @@
+{% # theme-check-disable %}
+  <link
+    rel="preload"
+    as="font"
+    href="https://cdn.shopify.com/s/files/1/0503/6841/3848/files/AcuminProWide-Regular.woff2?v=1704904215"
+    type="font/woff2"
+    crossorigin
+    fetchpriority="low"
+  >
+  <link
+    rel="preload"
+    as="font"
+    href="https://cdn.shopify.com/s/files/1/0503/6841/3848/files/AcuminProWide-Medium.woff2?v=1704904215"
+    type="font/woff2"
+    crossorigin
+    fetchpriority="low"
+  >
+{%- unless settings.type_heading_font.system? -%}
+  <link
+    rel="preload"
+    as="font"
+    href="https://cdn.shopify.com/s/files/1/0503/6841/3848/files/AcuminProWide-Medium.woff2?v=1704904215"
+    type="font/woff2"
+    crossorigin
+    fetchpriority="low"
+  >
+{%- endunless -%}
+{%- unless settings.type_accent_font.system? -%}
+  <link
+    rel="preload"
+    as="font"
+    href="https://cdn.shopify.com/s/files/1/0503/6841/3848/files/AcuminProWide-Medium.woff2?v=1704904215"
+    type="font/woff2"
+    crossorigin
+    fetchpriority="low"
+  >
+{%- endunless -%}
+{% # theme-check-enable %}

@@ -1,0 +1,282 @@
+{%- if request.page_type == 'product' and product -%}
+  {%- liquid
+    assign shop_label = section.settings.shop_label | default: 'Shop'
+
+    assign shop_url = section.settings.shop_url
+    if shop_url == blank
+      assign shop_url = routes.all_products_collection_url
+    endif
+
+    assign current_collection = collection
+    if current_collection == nil and section.settings.use_first_collection
+      assign current_collection = product.collections | first
+    endif
+  -%}
+
+  <div class="breadcrumbs" id="breadcrumbs"
+    style="
+      --b-margin-bottom: {{ section.settings.margin_bottom }}px;
+    "
+  >
+    <div class="section-background color-{{ section.settings.color_scheme }}"></div>
+
+    <div
+      class="section section--page-width color-scheme-1 section-resource-list spacing-style gap-style"
+      style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+    >
+      <nav class="breadcrumbs__nav" aria-label="Breadcrumb" style="--bc-gap: {{ section.settings.gap }}px;">
+        <ul class="breadcrumbs__list list-unstyled">
+          <!-- Home -->
+          <li class="breadcrumbs__item">
+            <a class="breadcrumbs__link breadcrumbs__home" href="{{ routes.root_url }}" aria-label="Home">
+              <span class="breadcrumbs__icon" aria-hidden="true">
+                {{- 'icon-home.svg' | inline_asset_content -}}
+              </span>
+            </a>
+          </li>
+
+          <li class="breadcrumbs__sep" aria-hidden="true">
+            <span class="breadcrumbs__sep-icon">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </li>
+
+          <!-- Optional: Shop -->
+          {%- if section.settings.show_shop -%}
+            <li class="breadcrumbs__item">
+              <a class="breadcrumbs__link" href="{{ shop_url }}">{{ shop_label }}</a>
+            </li>
+
+            <li class="breadcrumbs__sep" aria-hidden="true">
+              <span class="breadcrumbs__sep-icon">
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </span>
+            </li>
+          {%- endif -%}
+
+          <!-- Optional: Collection -->
+          {%- if section.settings.show_collection and current_collection != blank -%}
+            <li class="breadcrumbs__item">
+              <a class="breadcrumbs__link" href="{{ current_collection.url }}">
+                {{ current_collection.title }}
+              </a>
+            </li>
+
+            <li class="breadcrumbs__sep" aria-hidden="true">
+              <span class="breadcrumbs__sep-icon">
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </span>
+            </li>
+          {%- endif -%}
+
+          <!-- Current product -->
+          <li class="breadcrumbs__item breadcrumbs__item--current">
+            <span class="breadcrumbs__current" aria-current="page">
+              {{ product.title }}
+            </span>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+{%- endif -%}
+
+<style>
+  .breadcrumbs {
+    width: 100%;
+    margin: 0;
+    margin-bottom: var(--b-margin-bottom, 20px);
+  }
+
+  .breadcrumbs__nav {
+    width: 100%;
+  }
+
+  /* Scrollable row (desktop + mobile) */
+  .breadcrumbs__list {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--bc-gap);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    white-space: nowrap;
+    overflow-x: auto;     /* enables horizontal scrolling */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch; /* smooth iOS momentum scroll */
+  }
+
+  .breadcrumbs__item,
+  .breadcrumbs__sep {
+    flex: 0 0 auto;
+  }
+
+  /* Keep each crumb unbroken */
+  .breadcrumbs__link,
+  .breadcrumbs__current {
+    white-space: nowrap;
+    line-height: 1.2;
+    text-decoration: none;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  /* Caret styled like ">" */
+  .breadcrumbs__sep {
+    line-height: 1;
+    opacity: 0.65;
+  }
+  .breadcrumbs__sep-icon {
+    display: inline-flex;
+    transform: rotate(-90deg);
+    position: relative;
+    top: 0.5px;
+  }
+  .breadcrumbs__sep-icon svg {
+    display: block;
+    width: 12px;
+    height: 12px;
+  }
+
+  .breadcrumbs__icon svg {
+    display: block;
+  }
+
+  .breadcrumbs__home {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .breadcrumbs__link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+  }
+
+  /*
+    IMPORTANT: Visible scrollbar (don’t hide it)
+    - Firefox: scrollbar-width
+    - WebKit: ::-webkit-scrollbar
+  */
+  .breadcrumbs__list {
+      overflow-x: auto;
+      overflow-y: hidden;
+
+      /* Firefox */
+      scrollbar-width: none;
+
+      /* IE/old Edge */
+      -ms-overflow-style: none;
+  }
+
+  .breadcrumbs__list::-webkit-scrollbar {
+    /* Chrome/Safari/Edge */
+    display: none;
+    height: 0;
+  }
+
+  .breadcrumbs__list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .breadcrumbs__list::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.25);
+    border-radius: 999px;
+  }
+
+  .breadcrumbs__list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.35);
+  }
+
+  /* Make scrollbar a bit easier to grab on mobile */
+  @media (max-width: 830px) {
+    .breadcrumbs__list::-webkit-scrollbar {
+      height: 12px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Breadcrumbs",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "label": "Color scheme",
+      "id": "color_scheme",
+      "default": "schema-1"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shop",
+      "label": "Show “Shop” link",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "shop_label",
+      "label": "Shop label",
+      "default": "Shop"
+    },
+    {
+      "type": "url",
+      "id": "shop_url",
+      "label": "Shop link URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection",
+      "label": "Show collection crumb",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_first_collection",
+      "label": "If not on a collection, use product’s first collection",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between items",
+      "min": 6,
+      "max": 24,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "label": "Padding top",
+      "id": "padding_top",
+      "min": 0,
+      "max": 48,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "label": "Padding bottom",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 48,
+      "step": 1,
+      "default": 16,
+      "unit": "px"
+    }
+  ],
+  "presets": [{ "name": "Breadcrumbs" }]
+}
+{% endschema %}

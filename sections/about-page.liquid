@@ -1,0 +1,1595 @@
+{% comment %}
+  About Page Section
+  - Hero with founder quote & image
+  - Alternating content rows with background variation
+  - Brand values strip
+  - Reviews
+  - Blog posts
+  All configurable via blocks in the theme editor.
+{% endcomment %}
+<div class="shopify-section section-wrapper about-page">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+
+        {%- comment -%} ======================== HERO ======================== {%- endcomment -%}
+        {%- when 'hero' -%}
+          <div class="section section--page-width">
+          <section class="about-hero" {{ block.shopify_attributes }}>
+            <div class="about-hero__inner">
+              <div class="about-hero__content">
+                {%- if block.settings.subtitle != blank -%}
+                  <p class="about-hero__subtitle">{{ block.settings.subtitle }}</p>
+                {%- endif -%}
+                {%- if block.settings.heading != blank -%}
+                  <h1 class="about-hero__heading">{{ block.settings.heading }}</h1>
+                {%- endif -%}
+                {%- if block.settings.intro != blank -%}
+                  <p class="about-hero__intro">{{ block.settings.intro }}</p>
+                {%- endif -%}
+                {%- if block.settings.quote != blank -%}
+                  <blockquote class="about-hero__quote">
+                    <p>{{ block.settings.quote }}</p>
+                  </blockquote>
+                {%- endif -%}
+                {%- if block.settings.founder_name != blank -%}
+                  <div class="about-hero__founder">
+                    <p class="about-hero__founder-name">{{ block.settings.founder_name }}</p>
+                    {%- if block.settings.founder_title != blank -%}
+                      <p class="about-hero__founder-title">{{ block.settings.founder_title }}</p>
+                    {%- endif -%}
+                    {%- if block.settings.founder_credentials != blank -%}
+                      <p class="about-hero__founder-creds">{{ block.settings.founder_credentials }}</p>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+              {%- if block.settings.image != blank -%}
+                <div class="about-hero__image-wrap">
+                  <div class="about-hero__image-accent"></div>
+                  <img
+                    src="{{ block.settings.image | image_url: width: 900 }}"
+                    srcset="
+                      {{ block.settings.image | image_url: width: 500 }} 500w,
+                      {{ block.settings.image | image_url: width: 700 }} 700w,
+                      {{ block.settings.image | image_url: width: 900 }} 900w
+                    "
+                    sizes="(max-width: 989px) 100vw, 50vw"
+                    alt="{{ block.settings.image.alt | escape }}"
+                    loading="eager"
+                    class="about-hero__image"
+                    height="auto"
+                    width="auto"
+                  >
+                </div>
+              {%- endif -%}
+            </div>
+          </section>
+        </div>
+
+        {%- comment -%} ======================== CONTENT ROW ======================== {%- endcomment -%}
+        {%- when 'content_row' -%}
+          {%- assign row_index = forloop.index -%}
+          {%- assign is_reversed = block.settings.reverse_layout -%}
+          <section
+            class="about-row {% if block.settings.bg_style == 'cream' %}about-row--cream{% elsif block.settings.bg_style == 'white' %}about-row--white{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="about-row__inner {% if is_reversed %}about-row__inner--reversed{% endif %}">
+              {%- if block.settings.image != blank -%}
+                <div class="about-row__image-wrap">
+                  <img
+                    src="{{ block.settings.image | image_url: width: 900 }}"
+                    srcset="
+                      {{ block.settings.image | image_url: width: 500 }} 500w,
+                      {{ block.settings.image | image_url: width: 700 }} 700w,
+                      {{ block.settings.image | image_url: width: 900 }} 900w
+                    "
+                    sizes="(max-width: 989px) 100vw, 50vw"
+                    alt="{{ block.settings.image.alt | escape }}"
+                    loading="lazy"
+                    class="about-row__image"
+                    width="auto"
+                    height="auto"
+                  >
+                </div>
+              {%- endif -%}
+              <div class="about-row__content">
+                {%- if block.settings.accent_label != blank -%}
+                  <span class="about-row__accent-label">{{ block.settings.accent_label }}</span>
+                {%- endif -%}
+                {%- if block.settings.heading != blank -%}
+                  <h2 class="about-row__heading">{{ block.settings.heading }}</h2>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="about-row__text">{{ block.settings.text }}</div>
+                {%- endif -%}
+                {%- if block.settings.button_label != blank and block.settings.button_link != blank -%}
+                  <a href="{{ block.settings.button_link }}" class="about-row__btn">{{ block.settings.button_label }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+          </section>
+
+        {%- comment -%} ======================== VALUES STRIP ======================== {%- endcomment -%}
+        {%- when 'values_strip' -%}
+          <section class="about-values" {{ block.shopify_attributes }}>
+            <div class="about-values__inner">
+              {%- if block.settings.heading != blank -%}
+                <p class="about-values__heading">{{ block.settings.heading }}</p>
+              {%- endif -%}
+              <div class="about-values__grid">
+                {%- for i in (1..4) -%}
+                  {%- assign icon_key = 'icon_' | append: i -%}
+                  {%- assign label_key = 'label_' | append: i -%}
+                  {%- assign desc_key = 'desc_' | append: i -%}
+                  {%- assign icon_val = block.settings[icon_key] -%}
+                  {%- assign label_val = block.settings[label_key] -%}
+                  {%- assign desc_val = block.settings[desc_key] -%}
+                  {%- if label_val != blank -%}
+                    <div class="about-values__item">
+                      {%- if icon_val != blank -%}
+                        <span class="about-values__icon">{{ icon_val }}</span>
+                      {%- endif -%}
+                      <h3 class="about-values__label">{{ label_val }}</h3>
+                      {%- if desc_val != blank -%}
+                        <p class="about-values__desc">{{ desc_val }}</p>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          </section>
+
+        {%- comment -%} ======================== MISSION STATEMENT ======================== {%- endcomment -%}
+        {%- when 'mission' -%}
+          <section class="about-mission" {{ block.shopify_attributes }}>
+            <div class="about-mission__inner">
+              {%- if block.settings.text != blank -%}
+                <p class="about-mission__text">{{ block.settings.text }}</p>
+              {%- endif -%}
+            </div>
+          </section>
+
+        {%- comment -%} ======================== REVIEWS ======================== {%- endcomment -%}
+        {%- when 'reviews' -%}
+          <section class="about-reviews" {{ block.shopify_attributes }}>
+            <div class="about-reviews__inner">
+              <div class="about-reviews__header">
+                <div>
+                  {%- if block.settings.subtitle != blank -%}
+                    <p class="about-reviews__subtitle">{{ block.settings.subtitle }}</p>
+                  {%- endif -%}
+                  {%- if block.settings.heading != blank -%}
+                    <h2 class="about-reviews__heading">{{ block.settings.heading }}</h2>
+                  {%- endif -%}
+                </div>
+                {%- if block.settings.link_label != blank and block.settings.link_url != blank -%}
+                  <a href="{{ block.settings.link_url }}" class="about-reviews__view-all">{{ block.settings.link_label }}</a>
+                {%- endif -%}
+              </div>
+              <div class="about-reviews__grid">
+                {%- for i in (1..3) -%}
+                  {%- assign text_key = 'review_' | append: i | append: '_text' -%}
+                  {%- assign name_key = 'review_' | append: i | append: '_name' -%}
+                  {%- assign text_val = block.settings[text_key] -%}
+                  {%- assign name_val = block.settings[name_key] -%}
+                  {%- if text_val != blank -%}
+                    <div class="about-reviews__card">
+                      <div class="about-reviews__stars">
+                        {%- for s in (1..5) -%}
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="#1a1a1a" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        {%- endfor -%}
+                      </div>
+                      <p class="about-reviews__text">"{{ text_val }}"</p>
+                      {%- if name_val != blank -%}
+                        <p class="about-reviews__name">{{ name_val }}</p>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          </section>
+
+        {%- comment -%} ======================== BLOG POSTS ======================== {%- endcomment -%}
+        {%- when 'blog_posts' -%}
+          {%- assign selected_blog = block.settings.blog -%}
+          {%- if selected_blog != blank -%}
+            <section class="about-blog" {{ block.shopify_attributes }}>
+              <div class="about-blog__inner">
+                <div class="about-blog__header">
+                  <div>
+                    {%- if block.settings.subtitle != blank -%}
+                      <p class="about-blog__subtitle">{{ block.settings.subtitle }}</p>
+                    {%- endif -%}
+                    {%- if block.settings.heading != blank -%}
+                      <h2 class="about-blog__heading">{{ block.settings.heading }}</h2>
+                    {%- endif -%}
+                  </div>
+                  <a href="{{ selected_blog.url }}" class="about-blog__read-all">Read all</a>
+                </div>
+                <div class="about-blog__grid">
+                  {%- for post in selected_blog.articles limit: block.settings.post_count -%}
+                    <a href="{{ post.url }}" class="about-blog__card">
+                      {%- if post.image -%}
+                        <div class="about-blog__card-img-wrap">
+                          <img
+                            src="{{ post.image | image_url: width: 600 }}"
+                            srcset="
+                              {{ post.image | image_url: width: 400 }} 400w,
+                              {{ post.image | image_url: width: 600 }} 600w
+                            "
+                            sizes="(max-width: 749px) 100vw, (max-width: 989px) 50vw, 33vw"
+                            alt="{{ post.image.alt | escape }}"
+                            loading="lazy"
+                            class="about-blog__card-img"
+                            width="auto"
+                            height="auto"
+                          >
+                        </div>
+                      {%- endif -%}
+                      <div class="about-blog__card-body">
+                        <h3 class="about-blog__card-title">{{ post.title }}</h3>
+                        <p class="about-blog__card-excerpt">{{ post.excerpt_or_content | strip_html | truncate: 100 }}</p>
+                        <span class="about-blog__card-link">Read more</span>
+                      </div>
+                    </a>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </section>
+          {%- endif -%}
+          {%- comment -%} ======================== PRODUCT FEATURE ======================== {%- endcomment -%}
+        {%- when 'product_feature' -%}
+          <section class="about-product-feature" {{ block.shopify_attributes }}>
+            <div class="about-product-feature__inner">
+              <div class="about-product-feature__content">
+                {%- if block.settings.heading != blank -%}
+                  <h2 class="about-product-feature__heading">{{ block.settings.heading }}</h2>
+                {%- endif -%}
+                {%- if block.settings.show_rating -%}
+                  <div class="about-product-feature__rating">
+                    <div class="about-product-feature__stars">
+                      {%- for i in (1..5) -%}
+                        {%- if i <= block.settings.rating_whole -%}
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="#1a1a1a" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        {%- else -%}
+                          {%- assign next_star_index = block.settings.rating_whole | plus: 1 -%}
+                          {%- if i == next_star_index and block.settings.rating_has_half -%}
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="none">
+                              <defs><clipPath id="half-{{ block.id }}"><rect x="0" y="0" width="12" height="24"/></clipPath></defs>
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#1a1a1a" clip-path="url(#half-{{ block.id }})"/>
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+                            </svg>
+                          {%- else -%}
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </div>
+                    {%- if block.settings.rating_text != blank -%}
+                      <span class="about-product-feature__rating-text">{{ block.settings.rating_text }}</span>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+                {%- if block.settings.description != blank -%}
+                  <div class="about-product-feature__desc">{{ block.settings.description }}</div>
+                {%- endif -%}
+                {%- if block.settings.info_1 != blank -%}
+                  <p class="about-product-feature__info">{{ block.settings.info_1 }}</p>
+                {%- endif -%}
+                {%- if block.settings.info_2 != blank -%}
+                  <p class="about-product-feature__info">{{ block.settings.info_2 }}</p>
+                {%- endif -%}
+                <div class="about-product-feature__buttons">
+                  {%- if block.settings.button_1_label != blank and block.settings.button_1_link != blank -%}
+                    <a href="{{ block.settings.button_1_link }}" class="about-product-feature__btn about-product-feature__btn--primary">{{ block.settings.button_1_label }}</a>
+                  {%- endif -%}
+                  {%- if block.settings.button_2_label != blank and block.settings.button_2_link != blank -%}
+                    <a href="{{ block.settings.button_2_link }}" class="about-product-feature__btn about-product-feature__btn--secondary">{{ block.settings.button_2_label }}</a>
+                  {%- endif -%}
+                </div>
+              </div>
+              {%- if block.settings.image != blank -%}
+                <div class="about-product-feature__image-wrap">
+                  <img
+                    src="{{ block.settings.image | image_url: width: 900 }}"
+                    srcset="
+                      {{ block.settings.image | image_url: width: 500 }} 500w,
+                      {{ block.settings.image | image_url: width: 700 }} 700w,
+                      {{ block.settings.image | image_url: width: 900 }} 900w
+                    "
+                    sizes="(max-width: 989px) 100vw, 50vw"
+                    alt="{{ block.settings.image.alt | escape }}"
+                    loading="lazy"
+                    class="about-product-feature__image"
+                    width="auto"
+                    height="auto"
+                  >
+                </div>
+              {%- endif -%}
+            </div>
+          </section>
+
+      {%- endcase -%}
+    {%- endfor -%}
+</div>
+
+{% stylesheet %}
+  /* ========================================
+     ABOUT PAGE — BASE
+     ======================================== */
+  .about-page {
+    --about-accent: #6b9080;
+    --about-accent-light: #dce8e0;
+    --about-cream: #fff7ef;
+    --about-gold: #fce0a8;
+    --about-dark: #1a1a1a;
+    --about-muted: #6b6b6b;
+    --about-max-width: 1300px;
+  }
+
+  /* ========================================
+     HERO
+     ======================================== */
+  .about-hero {
+    overflow: hidden;
+  }
+
+  .about-hero__inner {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    gap: 40px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-hero__inner {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
+      min-height: 680px;
+    }
+  }
+
+  .about-hero__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-hero__content {
+      flex: 0 0 50%;
+      padding: 80px 60px 80px 0;
+    }
+  }
+
+  .about-hero__subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--about-accent);
+    margin: 0 0 16px 0;
+  }
+
+  .about-hero__heading {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin: 0 0 24px 0;
+    letter-spacing: -0.02em;
+    color: var(--about-dark);
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-hero__heading {
+      font-size: 52px;
+    }
+  }
+
+  .about-hero__intro {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--about-muted);
+    margin: 0 0 28px 0;
+  }
+
+  .about-hero__quote {
+    margin: 0 0 28px 0;
+    padding-left: 24px;
+    border-left: 3px solid var(--about-accent);
+  }
+
+  .about-row__image-wrap {
+    overflow: hidden;
+    border-radius: 12px;
+  }
+
+  .about-hero__quote p {
+    font-size: 16px;
+    font-style: italic;
+    line-height: 1.7;
+    color: #444;
+    margin: 0;
+  }
+
+  .about-hero__founder {
+    padding-top: 4px;
+  }
+
+  .about-hero__founder-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: var(--about-dark);
+  }
+
+  .about-hero__founder-title {
+    font-size: 14px;
+    color: var(--about-accent);
+    font-weight: 500;
+    margin: 0 0 2px 0;
+  }
+
+  .about-hero__founder-creds {
+    font-size: 13px;
+    color: var(--about-muted);
+    margin: 0;
+  }
+
+  .about-hero__image-wrap {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-hero__image-wrap {
+      flex: 0 0 50%;
+      border-radius: 0;
+    }
+  }
+
+  .about-hero__image-accent {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 120px;
+    height: 120px;
+    background: var(--about-accent-light);
+    border-radius: 0 0 0 100%;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  .about-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    min-height: 400px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-hero__image {
+      min-height: 100%;
+    }
+  }
+
+  /* ========================================
+     CONTENT ROW
+     ======================================== */
+  .about-row {
+    padding: 0 24px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .about-hero {
+      padding-bottom: 0;
+    }
+
+    .about-row__image-wrap {
+      border-radius:0;
+    }
+
+    .about-hero__inner {
+      gap: 0;
+    }
+
+    .about-hero__content {
+      padding: 40px 0 32px;
+    }
+
+    .about-hero__image-wrap {
+      border-radius: 0;
+      margin: 0 -24px;
+    }
+
+    .about-row__image-wrap {
+      border-radius: 0;
+      margin: 0 -24px;
+    }
+
+    .about-hero__inner {
+      flex-direction: column-reverse;
+    }
+
+    .about-row__inner {
+      flex-direction: column-reverse;
+      gap: 0;
+    }
+
+    .about-row__content {
+      padding: 0;
+    }
+    .about-row {
+      padding: 0 20px 40px;
+    }
+  }
+
+  .about-row--cream {
+    background-color: var(--about-cream);
+  }
+
+  .about-row--white {
+    background-color: #fff;
+  }
+
+  .about-row__inner {
+    display: flex;
+    flex-direction: column;
+    max-width: var(--about-max-width);
+    margin: 0 auto;
+    gap: 40px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-row__inner {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
+      min-height: 560px;
+    }
+
+    .about-row__inner--reversed {
+      flex-direction: row-reverse;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-row__image-wrap {
+      flex: 0 0 50%;
+      border-radius: 0;
+    }
+  }
+
+  .about-row__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    min-height: 350px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-row__image {
+      min-height: 100%;
+    }
+
+  }
+
+  .about-row__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-row__content {
+      flex: 0 0 50%;
+      padding: 80px 60px;
+    }
+  }
+
+  .about-row__accent-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--about-accent);
+    background: var(--about-accent-light);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    align-self: flex-start;
+  }
+
+  .about-row__heading {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin: 0 0 20px 0;
+    letter-spacing: -0.01em;
+    color: var(--about-dark);
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-row__heading {
+      font-size: 38px;
+    }
+  }
+
+  .about-row__text {
+    font-size: 16px;
+    line-height: 1.75;
+    color: #444;
+  }
+
+  .about-row__text p {
+    margin: 0 0 16px 0;
+  }
+
+  .about-row__text p:last-child {
+    margin-bottom: 0;
+  }
+
+  .about-row__btn {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 12px 28px;
+    background: var(--about-dark);
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: background 0.2s;
+    align-self: flex-start;
+  }
+
+  .about-row__btn:hover {
+    background: #333;
+  }
+
+  /* ========================================
+     VALUES STRIP
+     ======================================== */
+  .about-values {
+    background: var(--about-cream);
+    color: #fff;
+    padding: 0 24px 60px;
+  }
+
+  .about-values__inner {
+    max-width: var(--about-max-width);
+    margin: 0 auto;
+  }
+
+  .about-values__heading {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin: 0 0 36px 0;
+    text-align: center;
+  }
+
+  .about-values__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-values__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-values__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .about-values__item {
+    text-align: center;
+    padding: 24px 16px;
+    border: 1px solid #000;
+    border-radius: 12px;
+    transition: border-color 0.3s;
+  }
+
+  .about-values__item:hover {
+    border-color: var(--about-accent);
+  }
+
+  .about-values__icon {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .about-values__label {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color:#000;
+  }
+
+  .about-values__desc {
+    font-size: 16px;
+    line-height: 1.55;
+    color: #000;
+    margin: 0;
+  }
+
+  /* ========================================
+     MISSION STATEMENT
+     ======================================== */
+  .about-mission {
+    padding: 72px 24px 0;
+    background: var(--about-cream);
+  }
+
+  .about-mission__inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .about-mission__text {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--about-dark);
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-mission__text {
+      font-size: 28px;
+    }
+  }
+
+  /* ========================================
+     REVIEWS
+     ======================================== */
+  .about-reviews {
+    padding: 72px 24px;
+  }
+
+  .about-reviews__inner {
+    max-width: var(--about-max-width);
+    margin: 0 auto;
+  }
+
+  .about-reviews__header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-reviews__header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+
+  .about-reviews__subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--about-muted);
+    margin: 0 0 4px 0;
+  }
+
+  .about-reviews__heading {
+    font-size: 30px;
+    font-weight: 800;
+    margin: 0;
+    color: var(--about-dark);
+  }
+
+  .about-reviews__view-all {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--about-dark);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .about-reviews__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-reviews__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .about-reviews__card {
+    background: linear-gradient(145deg, var(--about-accent), #9ab8a8, var(--about-accent-light));
+    border-radius: 16px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 240px;
+    justify-content: center;
+  }
+
+  .about-reviews__stars {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 16px;
+  }
+
+  .about-reviews__text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: #fff;
+    margin: 0 0 20px 0;
+    font-style: italic;
+  }
+
+  .about-reviews__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--about-dark);
+    margin: 0;
+  }
+
+  /* ========================================
+     BLOG POSTS
+     ======================================== */
+  .about-blog {
+    padding: 40px 24px;
+    background: #FFF;
+  }
+
+  .about-blog__inner {
+    max-width: var(--about-max-width);
+    margin: 0 auto;
+  }
+
+  .about-blog__header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-blog__header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+
+  .about-blog__subtitle {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--about-muted);
+    margin: 0 0 4px 0;
+  }
+
+  .about-blog__heading {
+    font-size: 30px;
+    font-weight: 800;
+    margin: 0;
+    color: var(--about-dark);
+  }
+
+  .about-blog__read-all {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--about-dark);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .about-blog__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-blog__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-blog__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .about-blog__card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #eee;
+    transition: box-shadow 0.25s, transform 0.25s;
+  }
+
+  .about-blog__card:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    transform: translateY(-3px);
+  }
+
+  .about-blog__card-img-wrap {
+    overflow: hidden;
+  }
+
+  .about-blog__card-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    aspect-ratio: 16/10;
+    transition: transform 0.35s;
+  }
+
+  .about-blog__card:hover .about-blog__card-img {
+    transform: scale(1.04);
+  }
+
+  .about-blog__card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .about-blog__card-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+    color: var(--about-dark);
+  }
+
+  .about-blog__card-excerpt {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--about-muted);
+    margin: 0 0 16px 0;
+    flex: 1;
+  }
+
+  .about-blog__card-link {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--about-dark);
+    padding-top: 12px;
+    border-top: 1px solid #eee;
+  }
+
+  /* ========================================
+     PRINT
+     ======================================== */
+  @media print {
+    .about-reviews,
+    .about-blog {
+      display: none !important;
+    }
+  }
+
+  /* ========================================
+     PRODUCT FEATURE
+     ======================================== */
+  .about-product-feature {
+    padding: 0 24px;
+    background: #fff;
+  }
+
+  .about-product-feature__inner {
+    display: flex;
+    flex-direction: column-reverse;
+    max-width: var(--about-max-width);
+    margin: 0 auto;
+    gap: 0;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-product-feature__inner {
+      flex-direction: row;
+      align-items: center;
+      min-height: 600px;
+      gap: 0;
+    }
+  }
+
+  .about-product-feature__content {
+    padding: 40px 0 48px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-product-feature__content {
+      flex: 0 0 50%;
+      padding: 80px 80px 80px 0;
+    }
+  }
+
+  .about-product-feature__heading {
+    font-size: 36px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.15;
+    margin: 0 0 16px 0;
+    color: var(--about-dark);
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-product-feature__heading {
+      font-size: 48px;
+    }
+  }
+
+  .about-product-feature__rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .about-product-feature__stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .about-product-feature__rating-text {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--about-muted);
+  }
+
+  .about-product-feature__desc {
+    font-size: 18px;
+    line-height: 1.65;
+    color: #444;
+    margin-bottom: 24px;
+  }
+
+  .about-product-feature__desc p {
+    margin: 0 0 16px 0;
+  }
+
+  .about-product-feature__desc p:last-child {
+    margin-bottom: 0;
+  }
+
+  .about-product-feature__info {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--about-muted);
+    margin: 0 0 12px 0;
+  }
+
+  .about-product-feature__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .about-product-feature__buttons {
+      max-width: 360px;
+    }
+  }
+
+  .about-product-feature__btn {
+    display: block;
+    text-align: center;
+    padding: 16px 32px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 0;
+    transition: all 0.2s;
+  }
+
+  .about-product-feature__btn--primary {
+    background: var(--about-dark);
+    color: #fff;
+    border: 2px solid var(--about-dark);
+  }
+
+  .about-product-feature__btn--primary:hover {
+    background: #333;
+    border-color: #333;
+  }
+
+  .about-product-feature__btn--secondary {
+    background: transparent;
+    color: var(--about-dark);
+    border: 2px solid var(--about-dark);
+  }
+
+  .about-product-feature__btn--secondary:hover {
+    background: var(--about-dark);
+    color: #fff;
+  }
+
+  .about-product-feature__image-wrap {
+    overflow: hidden;
+  }
+
+  @media screen and (max-width: 989px) {
+    .about-product-feature__image-wrap {
+      margin: 0 -24px;
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-product-feature__image-wrap {
+      flex: 0 0 50%;
+    }
+  }
+
+  .about-product-feature__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  @media screen and (min-width: 990px) {
+    .about-product-feature__image {
+      height: 100%;
+      min-height: 600px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "About Page",
+  "tag": "section",
+  "max_blocks": 10,
+  "settings": [],
+  "blocks": [
+    
+    {
+      "type": "hero",
+      "name": "Hero / Our Story",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "Est. 2020"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Our Story"
+        },
+        {
+          "type": "textarea",
+          "id": "intro",
+          "label": "Intro paragraph",
+          "default": "ELIVIDE was founded by Matt Jarosy, a qualified nutritionist & health coach."
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Founder quote",
+          "default": "After a decade of studying human nutrition and working in clinical practice, I was frustrated that the supplement industry was not providing what my clients needed. The truth is, most supplements today are loaded with copious amounts of unnecessary fillers and inorganic nutrients. I wanted only the active compounds and in the most bioavailable forms. I wanted full transparency over how ingredients had been handled. I wanted supplements that were made sustainably with the least amount of plastic. Behind this idea, ELIVIDE was born. Every year I continue to formulate new supplements with the same ethos, prioritising the best quality ingredients with zero additives."
+        },
+        {
+          "type": "text",
+          "id": "founder_name",
+          "label": "Founder name",
+          "default": "Matt Jarosy"
+        },
+        {
+          "type": "text",
+          "id": "founder_title",
+          "label": "Founder title",
+          "default": "Founder & Formulator"
+        },
+        {
+          "type": "text",
+          "id": "founder_credentials",
+          "label": "Credentials",
+          "default": "BSc DipNT DipHC"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Founder image"
+        }
+      ]
+    },
+    {
+      "type": "content_row",
+      "name": "Content Row",
+      "settings": [
+        {
+          "type": "text",
+          "id": "accent_label",
+          "label": "Accent label (optional)",
+          "info": "Small tag above the heading"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Sustainability & Sourcing"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Body text"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "checkbox",
+          "id": "reverse_layout",
+          "label": "Image on right (text on left)",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "bg_style",
+          "label": "Background",
+          "options": [
+            { "value": "white", "label": "White" },
+            { "value": "cream", "label": "Cream" }
+          ],
+          "default": "white"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label (optional)"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        }
+      ]
+    },
+    {
+      "type": "values_strip",
+      "name": "Brand Values",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "What we stand for"
+        },
+        {
+          "type": "text",
+          "id": "icon_1",
+          "label": "Icon 1 (emoji)",
+          "default": "🌿"
+        },
+        {
+          "type": "text",
+          "id": "label_1",
+          "label": "Label 1",
+          "default": "Zero Additives"
+        },
+        {
+          "type": "text",
+          "id": "desc_1",
+          "label": "Description 1",
+          "default": "100% active ingredients, no fillers, binders or flow agents."
+        },
+        {
+          "type": "text",
+          "id": "icon_2",
+          "label": "Icon 2 (emoji)",
+          "default": "♻️"
+        },
+        {
+          "type": "text",
+          "id": "label_2",
+          "label": "Label 2",
+          "default": "Sustainable"
+        },
+        {
+          "type": "text",
+          "id": "desc_2",
+          "label": "Description 2",
+          "default": "Recycled glass jars, biodegradable pouches, 100% renewable energy."
+        },
+        {
+          "type": "text",
+          "id": "icon_3",
+          "label": "Icon 3 (emoji)",
+          "default": "🔬"
+        },
+        {
+          "type": "text",
+          "id": "label_3",
+          "label": "Label 3",
+          "default": "Tested & Traced"
+        },
+        {
+          "type": "text",
+          "id": "desc_3",
+          "label": "Description 3",
+          "default": "Full certificates of analysis and organoleptic testing on every batch."
+        },
+        {
+          "type": "text",
+          "id": "icon_4",
+          "label": "Icon 4 (emoji)",
+          "default": "🇬🇧"
+        },
+        {
+          "type": "text",
+          "id": "label_4",
+          "label": "Label 4",
+          "default": "Made in the UK"
+        },
+        {
+          "type": "text",
+          "id": "desc_4",
+          "label": "Description 4",
+          "default": "GMP & GHP certified manufacturing, blended and tested in Britain."
+        }
+      ]
+    },
+    {
+      "type": "mission",
+      "name": "Mission Statement",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Statement",
+          "default": "Curating additive-free, bioavailable supplements formulated for modern living. Crafted sustainably in the UK by nutritional experts."
+        }
+      ]
+    },
+    {
+      "type": "reviews",
+      "name": "Reviews",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "Reviews.IO"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Verified reviews"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "View all testimonials"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "Link URL"
+        },
+        {
+          "type": "header",
+          "content": "Review 1"
+        },
+        {
+          "type": "textarea",
+          "id": "review_1_text",
+          "label": "Review 1 text",
+          "default": "I have been taking Elivide products for the past 2 years particularly the Magnesium products, CQ10 Mitochondrial support tablets. Since taking the supplements I have noticed a better quality sleep and increased energy levels. I would highly recommend."
+        },
+        {
+          "type": "text",
+          "id": "review_1_name",
+          "label": "Review 1 name",
+          "default": "Liz"
+        },
+        {
+          "type": "header",
+          "content": "Review 2"
+        },
+        {
+          "type": "textarea",
+          "id": "review_2_text",
+          "label": "Review 2 text",
+          "default": "Fabulous company, not only do I love your strong ethics, but the quality of your products speak from themselves. The magnesium did wonders for me and I can finally get some quality sleep…!"
+        },
+        {
+          "type": "text",
+          "id": "review_2_name",
+          "label": "Review 2 name",
+          "default": "Bianca"
+        },
+        {
+          "type": "header",
+          "content": "Review 3"
+        },
+        {
+          "type": "textarea",
+          "id": "review_3_text",
+          "label": "Review 3 text",
+          "default": "I've been taking Elivide's supplements for 3 years now, and I have moved all my family and friends onto their supplements after seeing such benefits from taking their magnesium, which really helps with relaxation and muscle cramps."
+        },
+        {
+          "type": "text",
+          "id": "review_3_name",
+          "label": "Review 3 name",
+          "default": "Ella"
+        }
+      ]
+    },
+    {
+      "type": "blog_posts",
+      "name": "Blog Posts",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle",
+          "default": "New & featured"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "From the blog"
+        },
+        {
+          "type": "blog",
+          "id": "blog",
+          "label": "Blog"
+        },
+        {
+          "type": "range",
+          "id": "post_count",
+          "label": "Number of posts",
+          "min": 2,
+          "max": 6,
+          "step": 1,
+          "default": 3
+        }
+      ]
+    },
+    {
+      "type": "product_feature",
+      "name": "Product Feature",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Product name",
+          "default": "Rested"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_rating",
+          "label": "Show star rating",
+          "default": true
+        },
+        {
+          "type": "range",
+          "id": "rating_whole",
+          "label": "Full stars",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 4
+        },
+        {
+          "type": "checkbox",
+          "id": "rating_has_half",
+          "label": "Show half star",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "rating_text",
+          "label": "Rating text",
+          "default": "4.7  |  284 reviews"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description"
+        },
+        {
+          "type": "text",
+          "id": "info_1",
+          "label": "Info line 1",
+          "default": "Next batch ships in 3–5 weeks."
+        },
+        {
+          "type": "text",
+          "id": "info_2",
+          "label": "Info line 2",
+          "default": "Produced in limited runs to preserve integrity and consistency. Secure your place in our upcoming batch."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Product image"
+        },
+        {
+          "type": "text",
+          "id": "button_1_label",
+          "label": "Primary button label",
+          "default": "PRE-ORDER"
+        },
+        {
+          "type": "url",
+          "id": "button_1_link",
+          "label": "Primary button link"
+        },
+        {
+          "type": "text",
+          "id": "button_2_label",
+          "label": "Secondary button label",
+          "default": "LEARN MORE"
+        },
+        {
+          "type": "url",
+          "id": "button_2_link",
+          "label": "Secondary button link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Page",
+      "blocks": [
+        { "type": "hero" },
+        { "type": "content_row" },
+        { "type": "content_row" },
+        { "type": "values_strip" },
+        { "type": "mission" },
+        { "type": "reviews" },
+        { "type": "blog_posts" }
+      ]
+    }
+  ]
+}
+{% endschema %}

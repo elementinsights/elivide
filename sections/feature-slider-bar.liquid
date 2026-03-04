@@ -1,0 +1,552 @@
+{% comment %}
+  Section: Features Bar (Swiper-like DOM, no external Swiper)
+  - Desktop: "grid" row (all items visible)
+  - Mobile: slider with prev/next arrows (hide-desktop), infinite loop, autoplay interval setting
+  - Structure intentionally mirrors the provided HTML (section__wrapper, container, swiper/wrapper/slide classnames, etc.)
+{% endcomment %}
+
+<section
+  id="shopify-section-{{ section.id }}"
+  class="shopify-section shopify-section-group-main-header features-bar{% if section.settings.mobile_layout == 'slider' %} slider-enabled{% endif %}"
+  data-features-bar
+  data-autoplay="{{ section.settings.autoplay }}"
+  data-interval="{{ section.settings.interval | times: 1000 }}"
+  data-mobile-layout="{{ section.settings.mobile_layout }}"
+  data-desktop-layout="{{ section.settings.desktop_layout }}"
+>
+  <div class="section__wrapper container--default hide-no section--with-background">
+    <div
+      class="features-bar__bg"
+      style="
+        --fb-space-mobile: {{ section.settings.space_mobile }}px;
+        --fb-space-desktop: {{ section.settings.space_desktop }}px;
+      "
+    >
+      <div
+        class="section section--page-width spacing-style"
+        style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+      >
+        <div class="container">
+          <div class="features-bar__inner">
+            <button
+              type="button"
+              class="icon swiper-button-prev hide-desktop loaded features-bar__nav"
+              aria-label="Previous slide"
+              data-fb-prev
+            >
+            {{ 'icon-caret.svg' | inline_asset_content }}
+            </button>
+
+            <div class="swiper features-bar__swiper" data-fb-swiper>
+              <div class="swiper-wrapper features-bar__wrapper" data-fb-wrapper>
+                {%- for block in section.blocks -%}
+                  <div
+                    class="swiper-slide hide-no features-bar__slide"
+                    role="group"
+                    aria-label="{{ forloop.index }} / {{ section.blocks.size }}"
+                    data-fb-slide
+                    {{ block.shopify_attributes }}
+                  >
+                    <div class="features-bar__item">
+                        {%- assign icon_input = block.settings.icon_name | default: '' -%}
+                        {%- assign icon_name = icon_input | strip | handleize -%}
+                        {%- assign icon_asset = 'icon-' | append: icon_name | append: '.svg' -%}
+
+                        <span class="icon loaded features-bar__icon" aria-hidden="true" role="presentation">
+                        {%- if icon_name != blank -%}
+                            <span class="features-bar__icon-inline">
+                            {{ icon_asset | inline_asset_content }}
+                            </span>
+                        {%- endif -%}
+                        </span>
+
+
+
+                      <div class="features-bar__copy">
+                        {%- if block.settings.title != blank -%}
+                          <strong>{{ block.settings.title }}</strong>
+                        {%- endif -%}
+                        {%- if block.settings.subtitle != blank -%}
+                          <p>{{ block.settings.subtitle }}</p>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="icon swiper-button-next hide-desktop loaded features-bar__nav"
+              aria-label="Next slide"
+              data-fb-next
+            >
+              {{ 'icon-caret.svg' | inline_asset_content }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Background gradient like your reference section__wrapper inline style */
+  #shopify-section-{{ section.id }} .features-bar__bg {
+    background:linear-gradient(46deg, rgba(117, 164, 158, 1) 13%, rgba(228, 183, 136, 0.97) 86%);
+    overflow: hidden;
+  }
+
+  /* Inner layout with arrows + slider */
+  #shopify-section-{{ section.id }} .features-bar__inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  /* Icon/text color rules matching sample */
+  #shopify-section-{{ section.id }} .icon { color: #ffffff; }
+
+  #shopify-section-{{ section.id }} .features-bar__item strong,
+  #shopify-section-{{ section.id }} .features-bar__item p {
+    color: #ffffff;
+  }
+
+  /* Icon ring similar to sample: border + round + padding */
+  #shopify-section-{{ section.id }} .features-bar__icon {
+    border: 1px solid rgba(255,255,255,0.9);
+    border-radius: 100%;
+    padding: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+  }
+
+
+  #shopify-section-{{ section.id }} .features-bar__icon-inline svg {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    display: block;
+    fill:#FFF;
+  }
+
+  /* Item layout */
+  #shopify-section-{{ section.id }} .features-bar__item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .swiper-slide:nth-child(2) .features-bar__item {
+    display:flex;
+    justify-content:center;
+  }
+
+  #shopify-section-{{ section.id }} .swiper-slide:nth-child(3) .features-bar__item {
+    display:flex;
+    justify-content:flex-end;
+  }
+  
+
+  #shopify-section-{{ section.id }} .features-bar__copy { min-width: 0; }
+  #shopify-section-{{ section.id }} .features-bar__copy strong {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.15;
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .features-bar__copy p {
+    margin: 2px 0 0;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.2;
+    opacity: 0.95;
+  }
+
+  /* Swiper-like pieces */
+  #shopify-section-{{ section.id }} .features-bar__swiper {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .features-bar__wrapper {
+    display: flex;
+    will-change: transform;
+    transform: translate3d(0,0,0);
+  }
+
+  /* Default slide sizing (mobile) */
+  #shopify-section-{{ section.id }} .features-bar__slide {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
+
+  /* Nav buttons: similar to swiper-button-prev/next in your screenshot */
+  #shopify-section-{{ section.id }} .features-bar__nav {
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 26px;
+    line-height: 1;
+    padding:0;
+  }
+    #shopify-section-{{ section.id }} .features-bar__nav svg {
+        font-size:24px;
+    }
+
+    #shopify-section-{{ section.id }} .swiper-button-prev {
+        transform: rotate(90deg);
+        left: -16px;
+        position:relative;
+    }
+    #shopify-section-{{ section.id }} .swiper-button-next {
+        transform: rotate(-90deg);
+        right:-16px;
+        position:relative;
+    }
+
+  #shopify-section-{{ section.id }} .features-bar__nav:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.9);
+    outline-offset: 3px;
+  }
+
+  /* Hide arrows on desktop (like hide-desktop class in your reference) */
+  #shopify-section-{{ section.id }} .hide-desktop { display: none; }
+
+  /* Desktop: show all items as a row/grid */
+  @media (min-width: 750px) {
+    #shopify-section-{{ section.id }} .features-bar__swiper { overflow: visible; }
+    #shopify-section-{{ section.id }} .features-bar__wrapper {
+      transform: none !important;
+      transition: none !important;
+      gap: var(--fb-space-desktop);
+    }
+    #shopify-section-{{ section.id }} .features-bar__slide {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
+
+  /* Mobile: show arrows + spacing between slides */
+  @media (max-width: 749px) {
+    #shopify-section-{{ section.id }} .hide-desktop { display: inline-flex; }
+    #shopify-section-{{ section.id }} .features-bar__wrapper { gap: var(--fb-space-mobile); }
+  }
+</style>
+
+<script>
+  (function () {
+    const root = document.querySelector('#shopify-section-{{ section.id }}[data-features-bar]');
+    if (!root) return;
+
+    const mobileMQ = window.matchMedia('(max-width: 749px)');
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const autoplayEnabled = root.dataset.autoplay === 'true';
+    const intervalMs = parseInt(root.dataset.interval || '10000', 10);
+
+    const swiper = root.querySelector('[data-fb-swiper]');
+    const wrapper = root.querySelector('[data-fb-wrapper]');
+    const prevBtn = root.querySelector('[data-fb-prev]');
+    const nextBtn = root.querySelector('[data-fb-next]');
+
+    if (!swiper || !wrapper) return;
+
+    let timer = null;
+    let isAnimating = false;
+
+    // Infinite looping with clones:
+    // [clone-last] [real-1..real-n] [clone-first]
+    let index = 1; // start at first real slide
+    let space = 16;
+
+    function getSpaceMobile() {
+      const bg = root.querySelector('.features-bar__bg');
+      if (!bg) return 16;
+      const raw = getComputedStyle(bg).getPropertyValue('--fb-space-mobile').trim();
+      const v = parseInt(raw || '16', 10);
+      return Number.isFinite(v) ? v : 16;
+    }
+
+    function realSlides() {
+      return Array.from(wrapper.querySelectorAll('[data-fb-slide]')).filter(el => el.dataset.fbClone !== 'true');
+    }
+
+    function cleanupClones() {
+      Array.from(wrapper.querySelectorAll('[data-fb-clone="true"]')).forEach(n => n.remove());
+    }
+
+    function viewportWidth() {
+      return swiper.getBoundingClientRect().width;
+    }
+
+    function setTransform(i, animate) {
+      const w = viewportWidth();
+      if (!w) return;
+
+      // move by (slideWidth + space) * i
+      const x = -1 * i * (w + space);
+
+      if (!animate || prefersReduced) {
+        wrapper.style.transition = 'none';
+      } else {
+        wrapper.style.transition = 'transform 420ms ease';
+      }
+      wrapper.style.transform = 'translate3d(' + x + 'px, 0, 0)';
+    }
+
+    function updateAria(i, n) {
+      // i is index in cloned track. Real slide is 1..n
+      let realIndex = i;
+      if (realIndex <= 0) realIndex = n;
+      if (realIndex >= n + 1) realIndex = 1;
+
+      const slidesAll = Array.from(wrapper.children);
+      slidesAll.forEach((el) => el.setAttribute('aria-live', 'off'));
+      // Not strictly required; keeping minimal while accessible
+    }
+
+    function build() {
+      cleanupClones();
+      const slides = realSlides();
+      const n = slides.length;
+
+      space = getSpaceMobile();
+
+      if (n <= 1) {
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
+        wrapper.style.transition = 'none';
+        wrapper.style.transform = 'translate3d(0,0,0)';
+        stopAuto();
+        return;
+      } else {
+        if (prevBtn) prevBtn.disabled = false;
+        if (nextBtn) nextBtn.disabled = false;
+      }
+
+      const first = slides[0].cloneNode(true);
+      const last = slides[n - 1].cloneNode(true);
+      first.dataset.fbClone = 'true';
+      last.dataset.fbClone = 'true';
+
+      wrapper.insertBefore(last, slides[0]);
+      wrapper.appendChild(first);
+
+      index = 1;
+      setTransform(index, false);
+      updateAria(index, n);
+    }
+
+    function goNext(userInitiated) {
+      const n = realSlides().length;
+      if (n <= 1 || isAnimating) return;
+
+      isAnimating = true;
+      index += 1;
+      setTransform(index, true);
+
+      if (userInitiated) restartAuto();
+    }
+
+    function goPrev(userInitiated) {
+      const n = realSlides().length;
+      if (n <= 1 || isAnimating) return;
+
+      isAnimating = true;
+      index -= 1;
+      setTransform(index, true);
+
+      if (userInitiated) restartAuto();
+    }
+
+    wrapper.addEventListener('transitionend', function () {
+      const slides = realSlides();
+      const n = slides.length;
+      if (n <= 1) return;
+
+      // When we land on a clone, jump (no animation) to the matching real slide.
+      // This keeps the direction consistent:
+      // - Clicking right always animates left, even from last -> first
+      // - Clicking left always animates right, even from first -> last
+      if (index === 0) {
+        index = n;
+        setTransform(index, false);
+      } else if (index === n + 1) {
+        index = 1;
+        setTransform(index, false);
+      }
+
+      requestAnimationFrame(() => { isAnimating = false; });
+      updateAria(index, n);
+    });
+
+    function startAuto() {
+      stopAuto();
+      if (!autoplayEnabled || prefersReduced) return;
+      if (!mobileMQ.matches) return;
+
+      timer = setInterval(() => {
+        goNext(false);
+      }, intervalMs);
+    }
+
+    function stopAuto() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    function restartAuto() {
+      startAuto();
+    }
+
+    function handleMode() {
+      if (mobileMQ.matches && root.dataset.mobileLayout === 'slider') {
+        build();
+        startAuto();
+      } else {
+        stopAuto();
+        cleanupClones();
+        wrapper.style.transition = 'none';
+        wrapper.style.transform = 'translate3d(0,0,0)';
+        isAnimating = false;
+      }
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => goPrev(true));
+    if (nextBtn) nextBtn.addEventListener('click', () => goNext(true));
+
+    // Touch drag (optional, no dependencies)
+    let startX = 0;
+    let deltaX = 0;
+    let dragging = false;
+
+    function onStart(e) {
+      if (!mobileMQ.matches) return;
+      dragging = true;
+      startX = (e.touches ? e.touches[0].clientX : e.clientX);
+      deltaX = 0;
+      stopAuto();
+      wrapper.style.transition = 'none';
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      const x = (e.touches ? e.touches[0].clientX : e.clientX);
+      deltaX = x - startX;
+
+      const w = viewportWidth();
+      const base = -1 * index * (w + space);
+      wrapper.style.transform = 'translate3d(' + (base + deltaX) + 'px, 0, 0)';
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+
+      const w = viewportWidth();
+      const threshold = Math.min(90, w * 0.18);
+
+      if (deltaX < -threshold) {
+        // swipe left -> next
+        wrapper.style.transition = '';
+        goNext(false);
+      } else if (deltaX > threshold) {
+        // swipe right -> prev
+        wrapper.style.transition = '';
+        goPrev(false);
+      } else {
+        // snap back
+        setTransform(index, true);
+      }
+
+      restartAuto();
+    }
+
+    swiper.addEventListener('touchstart', onStart, { passive: true });
+    swiper.addEventListener('touchmove', onMove, { passive: true });
+    swiper.addEventListener('touchend', onEnd);
+
+    // Mouse drag (desktop testing)
+    swiper.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+
+    // Init + respond to breakpoints/resizes
+    handleMode();
+    if (mobileMQ.addEventListener) mobileMQ.addEventListener('change', handleMode);
+    else mobileMQ.addListener(handleMode);
+
+    window.addEventListener('resize', function () {
+      if (!mobileMQ.matches) return;
+      // keep current slide aligned after rotation/responsive changes
+      setTransform(index, false);
+    });
+
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.detail && e.detail.sectionId === '{{ section.id }}') handleMode();
+    });
+    document.addEventListener('shopify:section:reorder', handleMode);
+    document.addEventListener('shopify:section:select', handleMode);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Features bar",
+  "settings": [
+    { "type": "select", "id": "desktop_layout", "label": "Desktop layout", "default": "grid", "options": [
+      { "value": "grid", "label": "Grid (all visible)" }
+    ]},
+    { "type": "select", "id": "mobile_layout", "label": "Mobile layout", "default": "slider", "options": [
+      { "value": "slider", "label": "Slider" },
+      { "value": "grid", "label": "Grid (no slider)" }
+    ]},
+
+    { "type": "range", "id": "space_mobile", "label": "Space between slides (mobile)", "min": 0, "max": 40, "step": 1, "default": 16, "unit": "px" },
+    { "type": "range", "id": "space_desktop", "label": "Space between items (desktop)", "min": 0, "max": 60, "step": 1, "default": 32, "unit": "px" },
+
+    { "type": "checkbox", "id": "autoplay", "label": "Autoplay on mobile", "default": true },
+    { "type": "range", "id": "interval", "label": "Autoplay interval (seconds)", "min": 3, "max": 30, "step": 1, "default": 10, "unit": "s" },
+
+    { "type": "range", "label": "Section padding top", "id": "padding_top", "min": 0, "max": 48, "step": 1, "default": 12, "unit": "px" },
+    { "type": "range", "label": "Section padding bottom", "id": "padding_bottom", "min": 0, "max": 48, "step": 1, "default": 12, "unit": "px" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Zero Additives" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "With wholefood ingredients" },
+        {
+            "type": "text",
+            "id": "icon_name",
+            "label": "Icon",
+            "info": "Type an icon name like \"award-star\" to load assets/icon-award-star.svg (case-insensitive)."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    { "name": "Features bar", "blocks": [{ "type": "feature" }, { "type": "feature" }, { "type": "feature" }] }
+  ]
+}
+{% endschema %}

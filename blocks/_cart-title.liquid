@@ -1,0 +1,272 @@
+
+
+{% assign block_settings = block.settings %}
+
+<div
+  class="cart-title spacing-style text-{{ block_settings.alignment }}"
+  style="{% render 'spacing-style', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
+  {% if block_settings.custom_cart_title == 'custom' %}
+    <div class="cart-title__custom-wrap">
+      <div class="cart-title__product-text">
+        <div class="cart-title__product-text__cart-bubble-wrap">
+          <span class="product-text">{{ block.settings.product_text }}</span>
+          {%- if block_settings.custom_show_count == 'yes' -%}<span class="cart-title__bubble">{% render 'cart-bubble' %}</span>{%- endif -%}
+        </div>
+      </div>
+      <div class="clart-title__total-text">
+        {{ block.settings.total_text }}
+      </div>
+  </div>
+
+  {% else %}
+    test2
+    <h1 class="{{ block_settings.type_preset | default: 'h2' }}">
+    {%- if cart.empty? -%}
+      {{ 'content.your_cart_is_empty' | t }}
+    {%- else -%}
+      {{ block_settings.title }}
+      {%- if block_settings.show_count -%}{% render 'cart-bubble' %}{%- endif -%}
+    {%- endif -%}
+  </h1>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+
+  .cart-title__custom-wrap {
+    letter-spacing:.7px;
+    font-size:14.5px;
+    padding-bottom:10px;
+    border-bottom:1px solid #0000000F;
+    display:flex;
+    font-weight:700;
+    justify-content: space-between;
+    text-transform:uppercase;
+  }
+
+  .clart-title__total-text {
+    display:flex;
+    align-items: center;
+  }
+
+  .cart-title__product-text__cart-bubble-wrap {
+    display:flex;
+    flex-direction:row;
+    gap:10px;
+    align-items: center;
+  }
+
+  .cart-title h1 {
+    margin-block-end: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--gap-sm);
+  }
+
+  .cart-title .cart-bubble {
+    width: fit-content;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--style-border-radius-buttons-primary);
+    aspect-ratio: auto;
+    padding: var(--cart-padding);
+  }
+
+  .cart-title .cart-bubble[data-maintain-ratio] {
+    aspect-ratio: 1;
+    min-width: 26px;
+    top:-3px;
+  }
+
+  .cart-title .cart-bubble__background {
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-10-25));
+  }
+
+  .cart-title .cart-bubble__text {
+    color: var(--color-foreground);
+    font-size: clamp(var(--cart-font-size--2xs), 0.7lh, var(--cart-font-size--xs));
+  }
+
+  
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.title",
+  "tag": null,
+  "settings": [
+    {
+      "type": "select",
+      "id": "custom_cart_title",
+      "label": "Title option",
+      "options": [
+        {
+          "value": "custom",
+          "label": "Custom",
+        },
+        {
+          "value": "default",
+          "label": "Default"
+        }
+      ],
+      "default": "custom"
+    },
+    {
+      "type": "select",
+      "id": "custom_show_count",
+      "label": "Show count",
+      "options": [
+        {
+          "value": "yes",
+          "label": "Yes"
+        },
+        {
+          "value": "no",
+          "label": "no"
+        }
+      ],
+      "default": "yes",
+      "visible_if": "{{ block.settings.custom_cart_title == 'custom' }}"
+    },
+    {
+      "type": "text",
+      "id": "product_text",
+      "label": "Product text",
+      "default": "Product",
+      "visible_if": "{{ block.settings.custom_cart_title == 'custom' }}"
+    },
+    {
+      "type": "text",
+      "id": "total_text",
+      "label": "Total text",
+      "default": "Total",
+      "visible_if": "{{ block.settings.custom_cart_title == 'custom' }}"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:settings.cart_title",
+      "default": "t:text_defaults.cart",
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "t:settings.cart_count",
+      "default": true,
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.typography",
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "select",
+      "id": "type_preset",
+      "label": "t:settings.preset",
+      "options": [
+        {
+          "value": "",
+          "label": "t:options.default"
+        },
+        {
+          "value": "paragraph",
+          "label": "t:options.paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "t:options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:options.h3"
+        },
+        {
+          "value": "h4",
+          "label": "t:options.h4"
+        },
+        {
+          "value": "h5",
+          "label": "t:options.h5"
+        },
+        {
+          "value": "h6",
+          "label": "t:options.h6"
+        }
+      ],
+      "default": "",
+      "info": "t:info.edit_presets_in_theme_settings",
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "default": "left",
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding",
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.custom_cart_title == 'default' }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.title"
+    }
+  ]
+}
+{% endschema %}

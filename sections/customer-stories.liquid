@@ -1,0 +1,303 @@
+<div
+  class="shopify-section section-wrapper section-customer-stories section-cs"
+  style="
+    --cs-bg: {{ section.settings.background_color }};
+    --cs-heading-font-size-desktop: {{ section.settings.heading_font_size_desktop }}px;
+    --cs-heading-font-size-mobile: {{ section.settings.heading_font_size_mobile }}px;
+    --cs-padding-top: {{ section.settings.padding_top }}px;
+    --cs-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="section section--page-width">
+    <h2 class="cs__heading">{{ section.settings.heading }}</h2>
+
+    {% assign p = product | default: closest.product %}
+    {% assign items = p.metafields.custom.customer_stories.value %}
+
+    {% if items != blank %}
+      {%- comment -%}
+        Two grids:
+        - Desktop (>=768): 3-across, render 3 or 6 (multiples of 3), equal-height cards via flex
+        - Mobile (<768): render up to 5
+      {%- endcomment -%}
+
+      {% assign total = items.size %}
+      {% assign desktop_limit = 3 %}
+      {% if total >= 6 %}
+        {% assign desktop_limit = 6 %}
+      {% endif %}
+
+      <!-- Desktop (>=768px): 3-across, 3 or 6 cards -->
+      <div class="cs__grid cs__grid--desktop">
+        {% for item in items limit: desktop_limit %}
+          {% assign author = item.author.value %}
+          {% assign text = item.text %}
+          {% assign title = item.title.value %}
+
+          <div class="cs__item">
+            <div class="cs__card">
+              {% render 'star-wrapper' %}
+
+              {% if title != blank %}
+                <h3 class="cs__title">{{ title }}</h3>
+              {% endif %}
+
+              {% if text != blank %}
+                <div class="cs__text">
+                  {{ text | metafield_tag }}
+                </div>
+              {% endif %}
+
+              {% if author != blank %}
+                <div class="cs__review-author">
+                  <div class="cs__author-verified">
+                    {{ 'icon-check-small.svg' | inline_asset_content }}
+                    <span class="verified">Verified Review</span>
+                  </div>
+                  <div class="cs__author">{{ author }}</div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Mobile (<768px): up to 5 cards max -->
+      <div class="cs__grid cs__grid--mobile">
+        {% for item in items limit: 3 %}
+          {% assign author = item.author.value %}
+          {% assign text = item.text %}
+          {% assign title = item.title.value %}
+
+          <div class="cs__item">
+            <div class="cs__card">
+              {% render 'star-wrapper' %}
+
+              {% if title != blank %}
+                <h3 class="cs__title">{{ title }}</h3>
+              {% endif %}
+
+              {% if text != blank %}
+                <div class="cs__text">
+                  {{ text | metafield_tag }}
+                </div>
+              {% endif %}
+
+              {% if author != blank %}
+                <div class="cs__review-author">
+                  <div class="cs__author-verified">
+                    {{ 'icon-check-small.svg' | inline_asset_content }}
+                    <span class="verified">Verified Review</span>
+                  </div>
+                  <div class="cs__author">{{ author }}</div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% style %}
+  .section-customer-stories {
+    min-height: 200px;
+    background-color: var(--cs-bg);
+    padding-top: var(--cs-padding-top);
+    padding-bottom: var(--cs-padding-bottom);
+    font-size: 16px;
+  }
+
+  .section-cs * {
+    margin: 0;
+  }
+
+  .section-cs p {
+    font-size: 16px;
+  }
+
+  .cs__heading {
+    font-size: var(--cs-heading-font-size-desktop);
+    text-wrap: balance;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* Base grid styles */
+  .cs__grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  /* Cards */
+  .cs__card {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cs__title {
+    font-size: 16px;
+  }
+
+  .section-cs .star-wrapper {
+    gap: 1px;
+  }
+
+  .section-cs .star svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .cs__review-author {
+    font-size: 14.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    margin-top:auto;
+    padding-top:10px;
+  }
+
+  .cs__review-author .cs__author-verified {
+    color: #1fa069;
+    font-size: 14.5px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+  }
+
+  .cs__author-verified .verified {
+    position: relative;
+    top: 1.75px;
+  }
+
+  .cs__author {
+    font-size: 14.5px;
+  }
+
+  .cs__author-verified svg {
+    border-radius: 9999px;
+    background: #1fa069;
+    fill: #fff;
+    margin-right: 6px;
+  }
+
+  /* Desktop (>=768px):
+     Use FLEX for the grid so rows "stretch" and cards become equal-height.
+     Flexbox will match heights within each row (each set of 3).
+  */
+  @media screen and (min-width: 768px) {
+    .cs__grid--desktop {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .cs__grid--desktop .cs__item {
+      flex: 0 0 calc((100% - 40px) / 3); /* 3 columns, accounting for 2 gaps */
+      display: flex;                   /* allow child card to stretch */
+    }
+
+    .cs__grid--desktop .cs__card {
+      flex: 1 1 auto;  /* stretch to match tallest in the row */
+      height: 100%;
+    }
+
+    .cs__grid--mobile {
+      display: none;
+    }
+  }
+
+  /* Mobile (<768px): show mobile list, up to 5 cards */
+  @media screen and (max-width: 767px) {
+    .cs__heading {
+      font-size: var(--cs-heading-font-size-mobile);
+    }
+
+    .cs__grid--mobile {
+      grid-template-columns: 1fr;
+    }
+
+    .cs__grid--desktop {
+      display: none;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Customer stories",
+  "tag": "div",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section styling"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#FAFBFA"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 45
+    },
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_desktop",
+      "label": "Heading font size desktop",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Heading font size mobile",
+      "min": 8,
+      "max": 64,
+      "step": 1,
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "See What Our Customers Have to Say"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer stories"
+    }
+  ]
+}
+{% endschema %}

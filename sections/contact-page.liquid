@@ -1,0 +1,515 @@
+{% capture submit_button %}
+  {% content_for 'block', type: 'contact-form-submit-button', id: 'submit-button' %}
+{% endcapture %}
+
+<div
+  class="shopify-section section-wrapper section-contact-page"
+  style="
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+    <div class="section section--page-width">
+        <div class="contact-section__container">
+            {%- comment -%} LEFT COLUMN: Contact Form {%- endcomment -%}
+            <div class="contact-section__form-column">
+            {%- if section.settings.heading != blank -%}
+                <h2 class="contact-section__heading">{{ section.settings.heading }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.description != blank -%}
+                <p class="contact-section__description">{{ section.settings.description }}</p>
+            {%- endif -%}
+
+            {% assign form_id = section.id | prepend: 'ContactForm-' %}
+
+            {%- form 'contact', id: form_id, class: 'contact-section__form' -%}
+                {%- if form.errors -%}
+                <div class="contact-section__error" tabindex="-1" autofocus>
+                    {{- 'icon-error.svg' | inline_asset_content -}}
+                    {{- form.errors.translated_fields.email | capitalize }}
+                    {{ form.errors.messages.email -}}
+                </div>
+                {%- endif -%}
+
+                {%- if form.posted_successfully? -%}
+                <div class="contact-section__success" tabindex="-1" autofocus>
+                    {{- 'icon-checkmark.svg' | inline_asset_content -}}
+                    {{- 'blocks.contact_form.post_success' | t -}}
+                </div>
+                {%- endif -%}
+
+                <div class="contact-section__form-row">
+                <div class="contact-section__field">
+                    <label class="contact-section__label" for="ContactForm-name-{{ section.id }}">
+                    {{ 'blocks.contact_form.name' | t }} <span aria-hidden="true">*</span>
+                    </label>
+                    <input
+                    type="text"
+                    id="ContactForm-name-{{ section.id }}"
+                    class="contact-section__input"
+                    autocomplete="name"
+                    name="contact[name]"
+                    value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                    placeholder="{{ 'blocks.contact_form.name' | t }}"
+                    >
+                </div>
+
+                <div class="contact-section__field">
+                    <label class="contact-section__label" for="ContactForm-email-{{ section.id }}">
+                    {{ 'blocks.contact_form.email' | t }} <span aria-hidden="true">*</span>
+                    </label>
+                    <input
+                    type="email"
+                    id="ContactForm-email-{{ section.id }}"
+                    class="contact-section__input"
+                    autocomplete="email"
+                    name="contact[email]"
+                    spellcheck="false"
+                    autocapitalize="off"
+                    value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                    aria-required="true"
+                    {% if form.errors contains 'email' %}
+                        aria-invalid="true"
+                        aria-describedby="ContactForm-email-error"
+                    {% endif %}
+                    placeholder="{{ 'blocks.contact_form.email' | t }}"
+                    >
+                </div>
+                </div>
+
+                <div class="contact-section__field">
+                <label class="contact-section__label" for="ContactForm-phone-{{ section.id }}">
+                    {{ 'blocks.contact_form.phone' | t }}
+                </label>
+                <input
+                    type="tel"
+                    id="ContactForm-phone-{{ section.id }}"
+                    class="contact-section__input"
+                    autocomplete="tel"
+                    name="contact[phone]"
+                    pattern="[0-9\-]*"
+                    value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                    placeholder="{{ 'blocks.contact_form.phone' | t }}"
+                >
+                </div>
+
+                <div class="contact-section__field">
+                <label class="contact-section__label" for="ContactForm-body-{{ section.id }}">
+                    {{ 'blocks.contact_form.comment' | t }} <span aria-hidden="true">*</span>
+                </label>
+                <textarea
+                    rows="10"
+                    id="ContactForm-body-{{ section.id }}"
+                    class="contact-section__input contact-section__textarea"
+                    name="contact[body]"
+                    placeholder="{{ 'blocks.contact_form.comment' | t }}"
+                >{{- form.body -}}</textarea>
+                </div>
+
+                {{ submit_button }}
+            {%- endform -%}
+            </div>
+
+            {%- comment -%} RIGHT COLUMN: Contact Info {%- endcomment -%}
+            <div class="contact-section__info-column" style="
+            background-color: {{ section.settings.info_bg_color }};
+            color: {{ section.settings.info_text_color }};
+            ">
+            {%- if section.settings.show_email_icon -%}
+                <div class="contact-section__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="{{ section.settings.info_text_color }}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                    <path d="M22 4l-10 8L2 4"></path>
+                </svg>
+                </div>
+            {%- endif -%}
+
+            {%- if section.settings.email != blank -%}
+                <div class="contact-section__info-email">
+                <span>Email: </span>
+                <a href="mailto:{{ section.settings.email }}" style="color: {{ section.settings.info_text_color }}; text-decoration: underline;">
+                    {{ section.settings.email }}
+                </a>
+                </div>
+            {%- endif -%}
+
+            {%- if section.settings.address_heading != blank -%}
+                <h2 class="contact-section__info-heading">{{ section.settings.address_heading }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.company_name != blank or section.settings.address_line_1 != blank -%}
+                <div class="contact-section__info-address">
+                {%- if section.settings.company_name != blank -%}
+                    <div>{{ section.settings.company_name }}</div>
+                {%- endif -%}
+                {%- if section.settings.address_line_1 != blank -%}
+                    <div>{{ section.settings.address_line_1 }}</div>
+                {%- endif -%}
+                {%- if section.settings.address_line_2 != blank -%}
+                    <div>{{ section.settings.address_line_2 }}</div>
+                {%- endif -%}
+                {%- if section.settings.city != blank -%}
+                    <div>{{ section.settings.city }}</div>
+                {%- endif -%}
+                {%- if section.settings.postcode != blank -%}
+                    <div>{{ section.settings.postcode }}</div>
+                {%- endif -%}
+                </div>
+            {%- endif -%}
+
+            {%- if section.settings.hours_heading != blank -%}
+                <h2 class="contact-section__info-heading">{{ section.settings.hours_heading }}</h2>
+            {%- endif -%}
+
+            {%- if section.settings.hours_note != blank -%}
+                <p class="contact-section__info-hours-note">{{ section.settings.hours_note }}</p>
+            {%- endif -%}
+
+            {%- if section.settings.hours_label != blank and section.settings.hours_value != blank -%}
+                <p class="contact-section__info-hours">
+                <strong>{{ section.settings.hours_label }}</strong> {{ section.settings.hours_value }}
+                </p>
+            {%- endif -%}
+
+            {%- if section.settings.facebook_url != blank or section.settings.instagram_url != blank -%}
+                <div class="contact-section__info-social">
+                {%- if section.settings.facebook_url != blank -%}
+                    <a href="{{ section.settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook" style="color: {{ section.settings.info_text_color }};">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 0H5C2.24 0 0 2.24 0 5v14c0 2.76 2.24 5 5 5h7v-9.5H9V11h3V8.41c0-3.1 1.87-4.79 4.59-4.79 1.31 0 2.44.1 2.76.14v3.22h-1.89c-1.49 0-1.77.71-1.77 1.74V11h3.54l-.46 3.5H15.7V24H19c2.76 0 5-2.24 5-5V5c0-2.76-2.24-5-5-5z"/>
+                    </svg>
+                    </a>
+                {%- endif -%}
+                {%- if section.settings.instagram_url != blank -%}
+                    <a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram" style="color: {{ section.settings.info_text_color }};">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                    </a>
+                {%- endif -%}
+                </div>
+            {%- endif -%}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% stylesheet %}
+  .contact-section__container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin: 0 auto;
+  }
+
+  @media screen and (min-width: 990px) {
+    .contact-section__container {
+      flex-direction: row;
+      gap: 60px;
+      align-items: flex-start;
+    }
+  }
+
+  /* LEFT COLUMN */
+  .contact-section__form-column {
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  .contact-section__heading {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+  }
+
+  .contact-section__description {
+    font-size: 16px;
+    margin: 0 0 28px 0;
+    line-height: 1.5;
+  }
+
+  .contact-section__form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-section__form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .contact-section__form-row {
+      flex-direction: row;
+      gap: 16px;
+    }
+
+    .contact-section__form-row .contact-section__field {
+      flex: 1;
+    }
+  }
+
+  .contact-section__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .contact-section__label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .contact-section__input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #d4d4d4;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: inherit;
+    color: inherit;
+    background-color: #fff;
+    transition: border-color 0.2s;
+  }
+
+  .contact-section__input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+  }
+
+  .contact-section__textarea {
+    resize: vertical;
+    min-height: 160px;
+    max-height:200px;
+  }
+
+  .contact-section__error,
+  .contact-section__success {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* RIGHT COLUMN */
+  .contact-section__info-column {
+    padding: 48px;
+    flex: 0 0 50%;
+  }
+
+  @media screen and (max-width: 989px) {
+    .contact-section__info-column {
+      flex: 1 1 auto;
+    }
+  }
+
+  .contact-section__icon {
+    margin-bottom: 24px;
+  }
+
+  .contact-section__info-email {
+    font-size: 16px;
+    margin-bottom: 32px;
+  }
+
+  .contact-section__info-heading {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+  }
+
+  .contact-section__info-address {
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  .contact-section__info-hours-note {
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 0 12px 0;
+  }
+
+  .contact-section__info-hours {
+    font-size: 16px;
+    margin: 0 0 32px 0;
+  }
+
+  .contact-section__info-social {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Form"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Send a message"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Fill out the form below with your message and someone from our team will respond."
+    },
+    {
+      "type": "header",
+      "content": "Contact info — Email"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_email_icon",
+      "label": "Show email icon",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email address",
+      "default": "info@elivide.com"
+    },
+    {
+      "type": "header",
+      "content": "Contact info — Address"
+    },
+    {
+      "type": "text",
+      "id": "address_heading",
+      "label": "Address heading",
+      "default": "Our address"
+    },
+    {
+      "type": "text",
+      "id": "company_name",
+      "label": "Company name",
+      "default": "ELIVIDE LTD"
+    },
+    {
+      "type": "text",
+      "id": "address_line_1",
+      "label": "Address line 1",
+      "default": "3rd Floor"
+    },
+    {
+      "type": "text",
+      "id": "address_line_2",
+      "label": "Address line 2",
+      "default": "207 Regent Street"
+    },
+    {
+      "type": "text",
+      "id": "city",
+      "label": "City",
+      "default": "London"
+    },
+    {
+      "type": "text",
+      "id": "postcode",
+      "label": "Postcode",
+      "default": "W1B 3HH"
+    },
+    {
+      "type": "header",
+      "content": "Contact info — Hours"
+    },
+    {
+      "type": "text",
+      "id": "hours_heading",
+      "label": "Hours heading",
+      "default": "Hours of operation"
+    },
+    {
+      "type": "textarea",
+      "id": "hours_note",
+      "label": "Hours note",
+      "default": "We aim to reply to all emails within 48 hours, however this can be longer during busy periods."
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours label",
+      "default": "Monday - Friday:"
+    },
+    {
+      "type": "text",
+      "id": "hours_value",
+      "label": "Hours value",
+      "default": "9am - 5pm"
+    },
+    {
+      "type": "header",
+      "content": "Contact info — Social"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "info_bg_color",
+      "label": "Info card background",
+      "default": "#FFF5EE"
+    },
+    {
+      "type": "color",
+      "id": "info_text_color",
+      "label": "Info card text color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Page"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,8 @@
+{%- if product -%}
+  <div
+    class="ruk_rating_snippet"
+    data-sku="#{{ product.handle }};#{{ product.variants | map: 'sku' | reject: '' | join: ';' }};#{{ product.variants | map: 'id' | join: ';' }}"
+  ></div>
+  <div class="ruk_rating_snippet" data-sku="#{{ product.handle }}"></div>
+
+{%- endif -%}

@@ -1,0 +1,126 @@
+{% comment %}
+  Section: Custom utilities (single-file)
+  - Breakpoint: 830px
+  - Centered on mobile
+  - Desktop: wider left area for logo/social
+  - Menu columns are blocks (heading + menu picker)
+{% endcomment %}
+
+<section
+  class="custom-utilities"
+  style="
+    --cu-bg: {{ section.settings.background_color }};
+    --cu-text: {{ section.settings.text_color }};
+    --cu-pt: {{  section.settings.padding_top }}px;
+    --cu-pb: {{  section.settings.padding_bottom }}px;
+  "
+>
+  <div class="custom-utilities__inner page-width">
+        <div class="custom-utilities__grid">
+            <div class="custom-utilities__grid-column column-one">
+                {{- 'icon-shopify-badge-dark.svg' | inline_asset_content -}}
+            </div>
+            <div class="custom-utilities__grid-column column-two">
+                <p class="copyright-text">Copyright © {{ 'now' | date: '%Y' }}, Elivide.</p>
+            </div>
+        </div>
+        {% if section.settings.disclaimer != blank %}
+          <p class="disclaimer">
+            {{ section.settings.disclaimer }}
+          </p>
+        {% endif %}
+  </div>
+</section>
+
+{% style %}
+    .custom-utilities {
+        background: var(--cu-bg);
+        color: var(--cu-text);
+        padding-top: var(--cu-pt);
+        padding-bottom: var(--cu-pb);
+        border-top: 1px solid hsla(0,0%,100%,.25);
+    }
+
+    /* Fallback if theme doesn't provide .page-width */
+    .custom-utilities .page-width {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .custom-utilities__grid-column {
+        display:flex;
+        flex-direction: column;
+        align-items:center;
+    }
+
+    .custom-utilities__grid-column.column-one {
+        margin-bottom:20px;
+    }
+
+     .copyright-text {
+        font-size:15px;
+     }
+
+     .disclaimer {
+        font-size:12px;
+        text-align:center;
+        line-height:1.4;
+        padding-top:10px;
+     }
+
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Custom Utilities",
+  "tag": "section",
+  "class": "section-custom-utilities",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#0d1b26"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 90,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 90,
+      "step": 1,
+      "default": 30
+    },
+    {
+      "type": "textarea",
+      "id": "disclaimer",
+      "label": "Paragraph",
+      "default": "**These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Utilities",
+      "blocks": [
+      ]
+    }
+  ]
+}
+{% endschema %}

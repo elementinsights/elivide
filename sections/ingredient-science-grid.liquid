@@ -1,0 +1,185 @@
+<div
+  class="shopify-section section-wrapper section-isg"
+  style="
+    --isg-bg: {{ section.settings.background_color }};
+    --isg-heading-gap: {{ section.settings.heading_gap }}px;
+    --isg-pre-heading-color: {{ section.settings.pre_heading_color }};
+    --isg-pre-heading-font-size: {{ section.settings.pre_heading_font_size }}px;
+    --isg-heading-color: {{ section.settings.heading_color }};
+    --isg-heading-font-size-desktop: {{ section.settings.heading_font_size_desktop }}px;
+    --isg-heading-font-size-mobile: {{ section.settings.heading_font_size_mobile }}px;
+    --isg-heading-margin-bottom: {{ section.settings.heading_margin_bottom }}px;
+    --isg-padding-top: {{ section.settings.padding_top }}px;
+    --isg-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+    {% assign pre_heading_content = product.metafields.custom.ingredient_science_pre_heading.value %}
+    {% assign heading_content = product.metafields.custom.ingredient_science_heading.value %}
+  <div class="section section--page-width">
+    <div class="isg__heading-wrap">
+      {% if pre_heading_content != blank %}
+        <p class="isg__pre-heading">
+          {{ pre_heading_content }}
+        </p>
+      {% endif %}
+
+      {% if heading_content != blank %}
+        <h2 class="isg__heading">
+          {{ heading_content }}
+        </h2>
+      {% endif %}
+    </div>
+
+    {% assign p = product | default: closest.product %}
+    {% assign items = p.metafields.custom.ingredient_science_items.value %}
+
+    {% if items != blank %}
+      <div class="isg__grid">
+        {% for item in items %}
+            {% assign img = item.image.value %}
+            {% assign title = item.title.value %}
+            {% assign desc = item.description %}
+
+            <div class="isg__item">
+                <div class="isg__card">
+                <div class="isg__media">
+                    {% if img != blank %}
+                    {{ img | image_url: width: 240 | image_tag: loading: 'lazy', class: 'isg__img' }}
+                    {% endif %}
+                </div>
+
+                <div class="isg__text">
+                    {% if title != blank %}
+                    <h3 class="isg__title">{{ title }}</h3>
+                    {% endif %}
+
+                    {% if desc != blank %}
+                    <div class="isg__body">{{ desc | metafield_tag }}</div>
+                    {% endif %}
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .section-isg {
+    background-color: var(--isg-bg);
+    padding-top: var(--isg-padding-top);
+    padding-bottom: var(--isg-padding-bottom);
+    text-align: center;
+  }
+
+  .isg__heading-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--isg-heading-gap, 20px);
+    margin-bottom: var(--isg-heading-margin-bottom, 20px);
+  }
+
+  .isg__pre-heading {
+    color: var(--isg-pre-heading-color);
+    font-size: var(--isg-pre-heading-font-size, 16px);
+    margin: 0;
+  }
+
+  .isg__heading {
+    color: var(--isg-heading-color);
+    font-size: var(--isg-heading-font-size-desktop, 32px);
+    margin: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    .isg__heading {
+      font-size: var(--isg-heading-font-size-mobile, 24px);
+    }
+  }
+
+  /* Grid layout: max 2 per row, wraps */
+  .isg__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px 80px;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .isg__item {
+    flex: 0 0 calc(50% - 40px); /* 2 columns (80px gap / 2) */
+    min-width: 0;
+  }
+
+  .isg__card {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .isg__media {
+    flex: 0 0 120px;
+  }
+
+  .isg__img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 20px;
+    display: block;
+  }
+
+  .isg__title {
+    margin: 0 0 8px;
+    font-size:18px;
+  }
+
+  .isg__body {
+    margin: 0;
+  }
+
+  .isg__text {
+    margin-top:7.5px;
+  }
+
+  .isg__body p {
+    font-size:15px;
+  }
+
+  @media screen and (max-width: 767px) {
+    .isg__grid {
+      gap: 28px;
+    }
+
+    .isg__item {
+      flex-basis: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Ingredient science grid",
+  "settings": [
+    { "type": "header", "content": "Section styling" },
+    { "type": "color", "id": "background_color", "label": "Background color", "default": "#FFFFFF" },
+    { "type": "range", "id": "padding_top", "label": "Padding top", "min": 12, "max": 99, "step": 1, "default": 32 },
+    { "type": "range", "id": "padding_bottom", "label": "Padding bottom", "min": 12, "max": 99, "step": 1, "default": 32 },
+
+    { "type": "header", "content": "Header styling" },
+    { "type": "range", "id": "heading_gap", "label": "Heading gap", "min": 5, "max": 60, "step": 1, "default": 12 },
+    { "type": "range", "id": "heading_margin_bottom", "label": "Margin bottom", "min": 0, "max": 64, "step": 1, "default": 20 },
+    { "type": "color", "id": "pre_heading_color", "label": "Pre-heading color", "default": "#54585a" },
+    { "type": "range", "id": "pre_heading_font_size", "label": "Pre-heading font size", "min": 8, "max": 64, "step": 1, "default": 16 },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#000000" },
+    { "type": "range", "id": "heading_font_size_desktop", "label": "Heading font size desktop", "min": 8, "max": 64, "step": 1, "default": 32 },
+    { "type": "range", "id": "heading_font_size_mobile", "label": "Heading font size mobile", "min": 8, "max": 64, "step": 1, "default": 24 },
+  ],
+  "presets": [
+    { "name": "Ingredient science grid" }
+  ]
+}
+{% endschema %}

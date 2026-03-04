@@ -1,0 +1,40 @@
+<div class="page-content" {{ block.shopify_attributes }}>
+  <h1>{{ page.title }}</h1>
+  <div class="rte">
+    {{ page.content }}
+  </div>
+</div>
+
+{% stylesheet %}
+  .page-content h1 {
+    font-size:42px;
+  }
+{% endstylesheet %}
+
+{% if template.suffix == 'magnesium-match' %}
+  <style>
+    h1 {
+      text-align:center;
+    }
+    .section-content-wrapper {
+      padding-bottom: 20px;
+    }
+
+    .shopify-block.shopify-app-block {
+      width:100%;
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Page content",
+  "tag": null,
+  "settings": [],
+  "presets": [
+    {
+      "name": "Page content"
+    }
+  ]
+}
+{% endschema %}

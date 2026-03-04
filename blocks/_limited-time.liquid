@@ -1,0 +1,292 @@
+{%- liquid
+  assign p = block.settings.product
+  if p == blank
+    assign p = collections.all.products.first
+  endif
+
+  assign v = p.selected_or_first_available_variant
+
+  assign can_add_to_cart = false
+  assign add_to_cart_text = 'products.product.unavailable' | t
+
+  if v and v.available
+    assign can_add_to_cart = true
+    assign add_to_cart_text = 'products.product.add_to_cart' | t
+  elsif v and v.inventory_management == 'shopify' and v.inventory_quantity <= 0 and v.inventory_policy == 'deny'
+    assign can_add_to_cart = false
+    assign add_to_cart_text = 'products.product.sold_out' | t
+  endif
+
+  assign product_form_id = 'LimitedTime-ProductForm-' | append: section.id | append: '-' | append: block.id
+
+  assign image_obj = p.featured_media.preview_image
+  if image_obj == blank and p.featured_image != blank
+    assign image_obj = p.featured_image
+  endif
+
+  assign compare_price = block.settings.compare_price
+
+-%}
+
+<div class="limited-time{% if block.settings.image_border != false %} limited-time__image-border{% endif %}" {{ block.shopify_attributes }}
+    style="
+      --lt-border-color: {{ block.settings.border_color }};
+      --lt-button-color: {{ block.settings.button_color }};
+      --lt-image-width: {{ block.settings.image_width }}px;
+      --lt-image-border-color: {{ block.settings.image_border_color }};
+    "
+>
+  <div class="limited-time__inner">
+    {%- comment -%} LEFT: title + price + button {%- endcomment -%}
+    <div class="limited-time__left">
+      <div class="limited-time__stars">
+        {% render 'star-wrapper' %}
+      </div>
+
+      <a class="limited-time__title" href="{{ p.url }}">
+        {{ p.title }}
+      </a>
+
+      <div class="limited-time__price">
+          <span class="limited-time__price-sale">{{ v.price | money }}</span>
+          {% if compare_price != blank %}
+            <s class="limited-time__price-compare">{{ compare_price }}</s>
+          {% endif %}
+      </div>
+
+      <div class="limited-time__cta">
+        <product-form-component
+          data-section-id="{{ section.id }}"
+          data-product-id="{{ p.id }}"
+          data-product-url="{{ p.url }}"
+          on:submit="/handleSubmit"
+          data-quantity-default="1"
+          data-quantity-error-max="{{ 'products.product.quantity_error_max' | t }}"
+        >
+          <div class="visually-hidden" aria-live="assertive" role="status" aria-atomic="true" ref="liveRegion"></div>
+
+          {%- form 'product', p, id: product_form_id, data-type: 'add-to-cart-form' -%}
+            <input type="hidden" name="id" ref="variantId" value="{{ v.id }}">
+
+            {% content_for 'block',
+              type: 'add-to-cart',
+              id: 'add-to-cart',
+              can_add_to_cart: can_add_to_cart,
+              add_to_cart_text: add_to_cart_text
+            %}
+          {%- endform -%}
+        </product-form-component>
+      </div>
+    </div>
+
+    {%- comment -%} RIGHT: image {%- endcomment -%}
+    <div class="limited-time__right">
+        <a class="limited-time__image" href="{{ p.url }}">
+          {{ image_obj | image_url: width: 420 | image_tag: loading: 'lazy', alt: p.title }}
+        </a>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .limited-time {
+    border: 3px solid var(--lt-border-color, #679992);
+    border-radius: 10px;
+    background: #fff;
+    width: 100%;
+    max-width: 720px;
+    position: relative;
+    padding: 14px 16px;
+    margin-top:23.5px;
+  }
+
+  .limited-time::before {
+    content: "Limited Time Only";
+    position: absolute;
+    top: -26.1px;
+    left: 7.5px;
+    background: var(--lt-border-color, #679992);
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+    height: 10.1px;
+    padding: 8px 14px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .limited-time__inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap:nowrap;
+    gap: 12px;
+    align-items: start;
+    justify-content: space-between;
+  }
+
+  .limited-time__left {
+    display: flex;
+    flex-direction: column;
+    gap: 7.5px;
+    min-width: 0;
+    margin-top:-3px;
+  }
+
+  .limited-time__stars {
+    margin-top: 4px;
+  }
+
+  .limited-time__title {
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    color: inherit;
+    line-height: 1.2;
+  }
+
+  .limited-time__price {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .limited-time__price-regular,
+  .limited-time__price-sale {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .limited-time .svg-wrapper.add-to-cart-icon {
+    display:none;
+  }
+
+  .limited-time__price-compare {
+    opacity: 0.6;
+    font-size:14px;
+  }
+
+  .limited-time__cta {
+    max-width: 260px;
+  }
+
+  .limited-time__cta .button {
+    width: 93px;
+    padding: 10px;
+    font-size: 12.5px;
+    height: 30px;
+    border-radius: 100px;
+    font-weight: 500;
+    background: var(--lt-button-color, inherit);
+  }
+
+  .limited-time__right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+
+  .limited-time__image {
+    display: block;
+    width: var(--lt-image-width, 98px);
+    height: var(--lt-image-width, 98px);
+    aspect-ratio: auto;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .limited-time__image-border .limited-time__image {
+    border: 1px solid var(--lt-image-border-color, #0000001F);
+  }
+
+
+  .limited-time__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .limited-time__image--placeholder {
+    display: grid;
+    place-items: center;
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 12px;
+  }
+
+  @media screen and (max-width: 520px) {
+    .limited-time__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .limited-time__right {
+      justify-content: flex-start;
+    }
+
+    .limited-time__cta {
+      max-width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Limited time",
+  "tag": null,
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Choose product"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#679992"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#679992"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "checkbox",
+      "id": "image_border",
+      "label": "Image border",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "image_border_color",
+      "label": "Image border color",
+      "default": "#0000001F",
+      "visible_if": "{{ block.settings.image_border == true }}"
+    },
+    {
+      "type": "number",
+      "id": "image_width",
+      "label": "Image width",
+      "default": 98
+    },
+    {
+      "type": "header",
+      "content": "Price"
+    },
+    {
+      "type": "text",
+      "id": "compare_price",
+      "label": "Compare price (optional)",
+      "default": "€44,95"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Limited time"
+    }
+  ]
+}
+{% endschema %}

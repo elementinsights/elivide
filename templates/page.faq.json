@@ -1,0 +1,266 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 0,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    },
+    "faq_accordion_v2_rpQg8G": {
+      "type": "faq-accordion-v2",
+      "name": "FAQ Accordion v2",
+      "settings": {
+        "content_position": "left",
+        "sticky_header": true,
+        "text_alignment": "left",
+        "heading_caption": "",
+        "heading": "FAQs",
+        "heading_type": "h2",
+        "subheading": "<p>Find answers to our most frequently asked questions.</p>",
+        "button_text": "",
+        "button_link": "",
+        "button_new_tab": false,
+        "category_caption": "More to learn here",
+        "category_heading": "General",
+        "category_heading_type": "h3",
+        "category_subheading": "",
+        "category_background_color": "rgba(0,0,0,0)",
+        "category_background_gradient": "",
+        "text_color": "",
+        "padding_top": 32,
+        "padding_bottom": 32,
+        "padding_top_mobile": 32,
+        "padding_bottom_mobile": 32,
+        "visibility": "show"
+      }
+    },
+    "faq_accordion_Wg8Qtc": {
+      "type": "faq-accordion",
+      "blocks": {
+        "qa_f97BVR": {
+          "type": "qa",
+          "settings": {
+            "question": "Where can I find the dosage information?",
+            "answer": "<p>Add your answer here.</p>"
+          }
+        },
+        "qa_wBzmwg": {
+          "type": "qa",
+          "settings": {
+            "question": "Where can I find information on the benefits of each supplement?",
+            "answer": "<p>In the product description you will find information about the formulation, including forms and functions. We also list related research at the bottom.</p>"
+          }
+        },
+        "qa_Gwi9TH": {
+          "type": "qa",
+          "settings": {
+            "question": "Why hasn't my order arrived?",
+            "answer": "<p>You will receive an update when your order has been dispatched and tracking number if applicable. If your order has not arrived within 10 working days, please contact us so we can investigate. Please note that orders shipped outside of the UK will have a variable delivery time depending on the country and postal service.</p>"
+          }
+        },
+        "qa_ctpg6G": {
+          "type": "qa",
+          "settings": {
+            "question": "Are your products Gluten free?",
+            "answer": "<p>None of our products use gluten containing ingredients.</p>"
+          }
+        },
+        "qa_e6hieY": {
+          "type": "qa",
+          "settings": {
+            "question": "Do you offer returns and refunds?",
+            "answer": "<p>If you are not completely satisfied with your order reach out to us at info@elivide.com so we can organise a return and refund for you. This offer is available for 30 days after you received your order.</p>"
+          }
+        },
+        "qa_ge3CeJ": {
+          "type": "qa",
+          "settings": {
+            "question": "Where can I find the dosage information?",
+            "answer": "<p>Add your answer here.</p>"
+          }
+        },
+        "qa_EUf7De": {
+          "type": "qa",
+          "settings": {
+            "question": "Are your products safe for pregnancy?",
+            "answer": "<p>We are not doctors and cannot prescribe anything for specific situations. However, many of our customer take our magnesium bisglycinate during pregnancy which is an important mineral for pregnancy health.</p>"
+          }
+        },
+        "qa_hgmzax": {
+          "type": "qa",
+          "settings": {
+            "question": "Where can I find the dosage information?",
+            "answer": "<p>Add your answer here.</p>"
+          }
+        },
+        "qa_YLyi4R": {
+          "type": "qa",
+          "settings": {
+            "question": "How long will your supplement last if I take the recommended dose everyday?",
+            "answer": "<p>All of our supplements come with a 1 months minimum supply (although typically more). You are welcome to take less than the recommended dose if you want to make your jar last a little longer. This will also depend on your individual needs</p>"
+          }
+        }
+      },
+      "block_order": [
+        "qa_f97BVR",
+        "qa_wBzmwg",
+        "qa_Gwi9TH",
+        "qa_ctpg6G",
+        "qa_e6hieY",
+        "qa_ge3CeJ",
+        "qa_EUf7De",
+        "qa_hgmzax",
+        "qa_YLyi4R"
+      ],
+      "name": "FAQ Accordion",
+      "settings": {
+        "heading": "Products & Orders",
+        "bg_color_1": "#cfe1d6",
+        "bg_color_2": "#86b9a6",
+        "bg_color_3": "#f3efe7",
+        "max_width": 1400,
+        "padding": 32,
+        "gap": 22,
+        "radius": 18,
+        "sticky_top": 24,
+        "anim_speed": 220,
+        "single_open": true
+      }
+    },
+    "faq_accordion_TiteGW": {
+      "type": "faq-accordion",
+      "blocks": {
+        "qa_wpcGER": {
+          "type": "qa",
+          "settings": {
+            "question": "Where can I manage my subscription?",
+            "answer": "<p>To manage your subscription, login into your account and click the 'Subscription' tab. Alternatively click subscriptions on the login page.</p>"
+          }
+        },
+        "qa_ABDezY": {
+          "type": "qa",
+          "settings": {
+            "question": "Will you notify me before my next subscription order?",
+            "answer": "<p>We will email you 3 days before your next subscription order is due so that any changes that you need to make can be done before the subscription triggers. You can easily modify, skip or cancel your delivery in your account.</p>"
+          }
+        },
+        "qa_33Uyic": {
+          "type": "qa",
+          "settings": {
+            "question": "Can I skip a month?",
+            "answer": "<p>Yes you can and it is easy to make a change. Login into your subscription dashboard and select the 'Skip' button located in the 'View your next order' tab. Alternatively you can delay your order in the upcoming order email notification.</p>"
+          }
+        },
+        "qa_pppzkm": {
+          "type": "qa",
+          "settings": {
+            "question": "How can I cancel my subscription?",
+            "answer": "<p>Once logged into your subscription account, you can cancel your order by clicking 'Manage this subscription' next to the relevant subscription and then scroll down to the bottom of the page to select 'Cancel subscription'.</p>"
+          }
+        },
+        "qa_3tjdNw": {
+          "type": "qa",
+          "settings": {
+            "question": "Do you offer returns and refunds?",
+            "answer": "<p>If you are not completely satisfied with your order reach out to us at info@elivide.com so we can organise a return and refund for you. This offer is available for 30 days after you received your order.</p>"
+          }
+        },
+        "qa_TdwAMY": {
+          "type": "qa",
+          "settings": {
+            "question": "Can I swap the product I have on subscription?",
+            "answer": "<p>Yes you can swap or add products easily. Simply log into your account, select 'manage this subscription' and select the products below that you would like.</p>"
+          }
+        },
+        "qa_HEjcFY": {
+          "type": "qa",
+          "settings": {
+            "question": "Can I change the frequency of deliveries?",
+            "answer": "<p>Yes, you can change the frequency of your orders by clicking 'Manage this subscription' and selecting the frequency you would like.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "qa_wpcGER",
+        "qa_ABDezY",
+        "qa_33Uyic",
+        "qa_pppzkm",
+        "qa_3tjdNw",
+        "qa_TdwAMY",
+        "qa_HEjcFY"
+      ],
+      "name": "FAQ Accordion",
+      "settings": {
+        "heading": "Subscriptions",
+        "bg_color_1": "#cfe1d6",
+        "bg_color_2": "#86b9a6",
+        "bg_color_3": "#f3efe7",
+        "max_width": 1400,
+        "padding": 32,
+        "gap": 22,
+        "radius": 18,
+        "sticky_top": 24,
+        "anim_speed": 220,
+        "single_open": true
+      }
+    },
+    "faq_accordion_aJtHiw": {
+      "type": "faq-accordion",
+      "blocks": {
+        "qa_MWhWz3": {
+          "type": "qa",
+          "settings": {
+            "question": "How can I contact you?",
+            "answer": "<p><a href=\"https://elivide.com/pages/contact\" title=\"Contact\">info@elivide.com</a>for any queries or use the form on our contact page.</p>"
+          }
+        },
+        "qa_BpEbPc": {
+          "type": "qa",
+          "settings": {
+            "question": "Will you be releasing my formulations?",
+            "answer": "<p>Yes absolutely! We have a whole range of supplements planned so keep an eye out</p>"
+          }
+        }
+      },
+      "block_order": [
+        "qa_MWhWz3",
+        "qa_BpEbPc"
+      ],
+      "name": "FAQ Accordion",
+      "settings": {
+        "heading": "About",
+        "bg_color_1": "#cfe1d6",
+        "bg_color_2": "#86b9a6",
+        "bg_color_3": "#f3efe7",
+        "max_width": 1400,
+        "padding": 32,
+        "gap": 22,
+        "radius": 18,
+        "sticky_top": 24,
+        "anim_speed": 220,
+        "single_open": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "faq_accordion_v2_rpQg8G",
+    "faq_accordion_Wg8Qtc",
+    "faq_accordion_TiteGW",
+    "faq_accordion_aJtHiw"
+  ]
+}

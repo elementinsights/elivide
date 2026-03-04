@@ -1,0 +1,424 @@
+{%- doc -%}
+  Intended for use in a block similar to the text block.
+
+  @param {string} [class] - custom class to define in addition to text-block classes
+  @param {string} [fallback_text] - fallback text if settings.text does not exist
+  @param {object} [block] - The block object
+  @param {string} [width] - width of the text block
+{%- enddoc -%}
+
+{% liquid
+  assign block_settings = block.settings
+  assign plain_text = block_settings.text | strip_newlines | strip_html | strip
+  assign text_width = width | default: block_settings.width
+
+  # Determine type for max-width token (display/heading/body) based on type_preset (NOT font_size)
+  assign type = 'body'
+  if block_settings.type_preset == 'h1' or block_settings.type_preset == 'h2'
+    assign type = 'display'
+  elsif block_settings.type_preset contains 'h'
+    assign type = 'heading'
+  endif
+
+  assign is_rte = false
+  if block_settings.type_preset == 'rte' or block_settings.type_preset == 'paragraph'
+    assign is_rte = true
+  endif
+
+  # Map custom typography settings to actual CSS values
+  assign custom_line_height = '1.4'
+  case block_settings.line_height
+    when 'tight'
+      assign custom_line_height = '1.15'
+    when 'normal'
+      assign custom_line_height = '1.4'
+    when 'loose'
+      assign custom_line_height = '1.7'
+  endcase
+
+
+  assign custom_letter_spacing = '0em'
+  case block_settings.letter_spacing
+    when 'tight'
+      assign custom_letter_spacing = '-0.01em'
+    when 'normal'
+      assign custom_letter_spacing = '0em'
+    when 'loose'
+      assign custom_letter_spacing = '0.03em'
+  endcase
+
+  assign custom_text_transform = 'none'
+  if block_settings.case == 'uppercase'
+    assign custom_text_transform = 'uppercase'
+  endif
+
+  assign custom_text_wrap = 'pretty'
+  assign custom_white_space = 'normal'
+  case block_settings.wrap
+    when 'balance'
+      assign custom_text_wrap = 'balance'
+    when 'pretty'
+      assign custom_text_wrap = 'pretty'
+    when 'nowrap'
+      assign custom_text_wrap = 'nowrap'
+      assign custom_white_space = 'nowrap'
+  endcase
+
+  capture text_block_classes
+    if text_width == '100%'
+      echo 'text-block--align-' | append: block_settings.alignment
+      if block_settings.max_width == 'none'
+        echo ' text-block--full-width '
+      endif
+    endif
+
+    if block_settings.type_preset == 'custom'
+      echo ' custom-typography custom-font-size '
+      if block_settings.color != ''
+        echo ' custom-color '
+      endif
+    endif
+
+    if block_settings.background
+      echo ' text-block--background '
+    endif
+
+    if is_rte
+      echo ' rte '
+    endif
+
+    if block_settings.before_stars
+      echo ' text-block--before-stars '
+    endif
+    if block_settings.list_style_checkmark
+      echo ' text-block--list-style-checkmark '
+    endif
+    if block_settings.list_to_row
+      echo ' text-block--list-to-row '
+    endif
+  endcapture
+%}
+
+{% capture attributes %}
+  class="{{ class }} spacing-style text-block text-block--{{ block.id }} {{ block_settings.type_preset }} {{ text_block_classes }}"
+
+  style="
+    {% render 'spacing-padding', settings: block_settings %}
+
+    {%- comment -%}
+      IMPORTANT:
+      - typography-style may assume font_size has units (e.g. rem) or preset strings.
+      - For custom preset, we handle typography ourselves to support numeric range (px).
+    {%- endcomment -%}
+    {% unless block_settings.type_preset == 'custom' %}
+      {% render 'typography-style', settings: block_settings %}
+    {% endunless %}
+    {% if block_settings.checkmark_text_color != blank %} --checkmark-text-color: {{ block_settings.checkmark_text_color }}; {% endif %}
+
+    --width: {{ text_width }};
+    --max-width: var(--max-width--{{ type }}-{{ block_settings.max_width }});
+
+    {% if text_width == "100%" %}
+      --text-align: {{ block_settings.alignment }};
+    {% endif %}
+
+    {% if block_settings.background %}
+      --text-background-color: {{ block_settings.background_color | default: 'rgb(255 255 255 / 1.0)' }};
+      --text-corner-radius: {{ block_settings.corner_radius }}px;
+      --text-padding: max(var(--padding-2xs), calc((var(--text-corner-radius) + var(--padding-xs)) * (1 - cos(45deg))));
+    {% endif %}
+
+    {% if block_settings.type_preset == 'custom' %}
+      --custom-font-size: {{ block_settings.font_size_px }}px;
+      --custom-line-height: {{ custom_line_height }};
+      --custom-letter-spacing: {{ custom_letter_spacing }};
+      --custom-text-transform: {{ custom_text_transform }};
+      --custom-text-wrap: {{ custom_text_wrap }};
+      --custom-white-space: {{ custom_white_space }};
+      {% if block_settings.color != '' %}
+        --color: {{ block_settings.color }};
+      {% endif %}
+    {% endif %}
+    {% if block_settings.checkmark_text_size_desktop != blank %}
+      --checkmark-text-size-desktop: {{ block_settings.checkmark_text_size_desktop }}px;
+    {% endif %}
+  "
+
+  {{ block.shopify_attributes }}
+{% endcapture %}
+
+{% liquid
+  # {{ attributes }} must be on the immediate HTML parent of the text to preserve click-to-edit.
+  assign element = 'div'
+  if is_rte
+    assign element = 'rte-formatter'
+  endif
+%}
+
+{% if fallback_text != blank and plain_text == blank %}
+  <div {{ attributes }}>
+    {{ fallback_text }}
+  </div>
+{% elsif plain_text != blank %}
+  <{{ element }} {{ attributes }}>
+    {{ block_settings.text }}
+  </{{ element }}>
+{% endif %}
+
+{% stylesheet %}
+  :root { --text-align-default: left; }
+
+  [style*='--horizontal-alignment: center'] .text-block { --text-align-default: center; }
+  [style*='--horizontal-alignment: flex-end'] .text-block { --text-align-default: right; }
+  [style*='--horizontal-alignment: flex-start'] > .text-block { --text-align-default: left; }
+  [style*='--horizontal-alignment: center'] > .text-block { --text-align-default: center; }
+  [style*='--horizontal-alignment: flex-end'] > .text-block { --text-align-default: right; }
+
+  .text-block {
+    width: var(--width);
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: var(--horizontal-alignment);
+  }
+
+  .text-block > * {
+    width: var(--width);
+    max-width: var(--max-width, 100%);
+    text-align: var(--text-align, var(--text-align-default));
+    text-wrap: var(--text-wrap);
+  }
+
+  .text-block:not(.text-block--full-width).rte,
+  .text-block:not(.text-block--full-width).paragraph {
+    text-wrap: balance;
+    text-wrap: pretty;
+  }
+
+  .text-block:not(.text-block--full-width):is(.h1, .h2, .h3, .h4, .h5, .h6) {
+    text-wrap: balance;
+  }
+
+  .text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) a {
+    text-decoration-color: transparent;
+  }
+
+  .text-block h1,
+  .text-block.h1 > * { margin-block: var(--font-h1--spacing); }
+
+  @media screen and (min-width:750px) {
+        .text-block h1,
+    .text-block.h1 > * { font-size:28px !important; }
+    }
+  .text-block h2,
+  .text-block.h2 > * {
+    margin-block: var(--font-h2--spacing);
+    font-size: 24px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  @media screen and (min-width:750px) {
+    .text-block h2,
+    .text-block.h2 > * {
+      margin-block: var(--font-h2--spacing);
+      font-size: 32px;
+      margin-top:20px;
+      margin-bottom:20px;
+    } 
+  }
+
+  .text-block li {
+    margin: 0 0 .5em;
+  }
+
+
+  .text-block .checkmark-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-inline-start: 1.5em;
+  }
+
+  .text-block .checkmark-list li {
+    position: relative;
+    padding-left: 1.6em;
+  }
+
+  .text-block .checkmark-list li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    top: 0;
+    line-height: 1.55;
+  }
+
+
+  .text-block h3,
+  .text-block.h3 > * { margin-block: var(--font-h3--spacing); font-size: 20px; margin-top: 20px; margin-bottom: 20px; }
+
+  .text-block h4,
+  .text-block.h4 > * { margin-block: var(--font-h4--spacing); }
+
+  .text-block h5,
+  .text-block.h5 > * { margin-block: var(--font-h5--spacing); }
+
+  .text-block h6,
+  .text-block.h6 > * { margin-block: var(--font-h6--spacing); }
+
+  .text-block p,
+  .text-block.p > * { margin-block: var(--font-paragraph--spacing); }
+
+  .text-block > *:first-child { margin-block-start: 0; }
+  .text-block > *:last-child  { margin-block-end: 0; }
+
+  .text-block--align-center,
+  .text-block--align-center > * { margin-inline: auto; }
+
+  .text-block--align-right,
+  .text-block--align-right > * { margin-inline-start: auto; }
+
+  .text-block--background {
+    background-color: var(--text-background-color);
+    border-radius: var(--text-corner-radius);
+    padding-block-start: max(var(--text-padding), var(--padding-block-start, 0));
+    padding-block-end: max(var(--text-padding), var(--padding-block-end, 0));
+    padding-inline-start: max(var(--text-padding), var(--padding-inline-start, 0));
+    padding-inline-end: max(var(--text-padding), var(--padding-inline-end, 0));
+  }
+
+  .custom-color,
+  .custom-color > :is(h1, h2, h3, h4, h5, h6, p, *) {
+    color: var(--color);
+  }
+
+  /* ✅ Custom preset typography (handles numeric font_size range in px AND legacy rem strings) */
+  .text-block.custom-typography {
+    font-size: var(--custom-font-size);
+    line-height: var(--custom-line-height);
+    letter-spacing: var(--custom-letter-spacing);
+    text-transform: var(--custom-text-transform);
+    text-wrap: var(--custom-text-wrap);
+    white-space: var(--custom-white-space);
+  }
+
+  /* Force children to inherit so theme heading sizes don't override your slider */
+  .text-block.custom-typography :is(h1,h2,h3,h4,h5,h6,p,li,span,a,strong,em) {
+    font-size: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+  }
+
+{% endstylesheet %}
+
+<style>
+{% if block_settings.before_stars %}
+.text-block--before-stars > *:first-child::before {
+  --star: 1em;
+  --gap: 2px;
+  --step: calc(var(--star) + var(--gap));
+
+  content: "";
+  display: inline-block;
+  width: calc((var(--star) * 5) + (var(--gap) * 4));
+  height: var(--star);
+  margin-right: 0.5rem;
+  vertical-align: -0.1em;
+  background-color: #f7d12f;
+
+  -webkit-mask-image:
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: var(--star) var(--star);
+  -webkit-mask-position:
+    0 50%,
+    calc(var(--step) * 1) 50%,
+    calc(var(--step) * 2) 50%,
+    calc(var(--step) * 3) 50%,
+    calc(var(--step) * 4) 50%;
+
+  mask-image:
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}"),
+    url("{{ 'icon-star-filled.svg' | asset_url }}");
+  mask-repeat: no-repeat;
+  mask-size: var(--star) var(--star);
+  mask-position:
+    0 50%,
+    calc(var(--step) * 1) 50%,
+    calc(var(--step) * 2) 50%,
+    calc(var(--step) * 3) 50%,
+    calc(var(--step) * 4) 50%;
+}
+{% endif %}
+
+{% if block_settings.list_style_checkmark %}
+.text-block--list-style-checkmark ul li {
+  color: var(--checkmark-text-color, currentColor);
+  position: relative;
+  padding-left: 14px;
+  line-height:1.6 !important;
+}
+
+.text-block--list-style-checkmark ul li::before {
+  content: "";
+  position: absolute;
+  top: 45%;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  transform: translateY(-50%);
+  background-color: currentColor;
+  background-color: var(--checkmark-text-color, currentColor);
+  -webkit-mask: url("{{ 'icon-checkmark-v2.svg' | asset_url }}") no-repeat center / contain;
+  mask: url("{{ 'icon-checkmark-v2.svg' | asset_url }}") no-repeat center / contain;
+}
+{% endif %}
+
+{% if block_settings.list_to_row %}
+.text-block--list-to-row {
+  align-items:center;
+}
+.text-block--list-to-row ul {
+  display: flex;
+  flex-wrap:wrap;
+  list-style: none;
+  padding: 0;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  column-gap: 16px;
+  align-items:center;
+}
+
+.ui-test-product-list .text-block h2, .ui-test-product-list
+  .text-block.h3 > *, .ui-test-product-list .text-block h3 {
+    font-size:36px;
+}
+
+@media screen and (max-width:749px) {
+  .ui-test-product-list .text-block h2, .ui-test-product-list
+    .text-block.h3 > *, .ui-test-product-list .text-block h3 {
+      font-size:28px;
+  }
+}
+
+@media screen and (min-width: 750px) {
+  .text-block--list-style-checkmark li,
+  .text-block--list-to-row li {
+    font-size: 15px !important;
+  }
+}
+
+{% endif %}
+
+</style>

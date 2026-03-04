@@ -1,0 +1,159 @@
+{%- liquid
+  assign accordion_id = 'accordion-' | append: block.id
+-%}
+
+<style>
+  .text-accordion-block {
+    width: {{ block.settings.width }};
+    {% if block.settings.max_width != 'none' %}
+      max-width: var(--max-width-{{ block.settings.max_width }});
+    {% endif %}
+    padding-block-start: {{ block.settings.padding-block-start }}px;
+    padding-block-end: {{ block.settings.padding-block-end }}px;
+    padding-inline-start: {{ block.settings.padding-inline-start }}px;
+    padding-inline-end: {{ block.settings.padding-inline-end }}px;
+    {% if block.settings.background %}
+      background-color: {{ block.settings.background_color }};
+      border-radius: {{ block.settings.corner_radius }}px;
+    {% endif %}
+  }
+
+  .text-accordion__trigger {
+    all: unset;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    gap: 1rem;
+    padding-block: 1rem;
+    box-sizing: border-box;
+    font-family: {{ block.settings.heading_font }};
+    font-size: {{ block.settings.heading_size }}px;
+    color: var(--color-foreground-heading, #111);
+    text-align: left;
+  }
+
+  .text-accordion__trigger:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .text-accordion__icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .text-accordion__icon::before,
+  .text-accordion__icon::after {
+    content: '';
+    position: absolute;
+    background-color: currentColor;
+    border-radius: 2px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .text-accordion__icon::before {
+    width: 12px;
+    height: 2px;
+  }
+
+  .text-accordion__icon::after {
+    width: 2px;
+    height: 12px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Open state — hide the vertical bar of the + to make a − */
+  .text-accordion__trigger[aria-expanded="true"] .text-accordion__icon::after {
+    transform: translate(-50%, -50%) scaleY(0);
+    opacity: 0;
+  }
+
+  .text-accordion__body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+  }
+
+  .text-accordion__body[aria-hidden="false"] {
+    grid-template-rows: 1fr;
+  }
+
+  .text-accordion__inner {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .text-accordion__content {
+    padding-bottom: 1rem;
+    color: var(--color-foreground, #333);
+    font-size: {{ block.settings.body_size }}px;
+    line-height: 1.6;
+  }
+
+  .text-accordion__content ul,
+  .text-accordion__content ol {
+    padding-left: 1.25em;
+  }
+
+  .text-accordion__content p:first-child {
+    margin-top: 0;
+  }
+
+  .text-accordion__content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .text-accordion-block h2 {
+    margin: 0;
+  }
+</style>
+
+<div
+  class="text-accordion-block"
+  id="{{ accordion_id }}"
+  {{ block.shopify_attributes }}
+>
+  <button
+    class="text-accordion__trigger"
+    aria-expanded="{% if block.settings.open_by_default %}true{% else %}false{% endif %}"
+    aria-controls="{{ accordion_id }}-body"
+  >
+    <h2>{{ block.settings.heading | escape }}</h2>
+    <span class="text-accordion__icon" aria-hidden="true"></span>
+  </button>
+
+  <div
+    class="text-accordion__body"
+    id="{{ accordion_id }}-body"
+    aria-hidden="{% if block.settings.open_by_default %}false{% else %}true{% endif %}"
+  >
+    <div class="text-accordion__inner">
+      <div class="text-accordion__content rte">
+        {{ block.settings.content }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var trigger = document.querySelector('#{{ accordion_id }} .text-accordion__trigger');
+    var body = document.getElementById('{{ accordion_id }}-body');
+
+    if (!trigger || !body) return;
+
+    trigger.addEventListener('click', function() {
+      var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+      body.setAttribute('aria-hidden', String(isOpen));
+    });
+  })();
+</script>

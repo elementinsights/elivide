@@ -1,0 +1,41 @@
+<div class="payment-methods">
+  <ul class="payment-methods-list">
+    {%- for type in shop.enabled_payment_types -%}
+      <li class="payment-icons__item">
+        {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+
+{% stylesheet %}
+  .payment-methods {
+    width: 100%;
+  }
+
+  .payment-methods-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 42px); /* auto-detect icon count */
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .payment-methods-list li {
+    width: 42px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .payment-methods-list svg {
+    width: 38px;
+    height: 24px;
+    display: block;
+  }
+{% endstylesheet %}

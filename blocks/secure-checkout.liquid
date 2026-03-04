@@ -1,0 +1,50 @@
+
+<div
+  class="secure-checkout"
+  {{ block.shopify_attributes }}
+>
+    <div class="secure-checkout__heading">
+        {{- 'icon-security.svg' | inline_asset_content -}}
+        <span class="secure-checkout__heading--text">Secure checkout <span class="secure-check__heading--normal-text">with</span></span>
+    </div>
+    {% render 'payment-methods' %}
+</div>
+
+{% stylesheet %}
+
+    .secure-checkout__heading {
+        font-weight:700;
+        display:flex;
+        justify-content: center;
+        align-items:center;
+        gap:8px;
+    }
+
+    .secure-checkout__heading--text {
+        margin-top:4px;
+    }
+
+    .secure-check__heading--normal-text {
+        font-weight:400;
+        font-size:15px;
+    }
+
+    .secure-checkout .payment-methods {
+        padding:10px 0;
+    }
+
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Secure checkout",
+  "settings": [
+  ],
+  "presets": [
+    {
+      "name": "Secure checkout"
+    }
+  ]
+}
+{% endschema %}

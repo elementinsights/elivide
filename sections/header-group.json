@@ -1,0 +1,178 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "header_announcements_NxUJh6": {
+      "type": "header-announcements",
+      "blocks": {
+        "announcement_HkJQdr": {
+          "type": "_announcement",
+          "name": "t:names.announcement",
+          "settings": {
+            "text": "Free UK shipping on orders over £55.00",
+            "link": "",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "weight": "",
+            "letter_spacing": "normal",
+            "case": "none"
+          },
+          "blocks": {}
+        },
+        "announcement_TfQLDV": {
+          "type": "_announcement",
+          "name": "t:names.announcement",
+          "settings": {
+            "text": "15% off subscriptions, with biodegradable refills",
+            "link": "",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "weight": "",
+            "letter_spacing": "normal",
+            "case": "none"
+          },
+          "blocks": {}
+        },
+        "announcement_nmDAr7": {
+          "type": "_announcement",
+          "name": "t:names.announcement",
+          "settings": {
+            "text": "Trusted by over 100 registered nutritionists",
+            "link": "",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "weight": "",
+            "letter_spacing": "normal",
+            "case": "none"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "announcement_HkJQdr",
+        "announcement_TfQLDV",
+        "announcement_nmDAr7"
+      ],
+      "name": "t:names.announcement_bar",
+      "settings": {
+        "speed": 5,
+        "section_width": "full-width",
+        "color_scheme": "scheme-2",
+        "divider_width": 0,
+        "padding-block-start": 12,
+        "padding-block-end": 12
+      }
+    },
+    "header_section": {
+      "type": "header",
+      "blocks": {
+        "header-logo": {
+          "type": "_header-logo",
+          "static": true,
+          "settings": {
+            "hide_logo_on_home_page": false,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "header-menu": {
+          "type": "_header-menu",
+          "static": true,
+          "settings": {
+            "menu": "navigation-desktop-menu",
+            "mobile_menu_1": "navigation-mobile-menu-2",
+            "mobile_menu_2": "",
+            "color_scheme": "scheme-3",
+            "type_font_primary_size": "1rem",
+            "menu_font_style": "inverse",
+            "type_font_primary_link": "body",
+            "type_case_primary_link": "none",
+            "menu_style": "custom_image",
+            "custom_image": "shopify://shop_images/Week_4_Magnesium_Bisglycinate.webp",
+            "custom_image_text": "",
+            "custom_image_link": "shopify://pages/find-your-magnesium-match",
+            "featured_products_aspect_ratio": "1 / 1",
+            "featured_collections_aspect_ratio": "1 / 1",
+            "image_border_radius": 0,
+            "navigation_bar": false,
+            "color_scheme_navigation_bar": "",
+            "drawer_accordion": true,
+            "drawer_accordion_expand_first": true,
+            "drawer_dividers": false,
+            "quiz_intro": "Find Your Magnesium Match",
+            "quiz_anchor": "Take our 60-second quiz",
+            "quiz_url": "shopify://pages/find-your-magnesium-match",
+            "show_second_submenu_image": true,
+            "second_submenu_image": "shopify://shop_images/ELIVIDE_Subscriptions_Discount.jpg",
+            "second_submenu_title": "GET UP TO 15% OFF SUBSCRIPTIONS",
+            "second_submenu_text": "Biodegradable refill pouches for letterbox friendly delivery",
+            "second_submenu_button_label": "",
+            "second_submenu_button_link": "shopify://pages/find-your-magnesium-match",
+            "second_submenu_text_color": "white",
+            "second_submenu_promo_columns_desktop": 4,
+            "second_submenu_promo_columns_tablet": 3,
+            "enable_first_submenu_images": true,
+            "first_submenu_image_size": 44,
+            "first_submenu_image_1": "shopify://shop_images/All_Formulations.jpg",
+            "first_submenu_image_2": "shopify://shop_images/Magnesium_Blends.jpg",
+            "first_submenu_image_3": "shopify://shop_images/Bundles.jpg",
+            "first_submenu_image_4": "shopify://shop_images/Water_Filters.jpg",
+            "rating_count": "4.99",
+            "order_count": "10,000+ Orders",
+            "pinterest_url": "",
+            "facebook_url": "https://www.facebook.com/elividehealth",
+            "instagram_url": "https://www.instagram.com/elividehealth/?hl=en",
+            "tiktok_url": "https://www.tiktok.com/@elividehealth"
+          },
+          "blocks": {}
+        }
+      },
+      "settings": {
+        "logo_position": "center",
+        "menu_position": "left",
+        "menu_row": "top",
+        "show_search": true,
+        "search_position": "right",
+        "search_row": "top",
+        "show_country": true,
+        "country_selector_style": false,
+        "show_language": false,
+        "localization_font": "heading",
+        "localization_font_size": "0.875rem",
+        "localization_position": "right",
+        "localization_row": "top",
+        "section_width": "page-width",
+        "section_height": "standard",
+        "enable_sticky_header": "scroll-up",
+        "divider_width": 0,
+        "divider_size": "page-width",
+        "border_width": 0,
+        "color_scheme_top": "scheme-3",
+        "color_scheme_bottom": "",
+        "color_scheme_transparent": "scheme-6",
+        "enable_transparent_header_home": false,
+        "home_color_scheme": "inverse",
+        "enable_transparent_header_product": false,
+        "product_color_scheme": "default",
+        "enable_transparent_header_collection": false,
+        "collection_color_scheme": "default"
+      }
+    }
+  },
+  "order": [
+    "header_announcements_NxUJh6",
+    "header_section"
+  ]
+}

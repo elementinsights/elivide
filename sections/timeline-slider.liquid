@@ -1,0 +1,613 @@
+{% comment %}
+  Timeline Tabs + Slider (Metaobject-powered)
+  - Slides come from product metafield: custom.timeline_items (List of metaobjects)
+  - Metaobject type: timeline_item with fields:
+    - title (single line text)
+    - subtitle (single line text)
+    - image (file: image)
+    - text (rich text)
+
+  UPDATE:
+  - Desktop width was being constrained by theme “page width” wrappers.
+  - Mobile stays the same (peek + scroll).
+  - Desktop (>= 991px) now uses full section width up to your --j-max and removes the page-width limiter.
+{% endcomment %}
+
+<div
+  id="timeline-{{ section.id }}"
+  class="timeline timeline--{{ section.id }} shopify-section section-wrapper section-timeline"
+  style="
+    --j-bg: {{ section.settings.bg }};
+    --j-max: {{ section.settings.max_width }}px;
+    --j-gap: {{ section.settings.gap }}px;
+    --j-padding-top-mobile: {{ section.settings.padding_top_mobile }}px;
+    --j-padding-bottom-mobile: {{ section.settings.padding_bottom_mobile }}px;
+    --j-padding-top-desktop: {{ section.settings.padding_top_desktop }}px;
+    --j-padding-bottom-desktop: {{ section.settings.padding_bottom_desktop }}px;
+    --j-pad: {{ section.settings.side_padding }}px;
+    --j-heading-font-size-mobile: {{ section.settings.heading_font_size_mobile }}px;
+    --j-subheading-font-size-mobile: {{ section.settings.subheading_font_size_mobile }}px;
+    --j-heading-font-size-desktop: {{ section.settings.heading_font_size_desktop }}px;
+    --j-subheading-font-size-desktop: {{ section.settings.subheading_font_size_desktop }}px;
+    --j-heading-gap: {{ section.settings.heading_gap }}px;
+    --j-heading-margin-bottom: {{ section.settings.heading_margin_bottom }}px;
+    --j-heading-letter-spacing: {{ section.settings.heading_letter_spacing }}px;
+    
+
+  "
+>
+  {% assign section_title = product.metafields.custom.timeline_title.value %}
+  {% assign section_subtitle = product.metafields.custom.timeline_subtitle.value %}
+  {%- assign timeline_items = product.metafields.custom.timeline_items.value -%}
+
+  {%- comment -%}
+    IMPORTANT:
+    Do NOT wrap this in theme "section--page-width" containers, because those often hard-cap width (~1100–1300px).
+    We control width via --j-max and padding ourselves.
+  {%- endcomment -%}
+  <div class="timeline__inner">
+    <div class="heading-wrap">
+      {% if section_title != blank %}
+        <h2 class="timeline__heading">{{ section_title }}</h2>
+      {% endif %}
+
+      {% if section_subtitle != blank %}
+        <p class="timeline__subheading">{{ section_subtitle }}</p>
+      {% endif %}
+    </div>
+
+    {% if timeline_items != blank and timeline_items.size > 0 %}
+      <!-- Tabs -->
+      <div class="timeline__tabs" role="tablist" aria-label="timeline steps">
+        {% for item in timeline_items %}
+          {% assign i = forloop.index0 %}
+          {% assign tab_label = item.title.value | default: item.title %}
+
+          <button
+            type="button"
+            class="timeline__tab{% if forloop.first %} is-active{% endif %}"
+            role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-controls="timeline-panel-{{ section.id }}-{{ i }}"
+            data-timeline-tab="{{ i }}"
+          >
+            <span class="timeline__tab-label">{{ tab_label }}</span>
+          </button>
+        {% endfor %}
+      </div>
+
+      <!-- Slider -->
+      <div class="timeline__viewport" data-timeline-viewport>
+        <div class="timeline__track">
+          {% for item in timeline_items %}
+            {% assign i = forloop.index0 %}
+
+            {% assign title = item.title.value | default: item.title %}
+            {% assign subtitle = item.subtitle.value | default: item.subtitle %}
+            {% assign img = item.image.value | default: item.image %}
+
+            <article
+              id="timeline-panel-{{ section.id }}-{{ i }}"
+              class="timeline__slide"
+              role="tabpanel"
+              aria-label="{{ title | escape }}"
+              data-timeline-slide="{{ i }}"
+            >
+              <div class="timeline-card">
+                {% if img != blank %}
+                  <div class="timeline-card__media">
+                    {{
+                      img
+                      | image_url: width: 2200
+                      | image_tag: loading: 'lazy', class: 'timeline-card__img'
+                    }}
+                  </div>
+                {% endif %}
+
+                <div class="timeline-card__body">
+                  {% if title != blank %}
+                    <div class="timeline-card__title">{{ title }}</div>
+                  {% endif %}
+
+                  {% if subtitle != blank %}
+                    <div class="timeline-card__headline">{{ subtitle }}</div>
+                  {% endif %}
+
+                  {% if item.text != blank %}
+                    <div class="timeline-card__text">{{ item.text | metafield_tag }}</div>
+                  {% endif %}
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% style %}
+  .timeline {
+    background: var(--j-bg);
+    padding-top: var(--j-padding-top-mobile, 48px);
+    padding-bottom: var(--j-padding-bottom-mobile, 48px);
+  }
+
+  .timeline * {
+    margin:0;
+  }
+
+  /* We control width ourselves (no theme "page-width" limiter) */
+  .timeline__inner {
+    max-width: var(--j-max);
+    margin: 0 auto;
+    padding-left: var(--j-pad);
+    padding-right: var(--j-pad);
+  }
+
+  .timeline .heading-wrap {
+    display:flex;
+    flex-direction:column;
+    gap: var(--j-heading-gap, 20px);
+    margin-bottom: var(--j-heading-margin-bottom, 40px);
+  }
+
+  /* Let the slider span the full inner width (not a smaller nested container) */
+  .timeline__viewport {
+    width: 100%;
+    margin-top: 26px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    /* Mobile “peek” stays exactly as-is */
+    padding-left: var(--j-pad);
+    padding-right: var(--j-pad);
+    scroll-padding-left: var(--j-pad);
+    scroll-padding-right: var(--j-pad);
+
+    overscroll-behavior-x: contain;
+    padding-bottom: 8px;
+  }
+
+  .timeline__heading {
+    text-align: center;
+    letter-spacing: var(--j-heading-letter-spacing, .5px);
+    font-weight: 600;
+    opacity: 0.85;
+    font-size: var(--j-heading-font-size-mobile, 24px);
+    line-height:1.2;
+  }
+
+  .timeline__subheading {
+    text-align: center;
+    margin: 0;
+    line-height: 1.1;
+    font-size: var(--j-subheading-font-size-mobile, 16px);
+  }
+
+  /* Tabs */
+  .timeline__tabs {
+    margin-top: 26px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 22px;
+    align-items: end;
+  }
+
+  .timeline__tab {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 12px 10px 10px 2px;
+    text-align: left;
+    cursor: pointer;
+    opacity: 0.55;
+    position: relative;
+    font: inherit;
+    white-space: nowrap;
+    font-size: 12px;
+    border-top: 1px solid #EAEAEA;
+  }
+
+  .timeline__tab:focus-visible {
+    outline: 2px solid rgba(0, 0, 0, 0.25);
+    outline-offset: 4px;
+    border-radius: 10px;
+  }
+
+  .timeline__tab-label {
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .timeline__tab.is-active {
+    opacity: 1;
+  }
+
+  .timeline__tab.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 0;
+    height: 2px;
+    background: rgba(0, 0, 0, 0.78);
+  }
+
+  .timeline__track {
+    display: flex;
+    gap: var(--j-gap);
+  }
+
+  .timeline { --slide-w: 86%; }                 
+  @media (min-width: 768px) { .timeline { --slide-w: 46%; } } 
+
+  @media (min-width: 991px) {
+
+    .timeline {
+      --slide-w: 23.5%;
+      padding-top: var(--j-padding-top-desktop, 80px);
+      padding-bottom: var(--j-padding-bottom-desktop, 80px);
+    }           
+
+    .timeline__tabs { display: none; }
+
+    .timeline__viewport {
+      overflow-x: visible;                      /* no scroll-bar feel on desktop */
+      scroll-snap-type: none;
+      padding-left: 0;
+      padding-right: 0;
+      scroll-padding-left: 0;
+      scroll-padding-right: 0;
+    }
+
+    .timeline__track {
+      width: 100%;
+    }
+
+    .timeline__heading {
+      font-size: var(--j-heading-font-size-desktop, 44px);
+    }
+
+    .timeline__subheading {
+      font-size: var(--j-subheading-font-size-desktop, 18px);
+    }
+
+  }
+
+  .timeline__slide {
+    flex: 0 0 var(--slide-w);
+    scroll-snap-align: start;
+  }
+
+  /* Card */
+  .timeline-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .timeline-card__media {
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.04);
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+  }
+
+  .timeline-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .timeline-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .timeline-card__title {
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  .timeline-card__headline {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.3;
+  }
+
+  .timeline-card__text {
+    opacity: 0.92;
+    line-height: 1.5;
+    font-size: 15px;
+  }
+
+  .timeline-card__text p {
+    font-size: 15px;
+  }
+
+  .timeline-card__btn {
+    margin-top: 10px;
+    width: fit-content;
+    border-radius: 999px;
+    padding: 12px 18px;
+    text-decoration: none;
+    background: #f2c56c;
+    color: rgba(0, 0, 0, 0.9);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  /* Mobile tweaks (unchanged behavior) */
+  @media (max-width: 767px) {
+    .timeline { padding: 36px 0; }
+    .timeline__tabs { column-gap: 14px; }
+    .timeline-card__text { font-size: 15.5px; }
+  }
+
+  /* Hide horizontal scrollbar (still scrollable) — applies mostly to mobile/tablet */
+  .timeline__viewport {
+    scrollbar-width: none;      /* Firefox */
+    -ms-overflow-style: none;   /* IE/old Edge */
+  }
+
+  .timeline__viewport::-webkit-scrollbar {
+    display: none;              /* Chrome/Safari */
+  }
+{% endstyle %}
+
+<script>
+  (function () {
+    function inittimeline(sectionEl) {
+      if (!sectionEl) return;
+
+      const viewport = sectionEl.querySelector("[data-timeline-viewport]");
+      const tabs = Array.from(sectionEl.querySelectorAll("[data-timeline-tab]"));
+      const slides = Array.from(sectionEl.querySelectorAll("[data-timeline-slide]"));
+      if (!viewport || tabs.length === 0 || slides.length === 0) return;
+
+      // prevent double-binding (theme editor reloads sections)
+      if (sectionEl.__timelineInit) return;
+      sectionEl.__timelineInit = true;
+
+      const setActive = (idx) => {
+        tabs.forEach((t, i) => {
+          const active = i === idx;
+          t.classList.toggle("is-active", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
+        });
+      };
+
+      const getViewportPaddingLeft = () => {
+        const styles = window.getComputedStyle(viewport);
+        return parseFloat(styles.paddingLeft || "0") || 0;
+      };
+
+      const scrollToSlide = (idx) => {
+        const slide = slides[idx];
+        if (!slide) return;
+
+        const padL = getViewportPaddingLeft();
+        const targetLeft = slide.offsetLeft - padL;
+
+        viewport.scrollTo({
+          left: Math.max(0, targetLeft),
+          behavior: "smooth"
+        });
+
+        setActive(idx);
+      };
+
+      // Click tab -> smooth slide
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const idx = Number(tab.dataset.timelineTab);
+          if (Number.isNaN(idx)) return;
+          scrollToSlide(idx);
+        });
+      });
+
+      // Scroll/swipe -> update active tab
+      let raf = null;
+      viewport.addEventListener(
+        "scroll",
+        () => {
+          if (raf) cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(() => {
+            const padL = getViewportPaddingLeft();
+            const left = viewport.scrollLeft + padL;
+
+            let bestIdx = 0;
+            let bestDist = Infinity;
+
+            slides.forEach((s, i) => {
+              const dist = Math.abs(s.offsetLeft - left);
+              if (dist < bestDist) {
+                bestDist = dist;
+                bestIdx = i;
+              }
+            });
+
+            setActive(bestIdx);
+          });
+        },
+        { passive: true }
+      );
+
+      // On resize, keep the active slide aligned (important when crossing 768/991)
+      const onResize = () => {
+        const activeIdx = tabs.findIndex((t) => t.classList.contains("is-active"));
+        if (activeIdx >= 0) scrollToSlide(activeIdx);
+      };
+      window.addEventListener("resize", onResize);
+
+      // initial
+      setActive(0);
+      scrollToSlide(0);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      inittimeline(document.getElementById("timeline-{{ section.id }}"));
+    });
+
+    // Theme editor dynamic reload
+    document.addEventListener("shopify:section:load", (e) => {
+      const root = e.target;
+      const el =
+        root.querySelector("#timeline-{{ section.id }}") ||
+        document.getElementById("timeline-{{ section.id }}");
+      inittimeline(el);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Timeline tabs slider",
+  "tag": "div",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg",
+      "label": "Background color",
+      "default": "#F6F1E7"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width (px)",
+      "min": 900,
+      "max": 1800,
+      "step": 10,
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top mobile",
+      "min": 10,
+      "max": 99,
+      "step": 1,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom mobile",
+      "min": 10,
+      "max": 99,
+      "step": 1,
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Padding top desktop",
+      "min": 10,
+      "max": 99,
+      "step": 1,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Padding bottom desktop",
+      "min": 10,
+      "max": 99,
+      "step": 1,
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding (px)",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Card gap (px)",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Heading font size mobile",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "default": 24
+    },
+      {
+      "type": "range",
+      "id": "subheading_font_size_mobile",
+      "label": "Subheading font size mobile",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_desktop",
+      "label": "Heading font size desktop",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_desktop",
+      "label": "Subheading font size desktop",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "heading_gap",
+      "label": "Heading gap",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Heading margin bottom",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Heading letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.1,
+      "default": 0.5
+    }
+  ],
+  "presets": [
+    { "name": "timeline tabs slider" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,134 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 0,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    },
+    "about_page_LrnGeL": {
+      "type": "about-page",
+      "blocks": {
+        "hero_EHFgL4": {
+          "type": "hero",
+          "settings": {
+            "subtitle": "Est. 2020",
+            "heading": "Our Story",
+            "intro": "ELIVIDE was founded by Matt Jarosy, a qualified nutritionist & health coach.",
+            "quote": "After a decade of studying human nutrition and working in clinical practice, I was frustrated that the supplement industry was not providing what my clients needed. The truth is, most supplements today are loaded with copious amounts of unnecessary fillers and inorganic nutrients. I wanted only the active compounds and in the most bioavailable forms. I wanted full transparency over how ingredients had been handled. I wanted supplements that were made sustainably with the least amount of plastic. Behind this idea, ELIVIDE was born. Every year I continue to formulate new supplements with the same ethos, prioritising the best quality ingredients with zero additives.",
+            "founder_name": "Matt Jarosy",
+            "founder_title": "Founder & Formulator",
+            "founder_credentials": "BSc DipNT DipHC",
+            "image": "shopify://shop_images/Founder_photo_about_1.png"
+          }
+        },
+        "content_row_NWrPXJ": {
+          "type": "content_row",
+          "settings": {
+            "accent_label": "",
+            "heading": "Sustainability & Sourcing",
+            "text": "<p>We focus on high quality, organic and non-GMO ingredients when formulating, and every ingredient we use comes to us with full traceability. No short cuts allowed.<br/><br/>All of our supplements come in recycled glass jars and fully biodegradable refill pouches. We're committed to keeping plastic to an absolute minimum.<br/><br/>Each product that we utilise comes with a full certificate of analysis and each batch is examined carefully, along with organoleptic tests. All of our products are manufactured according to Good Manufacturing Practice (GMP) and Good Hygiene Practice (GHP) procedures.<br/><br/>We utilise 100% renewable energy in our factory and also support ecologi by planting one tree with every order placed.</p>",
+            "image": "shopify://shop_images/2021.06.27_Matt_Product_Shoot0263.jpg",
+            "reverse_layout": false,
+            "bg_style": "cream",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "content_row_DgLJrq": {
+          "type": "content_row",
+          "settings": {
+            "accent_label": "",
+            "heading": "Purity & Philosophy",
+            "text": "<p>All of our supplements are 100% additive free with no added binders, bulking agents or flow agents. That means when you shop with us you get exactly what you pay for, the active compounds.<br/><br/>Our supplements provide the highest grade mineral chelates and wholefood compounds blended and tested for heavy metals here in the United Kingdom.<br/><br/>We utilise clean capsule shells made from either vegetable cellulose or pullulan which is derived tapioca, both suitable for vegetarians and vegans. Our factory does not handle tree nuts and all our supplements are free from wheat, dairy and soy.</p>",
+            "image": "shopify://shop_images/2021.06.27_Matt_Product_Shoot0359_1.jpg",
+            "reverse_layout": true,
+            "bg_style": "white",
+            "button_label": "",
+            "button_link": ""
+          }
+        },
+        "mission_qajFiz": {
+          "type": "mission",
+          "settings": {
+            "text": "Curating additive-free, bioavailable supplements formulated for modern living. Crafted sustainably in the UK by nutritional experts."
+          }
+        },
+        "values_strip_An6iJK": {
+          "type": "values_strip",
+          "settings": {
+            "heading": "What we stand for",
+            "icon_1": "🌿",
+            "label_1": "Zero Additives",
+            "desc_1": "100% active ingredients, no fillers, binders or flow agents.",
+            "icon_2": "♻️",
+            "label_2": "Sustainable",
+            "desc_2": "Recycled glass jars, biodegradable pouches, 100% renewable energy.",
+            "icon_3": "🔬",
+            "label_3": "Tested & Traced",
+            "desc_3": "Full certificates of analysis and organoleptic testing on every batch.",
+            "icon_4": "🇬🇧",
+            "label_4": "Made in the UK",
+            "desc_4": "GMP & GHP certified manufacturing, blended and tested in Britain."
+          }
+        },
+        "product_feature_RURBdq": {
+          "type": "product_feature",
+          "settings": {
+            "heading": "Magnesium Bisglycinate Food",
+            "show_rating": true,
+            "rating_whole": 5,
+            "rating_has_half": false,
+            "rating_text": "|  10,000 orders",
+            "description": "<p>Our award-winning magnesium bisglycinate that improves the quality and maintenance of sleep, supports physical and mental wellbeing and contributes to the normal functioning of the nervous system.</p>",
+            "info_1": "In stock",
+            "info_2": "Produced in limited runs to preserve integrity and consistency. Secure your place in our upcoming batch.",
+            "image": "shopify://shop_images/Magnesium_Bisglycinate_Food_White.webp",
+            "button_1_label": "Order",
+            "button_1_link": "shopify://products/magnesium-bisglycinate",
+            "button_2_label": "",
+            "button_2_link": "#"
+          }
+        },
+        "blog_posts_X8PLc7": {
+          "type": "blog_posts",
+          "settings": {
+            "subtitle": "New & featured",
+            "heading": "From the Wellness Journal",
+            "blog": "news",
+            "post_count": 3
+          }
+        }
+      },
+      "block_order": [
+        "hero_EHFgL4",
+        "content_row_NWrPXJ",
+        "content_row_DgLJrq",
+        "mission_qajFiz",
+        "values_strip_An6iJK",
+        "product_feature_RURBdq",
+        "blog_posts_X8PLc7"
+      ],
+      "name": "About Page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "about_page_LrnGeL"
+  ]
+}

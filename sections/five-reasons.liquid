@@ -1,0 +1,543 @@
+{% comment %}
+  Elivide — Proof Points / 5 Reasons Section
+  Updated to match provided mobile + desktop layouts
+{% endcomment %}
+
+<section class="reasons-list-section-element"
+    style="
+        --fr-background-color-desktop: {{ section.settings.background_color_desktop }}
+    "
+>
+  <div class="section section--page-width">
+    <!-- Desktop -->
+    <div class="reasons-list-desktop-area"
+    >
+      <div class="five-reason-desktop-left">
+        {% if section.settings.desktop_image != blank %}
+        {{ section.settings.desktop_image
+            | image_url: width: 960
+            | image_tag:
+            loading: 'lazy',
+            alt: section.settings.desktop_alt
+        }}
+        {% endif %}
+      </div>
+      <div class="five-reason-desktop-right">
+        <h3>{{ section.settings.heading }}</h3>
+        <ul>
+          <li>
+            <div class="number-circle" aria-hidden="true">
+              <span class="number-white">1</span>
+            </div>
+            <div class="reason-item">
+              <p>{{ section.settings.reason_one }}</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="number-circle" aria-hidden="true">
+              <span class="number-white">2</span>
+            </div>
+            <div class="reason-item">
+              <p>{{ section.settings.reason_two }}</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="number-circle" aria-hidden="true">
+              <span class="number-white">3</span>
+            </div>
+            <div class="reason-item">
+              <p>{{ section.settings.reason_three }}</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="number-circle" aria-hidden="true">
+              <span class="number-white">4</span>
+            </div>
+            <div class="reason-item">
+              <p>{{ section.settings.reason_four }}</p>
+            </div>
+          </li>
+
+          <li>
+            <div class="number-circle" aria-hidden="true">
+              <span class="number-white">5</span>
+            </div>
+            <div class="reason-item">
+              <p>{{ section.settings.reason_five }}</p>
+            </div>
+          </li>
+        </ul>
+        {% if section.settings.show_quiz != false %}
+            <div class="dtc-not-sure">
+            <span>{{ section.settings.quiz_title }}</span>
+            <p>{{ section.settings.quiz_description }}</p>
+            <a href="{{ section.settings.quiz_url }}">{{ section.settings.quiz_button_text }}</a>
+            </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Mobile -->
+    <div class="five-reason-mobile"
+        style="
+            --fr-background-color-mobile: {{ section.settings.background_color_mobile }};
+        "
+    >
+      <div class="five-reason-mobile-top">
+        {% if section.settings.mobile_image != blank %}
+        {{ section.settings.mobile_image
+            | image_url: width: 430
+            | image_tag:
+            loading: 'lazy',
+            alt: section.settings.mobile_alt
+        }}
+        {% endif %}
+
+
+        <h3>{{ section.settings.heading }}</h3>
+      </div>
+
+      <div class="section section--page-width">
+        <div class="five-reason-mobile-bot">
+          <ul>
+            <li>
+              <div class="number-circle" aria-hidden="true">
+                <span class="number-white">1</span>
+              </div>
+              <div class="reason-item">
+                <p>{{ section.settings.reason_one }}</p>
+              </div>
+            </li>
+
+            <li>
+              <div class="number-circle" aria-hidden="true">
+                <span class="number-white">2</span>
+              </div>
+              <div class="reason-item">
+                <p>{{ section.settings.reason_two }}</p>
+              </div>
+            </li>
+
+            <li>
+              <div class="number-circle" aria-hidden="true">
+                <span class="number-white">3</span>
+              </div>
+              <div class="reason-item">
+                <p>{{ section.settings.reason_three }}</p>
+              </div>
+            </li>
+
+            <li>
+              <div class="number-circle" aria-hidden="true">
+                <span class="number-white">4</span>
+              </div>
+              <div class="reason-item">
+                <p>{{ section.settings.reason_four }}</p>
+              </div>
+            </li>
+
+            <li>
+              <div class="number-circle" aria-hidden="true">
+                <span class="number-white">5</span>
+              </div>
+              <div class="reason-item">
+                <p>{{ section.settings.reason_five }}</p>
+              </div>
+            </li>
+          </ul>
+        {% if section.settings.show_quiz != false %}
+          <div class="dtc-not-sure">
+            <span>{{ section.settings.quiz_title }}</span>
+            <p>{{ section.settings.quiz_description }}</p>
+            <a href="{{ section.settings.quiz_url }}">{{ section.settings.quiz_button_text }}</a>
+          </div>
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% stylesheet %}
+
+.reasons-list-section-element {
+  background: var(--fr-background-color-desktop);
+}
+
+/* =========================
+   Desktop (default)
+   ========================= */
+
+.reasons-list-section-element .reasons-list-desktop-area {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.reasons-list-section-element .five-reason-desktop-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 50px 15px 30px 0;
+}
+
+.reasons-list-section-element .five-reason-desktop-left {
+    display: flex;
+    justify-content: center;
+}
+
+.reasons-list-section-element .five-reason-desktop-right h3 {
+  color: #0a0a0a;
+  font-size: 42.212px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 48.78px;
+  margin-bottom: 0;
+}
+
+.reasons-list-section-element .five-reason-desktop-right ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.reasons-list-section-element .five-reason-desktop-right ul li {
+  display: flex;
+  gap: 10px;
+}
+
+/* Shared list item bits (desktop + mobile) */
+.reasons-list-section-element .number-circle {
+  background-color: #fff;
+  border-radius: 100%;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.reasons-list-section-element .number-white {
+  color: #0a0a0a;
+  font-size: 20.081px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 33px;
+}
+
+.reasons-list-section-element .reason-item {
+  color: #0a0a0a;
+  font-size: 20.081px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 26.774px;
+}
+
+.reasons-list-section-element .reason-item p {
+    line-height:1.65;
+}
+
+/* CTA card */
+.reasons-list-section-element .dtc-not-sure {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 15px;
+  padding: 25px;
+  border-radius: 16.299px;
+  width: 90%;
+  background: #fff;
+  max-width: 534px;
+  box-shadow: 0 3.835px 3.835px #00000040;
+}
+
+.reasons-list-section-element .dtc-not-sure span {
+  color: #0a0a0a;
+  text-align: center;
+  font-size: 31.806px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 27.208px;
+}
+
+.reasons-list-section-element .dtc-not-sure p {
+  color: #0a0a0a;
+  text-align: center;
+  font-size: 15px;
+  margin: 0;
+  max-width: 336px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 23.2px;
+}
+
+.reasons-list-section-element .dtc-not-sure a {
+  display: flex;
+  width: 258.305px;
+  height: 51.083px;
+  padding: 9.638px 19.276px;
+  justify-content: center;
+  align-items: center;
+  gap: 9.638px;
+  flex-shrink: 0;
+  border-radius: 4.819px;
+  background: #66ceaa;
+  color: #fff;
+  font-size: 19.276px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26.987px;
+}
+
+/* Mobile container hidden by default */
+.reasons-list-section-element .five-reason-mobile {
+  display: none;
+}
+
+/* =========================
+   Desktop tweaks
+   ========================= */
+
+@media screen and (min-width: 769px) {
+  .reasons-list-section-element .five-reason-desktop-left {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 1200px) {
+  .reasons-list-section-element .five-reason-desktop-right ul {
+    gap: 10px;
+  }
+}
+
+@media screen and (min-width: 991px) and (max-width: 1200px) {
+  .reasons-list-section-element .five-reason-desktop-right h3 {
+    font-size: 32px;
+    line-height: normal;
+  }
+
+  .reasons-list-section-element .reason-item {
+    font-size: 18px;
+    line-height: normal;
+  }
+
+  .reasons-list-section-element .dtc-not-sure {
+    width: 100%;
+  }
+}
+
+/* =========================
+   Mobile layout
+   ========================= */
+
+@media screen and (max-width: 991px) {
+  .reasons-list-section-element .reasons-list-desktop-area {
+    display: none;
+  }
+
+  .reasons-list-section-element .reason-item p {
+    line-height:inherit;
+    
+  }
+
+  .reasons-list-section-element .five-reason-mobile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: 30px;
+    align-items: center;
+    background: var(--fr-background-color-mobile);
+    grid-column: 1 / 4;
+  }
+
+  .reasons-list-section-element .five-reason-mobile-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .reasons-list-section-element .five-reason-mobile-top img {
+    width: 215px !important;
+    height: auto;
+    aspect-ratio: auto;
+  }
+
+  .reasons-list-section-element .five-reason-mobile-top h3 {
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 32px;
+    margin: 0;
+    color: #0a0a0a;
+    max-width: 178px;
+  }
+
+  .reasons-list-section-element .five-reason-mobile-bot {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .reasons-list-section-element .five-reason-mobile-bot ul {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+    list-style: none;
+    max-width: 600px;
+  }
+
+  .reasons-list-section-element .five-reason-mobile-bot ul li {
+    display: flex;
+    gap: 10px;
+  }
+
+  .reasons-list-section-element .number-circle {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+  }
+
+  .reasons-list-section-element .number-white {
+    color: #0a0a0a;
+    font-size: 20.081px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 33px;
+  }
+
+  .reasons-list-section-element .reason-item {
+    color: #0a0a0a;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
+  .reasons-list-section-element .dtc-not-sure {
+    width: 100%;
+  }
+
+  .reasons-list-section-element .dtc-not-sure span {
+    color: #0a0a0a;
+    text-align: center;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24.472px;
+  }
+}
+
+@media (max-width: 576px) {
+  .reasons-list-section-element .five-reason-mobile-bot ul {
+    margin-bottom: 0;
+  }
+
+  .reasons-list-section-element .dtc-not-sure p {
+    margin-top: 0;
+  }
+}
+{% endstylesheet %}
+
+
+{% schema %}
+{
+  "name": "Reasons list",
+  "tag": "section",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+        "type": "color",
+        "id": "background_color_desktop",
+        "label": "Background color desktop",
+        "default": "#fff7ef"
+    },
+    {
+        "type": "color",
+        "id": "background_color_mobile",
+        "label": "Background color mobile",
+        "default": "#fff7ef"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+        "type": "image_picker",
+        "id": "desktop_image",
+        "label": "Desktop image"
+    },
+    {
+        "type": "image_picker",
+        "id": "mobile_image",
+        "label": "Mobile image"
+    },
+    {
+        "type": "richtext",
+        "id": "heading",
+        "label": "Heading"
+    },
+    {
+        "type": "richtext",
+        "id": "reason_one",
+        "label": "Reason one"
+    },
+    {
+        "type": "richtext",
+        "id": "reason_two",
+        "label": "Reason two"
+    },
+    {
+        "type": "richtext",
+        "id": "reason_three",
+        "label": "Reason three"
+    },
+    {
+        "type": "richtext",
+        "id": "reason_four",
+        "label": "Reason four"
+    },
+    {
+        "type": "richtext",
+        "id": "reason_five",
+        "label": "Reason five"
+    },
+    {
+        "type": "checkbox",
+        "id": "show_quiz",
+        "label": "Show quiz",
+        "default": false
+    },
+    { "type": "text", "id": "quiz_title", "label": "Quiz title", "default": "Not Sure Where To Start?", "visible_if": "{{ section.settings.show_quiz == true }}" },
+    { "type": "richtext", "id": "quiz_description", "label": "Quiz description", "visible_if": "{{ section.settings.show_quiz == true }}" },
+    { "type": "text", "id": "quiz_button_text", "label": "Quiz button text", "default": "Take the Quiz", "visible_if": "{{ section.settings.show_quiz == true }}" },
+    { "type": "url", "id": "quiz_url", "label": "Quiz url", "visible_if": "{{ section.settings.show_quiz == true }}" },
+  ],
+  "presets": [
+    {
+      "name": "Reasons list"
+    }
+  ]
+}
+{% endschema %}
+

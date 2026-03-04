@@ -1,0 +1,249 @@
+{%- comment -%}
+  Snippet: free-shipping-progress.liquid
+  Usage:
+    {% render 'free-shipping-progress' %}
+  Behavior:
+    - GBP threshold = £55
+    - EUR threshold = €60
+    - USD threshold = $70
+    - Fallback (all other currencies) = uses GBP setting value in that currency
+    - Uses cart.total_price (minor units) so it stays consistent with Shopify’s currency switching
+{%- endcomment -%}
+
+{%- liquid
+  assign currency = cart.currency.iso_code | default: shop.currency
+
+  assign threshold_major = settings.free_shipping_threshold_gbp | default: 55
+
+  if currency == 'EUR'
+    assign threshold_major = settings.free_shipping_threshold_eur | default: 60
+  elsif currency == 'GBP'
+    assign threshold_major = settings.free_shipping_threshold_gbp | default: 55
+  elsif currency == 'USD'
+    assign threshold_major = settings.free_shipping_threshold_usd | default: 70
+  endif
+
+  assign threshold_minor = threshold_major | times: 100
+  assign cart_total_minor = cart.total_price | default: 0
+
+  assign remaining_minor = threshold_minor | minus: cart_total_minor
+  if remaining_minor < 0
+    assign remaining_minor = 0
+  endif
+
+  assign progress_percent = cart_total_minor | times: 100 | divided_by: threshold_minor
+  if progress_percent > 100
+    assign progress_percent = 100
+  endif
+
+  assign is_full = false
+  if remaining_minor == 0
+    assign is_full = true
+  endif
+
+  if settings.currency_code_enabled_cart_items
+    assign remaining_formatted = remaining_minor | money_with_currency
+    assign threshold_formatted = threshold_minor | money_with_currency
+  else
+    assign remaining_formatted = remaining_minor | money
+    assign threshold_formatted = threshold_minor | money
+  endif
+-%}
+
+<div
+  class="free-shipping"
+  data-threshold-cents="{{ threshold_minor }}"
+  data-full="{% if is_full %}true{% else %}false{% endif %}"
+  data-success-text="You’ve unlocked <strong>FREE Shipping</strong>"
+  data-text-before="{{ block.settings.text_before_price | escape }}"
+  data-text-after="{{ block.settings.text_after_price | escape }}"
+  style="
+    --fs-font-size: {{ block.settings.font_size }}px;
+    --fs-text-align: {{ block.settings.text_align }};
+    --fs-progress-bar-background-color: {{ settings.progress_bar_background_color }};
+    --fs-progress-bar-fill-color: {{ settings.progress_bar_fill_color }};
+    --fs-progress-bar-fill-color-full: {{ settings.progress_bar_fill_color_full }};
+  "
+>
+  {%- if is_full -%}
+    <div class="free-shipping__text" data-text>
+      <span class="free-shipping__check" aria-hidden="true">{{ 'icon-shipping-check.svg' | inline_asset_content }}</span>
+      <span>You’ve unlocked <strong>FREE Shipping</strong></span>
+    </div>
+  {%- else -%}
+    <div class="free-shipping__text" data-text>
+      <span class="free-shipping__check" aria-hidden="true">{{ 'icon-shipping-check.svg' | inline_asset_content }}</span>
+      <span>You’re {{ remaining_formatted }} away from <strong>FREE Shipping</strong></span>
+    </div>
+  {%- endif -%}
+
+  <div
+    class="free-shipping__bar"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="{{ progress_percent }}"
+  >
+    <div class="free-shipping__bar-fill" data-fill style="width: {{ progress_percent }}%;"></div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .free-shipping {
+    width: 100%;
+  }
+
+  .free-shipping__text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--fs-font-size, 16px);
+    line-height: 1.2;
+    margin: 0 0 14px 0;
+    justify-content: var(--fs-text-align, center);
+  }
+
+  .free-shipping__check svg {
+    width: 15px;
+    height: 15px;
+    margin-top: -1.75px;
+  }
+
+  .free-shipping__bar {
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--fs-progress-bar-background-color, #00000014);
+    overflow: hidden;
+  }
+
+  .free-shipping__bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: var(--fs-progress-bar-fill-color, #1e88ff);
+    transition: width 220ms ease, background 220ms ease;
+  }
+
+  /* ✅ When full, swap the fill color */
+  .free-shipping[data-full="true"] .free-shipping__bar-fill {
+    background: var(--fs-progress-bar-fill-color-full, #f7d12f);
+  }
+{% endstylesheet %}
+
+<script>
+  class FreeShippingProgress extends HTMLElement {
+    connectedCallback() {
+      this.textEl = this.querySelector('[data-text]');
+      this.fillEl = this.querySelector('[data-fill]');
+
+      this.threshold = parseInt(this.dataset.thresholdCents || this.getAttribute('data-threshold-cents') || '0', 10);
+
+      this.successText = this.getAttribute('data-success-text') || 'You’ve unlocked <strong>FREE Shipping</strong>';
+      const before = this.getAttribute('data-text-before') || "You're ";
+      const after = this.getAttribute('data-text-after') || " away from FREE Shipping";
+
+      this.progressTemplate = `${before}[amount]${after}`;
+
+      this.updateFromCartObject({{ cart | json }});
+
+      document.addEventListener('cartUpdate', () => this.refresh());
+      document.addEventListener('cart:update', () => this.refresh());
+      document.addEventListener('theme:cart:update', () => this.refresh());
+    }
+
+    async refresh() {
+      try {
+        const res = await fetch('/cart.js', { credentials: 'same-origin' });
+        if (!res.ok) return;
+        const cart = await res.json();
+        this.updateFromCartObject(cart);
+      } catch (e) {}
+    }
+
+    updateFromCartObject(cart) {
+      if (!this.threshold || !this.textEl || !this.fillEl) return;
+
+      const total = Number(cart?.total_price || 0);
+      const remaining = Math.max(this.threshold - total, 0);
+      const progress = Math.min(Math.round((total / this.threshold) * 100), 100);
+
+      const formattedRemaining = this.formatMoney(remaining, cart?.currency || '{{ cart.currency.iso_code }}');
+
+      // ✅ Toggle "full" state so CSS can switch colors
+      this.dataset.full = remaining === 0 ? "true" : "false";
+
+      if (remaining === 0) {
+        this.textEl.innerHTML = this.successText;
+      } else {
+        this.textEl.innerHTML = this.progressTemplate.replace('[amount]', formattedRemaining);
+      }
+
+      this.fillEl.style.width = `${progress}%`;
+      this.closest('[role="progressbar"]')?.setAttribute('aria-valuenow', String(progress));
+    }
+
+    formatMoney(cents, currency) {
+      try {
+        return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(cents / 100);
+      } catch (e) {
+        return (cents / 100).toFixed(2);
+      }
+    }
+  }
+
+  if (!customElements.get('free-shipping-progress')) {
+    customElements.define('free-shipping-progress', FreeShippingProgress);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Shipping Progress",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Styling"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font size",
+      "min": 0,
+      "max": 99,
+      "step": 1,
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text align",
+      "options": [
+        { "value": "flex-start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "flex-end", "label": "Right" }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "text_before_price",
+      "label": "Text before price",
+      "default": "<p>You're</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text_after_price",
+      "label": "Text after price",
+      "default": "<p>away from <strong>FREE SHIPPING!</strong></p>"
+    }
+  ],
+  "presets": [
+    { "name": "Shipping Progress" }
+  ]
+}
+{% endschema %}

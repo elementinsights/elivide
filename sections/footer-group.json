@@ -1,0 +1,80 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "custom_footer_dwrL6L": {
+      "type": "custom-footer",
+      "blocks": {
+        "menu_column_PftJnU": {
+          "type": "menu_column",
+          "settings": {
+            "heading": "Supplements",
+            "menu": "footer-menu-1"
+          }
+        },
+        "menu_column_UrKg3T": {
+          "type": "menu_column",
+          "settings": {
+            "heading": "Learn",
+            "menu": "footer-menu-2"
+          }
+        },
+        "menu_column_ATVnC3": {
+          "type": "menu_column",
+          "settings": {
+            "heading": "Company",
+            "menu": "footer-menu-3"
+          }
+        }
+      },
+      "block_order": [
+        "menu_column_PftJnU",
+        "menu_column_UrKg3T",
+        "menu_column_ATVnC3"
+      ],
+      "name": "Custom footer",
+      "settings": {
+        "footer_image": "shopify://shop_images/elividie-logo-inverse.avif",
+        "left_area_width_desktop": 38,
+        "logo_width_desktop": 240,
+        "logo_width_mobile": 200,
+        "show_socials": true,
+        "facebook_social": "https://www.facebook.com/elividehealth",
+        "instagram_social": "https://www.instagram.com/elividehealth/?hl=en",
+        "pinterest_social": "",
+        "tiktok_social": "https://www.tiktok.com/@elividehealth",
+        "payment_methods_padding_top": 50,
+        "payment_methods_padding_bottom": 20,
+        "background_color": "#000000",
+        "text_color": "#ffffff",
+        "muted_text_color": "#b9c3cc",
+        "padding_top": 52,
+        "padding_bottom": 20
+      }
+    },
+    "custom_utilities_Tan8CG": {
+      "type": "custom-utilities",
+      "name": "Custom Utilities",
+      "settings": {
+        "background_color": "#000000",
+        "text_color": "#ffffff",
+        "padding_top": 30,
+        "padding_bottom": 30,
+        "disclaimer": "**These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease."
+      }
+    }
+  },
+  "order": [
+    "custom_footer_dwrL6L",
+    "custom_utilities_Tan8CG"
+  ]
+}

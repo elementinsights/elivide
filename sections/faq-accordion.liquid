@@ -1,0 +1,396 @@
+{% comment %}
+  Section: Products & Orders FAQ
+  - Sticky heading on desktop (works because the grid is NOT overflow hidden)
+  - Smooth open + close animation (including close) using the Web Animations API
+    and by temporarily preventing the default <details> close until animation completes.
+{% endcomment %}
+
+<section
+  class="po-faq"
+  id="po-faq-{{ section.id }}"
+  style="
+    --po-bg-1: {{ section.settings.bg_color_1 }};
+    --po-bg-2: {{ section.settings.bg_color_2 }};
+    --po-bg-3: {{ section.settings.bg_color_3 }};
+    --po-radius: {{ section.settings.radius }}px;
+    --po-pad: {{ section.settings.padding }}px;
+    --po-gap: {{ section.settings.gap }}px;
+    --po-max: {{ section.settings.max_width }}px;
+    --po-sticky-top: {{ section.settings.sticky_top }}px;
+    --po-anim-ms: {{ section.settings.anim_speed }}ms;
+  "
+>
+  <div class="po-faq__container">
+    <div class="po-faq__panel">
+      <div class="po-faq__grid">
+        <div class="po-faq__headingWrap">
+          {% if section.settings.heading != blank %}
+            <h2 class="po-faq__heading">{{ section.settings.heading | escape }}</h2>
+          {% endif %}
+        </div>
+
+        <div class="po-faq__items" data-po-faq-items>
+          {% for block in section.blocks %}
+            {% assign q = block.settings.question %}
+            {% assign a = block.settings.answer %}
+
+            <details class="po-faq__item" {{ block.shopify_attributes }} data-po-faq-item>
+              <summary class="po-faq__summary" data-po-summary>
+                <span class="po-faq__question">{{ q | escape }}</span>
+
+                <span class="po-faq__icon" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" focusable="false" role="presentation">
+                    <path d="M5.5 7.5 10 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </span>
+              </summary>
+
+              <div class="po-faq__answer" data-po-answer>
+                <div class="po-faq__answerInner rte">
+                  {{ a }}
+                </div>
+              </div>
+            </details>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #po-faq-{{ section.id }} { width: 100%; }
+
+    #po-faq-{{ section.id }} .po-faq__container {
+      margin-bottom:40px;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__panel {
+      background: linear-gradient(135deg, var(--po-bg-3) 0%, var(--po-bg-1) 42%, var(--po-bg-2) 100%);
+      border-radius: var(--po-radius);
+      overflow: hidden;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__grid {
+      padding: calc(var(--po-pad) * 1.1);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--po-gap);
+      overflow: visible;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__headingWrap { align-self: start; }
+
+    #po-faq-{{ section.id }} .po-faq__heading {
+      margin: 0;
+      font-weight: 800;
+      line-height: 1.05;
+      font-size: clamp(28px, 3.2vw, 32px);
+      color: #111;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__items {
+      display: grid;
+      gap: 14px;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__item {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.03);
+      overflow: hidden;
+    }
+
+    /* Remove default marker */
+    #po-faq-{{ section.id }} summary::-webkit-details-marker { display: none; }
+    #po-faq-{{ section.id }} summary::marker { content: ""; }
+
+    #po-faq-{{ section.id }} .po-faq__summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 18px;
+      min-height: 62px;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__question {
+      font-size: 20px;
+      line-height: 1.25;
+      color: #111;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: #111;
+      flex: 0 0 auto;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__icon svg {
+      width: 20px;
+      height: 20px;
+      transition: transform var(--po-anim-ms) ease;
+    }
+
+    #po-faq-{{ section.id }} details[open] .po-faq__icon svg { transform: rotate(180deg); }
+
+    /* Answer wrapper (height animation is handled via JS, but keep clipping) */
+    #po-faq-{{ section.id }} .po-faq__answer {
+      overflow: hidden;
+    }
+
+    #po-faq-{{ section.id }} .po-faq__answerInner {
+      padding: 0 18px 18px;
+      color: rgba(17,17,17,0.82);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+
+    /* Make richtext look clean */
+    #po-faq-{{ section.id }} .rte > *:first-child { margin-top: 0; }
+    #po-faq-{{ section.id }} .rte > *:last-child { margin-bottom: 0; }
+    #po-faq-{{ section.id }} .rte a { text-decoration: underline; }
+
+    @media (min-width: 990px) {
+      #po-faq-{{ section.id }} .po-faq__grid {
+        grid-template-columns: minmax(220px, 0.9fr) minmax(420px, 1.4fr);
+        align-items: start;
+        gap: 26px;
+        padding: calc(var(--po-pad) * 1.25);
+      }
+
+      #po-faq-{{ section.id }} .po-faq__headingWrap {
+        position: sticky;
+        top: var(--po-sticky-top);
+        align-self: start;
+      }
+
+      #po-faq-{{ section.id }} .po-faq__items {
+        max-width: 640px;
+        justify-self: end;
+        width: 100%;
+        gap: 14px;
+      }
+
+      #po-faq-{{ section.id }} .po-faq__summary { padding: 16px 24px; }
+      #po-faq-{{ section.id }} .po-faq__answerInner { padding: 0 22px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      #po-faq-{{ section.id }} .po-faq__grid { padding: 16px; }
+      #po-faq-{{ section.id }} .po-faq__summary { padding: 16px 16px; }
+      #po-faq-{{ section.id }} .po-faq__question { font-size: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #po-faq-{{ section.id }} .po-faq__icon svg { transition: none !important; }
+    }
+
+  </style>
+
+  <script>
+    (function() {
+      var root = document.getElementById('po-faq-{{ section.id }}');
+      if (!root) return;
+
+      var wrap = root.querySelector('[data-po-faq-items]');
+      if (!wrap) return;
+
+      var duration = parseInt(getComputedStyle(root).getPropertyValue('--po-anim-ms'), 10);
+      if (!duration || Number.isNaN(duration)) duration = 220;
+
+      var easing = 'ease';
+
+      function animate(detailsEl, opening) {
+        var answer = detailsEl.querySelector('[data-po-answer]');
+        if (!answer) return;
+
+        // Cancel any in-flight animation
+        if (detailsEl._poAnim) {
+          detailsEl._poAnim.cancel();
+          detailsEl._poAnim = null;
+        }
+
+        // Fix current height so we can animate from it
+        var startHeight = answer.offsetHeight;
+
+        // For opening, ensure it's open before measuring end height
+        if (opening) detailsEl.open = true;
+
+        // Measure target height by temporarily setting height:auto
+        answer.style.height = 'auto';
+        var endHeight = answer.scrollHeight;
+
+        // Reset to start height and animate to end
+        answer.style.height = startHeight + 'px';
+        answer.style.overflow = 'hidden';
+
+        // Force reflow
+        answer.offsetHeight;
+
+        var keyframes = [
+          { height: startHeight + 'px', opacity: opening ? 0 : 1 },
+          { height: endHeight + 'px', opacity: 1 }
+        ];
+
+        // Closing should animate from current height to 0
+        if (!opening) {
+          keyframes = [
+            { height: startHeight + 'px', opacity: 1 },
+            { height: '0px', opacity: 0 }
+          ];
+        }
+
+        detailsEl.classList.add('po-is-animating');
+
+        detailsEl._poAnim = answer.animate(keyframes, {
+          duration: duration,
+          easing: easing
+        });
+
+        detailsEl._poAnim.onfinish = function() {
+          detailsEl.classList.remove('po-is-animating');
+          detailsEl._poAnim = null;
+
+          if (!opening) {
+            detailsEl.open = false; // close only after animation
+          }
+
+          // Cleanup inline styles
+          answer.style.height = '';
+          answer.style.overflow = '';
+
+          // Keep closed answers visually collapsed
+          if (!detailsEl.open) {
+            answer.style.height = '0px';
+            answer.style.overflow = 'hidden';
+            answer.style.opacity = '';
+          }
+        };
+
+        detailsEl._poAnim.oncancel = function() {
+          detailsEl.classList.remove('po-is-animating');
+          detailsEl._poAnim = null;
+          answer.style.height = '';
+          answer.style.overflow = '';
+        };
+      }
+
+      function closeOthers(exceptEl) {
+        var openOnes = wrap.querySelectorAll('details.po-faq__item[open]');
+        openOnes.forEach(function(d) {
+          if (d !== exceptEl) animate(d, false);
+        });
+      }
+
+      // Initialize closed items to height:0 so they don't flash open
+      wrap.querySelectorAll('details.po-faq__item').forEach(function(d) {
+        var ans = d.querySelector('[data-po-answer]');
+        if (!ans) return;
+        if (!d.open) {
+          ans.style.height = '0px';
+          ans.style.overflow = 'hidden';
+        }
+      });
+
+      // Intercept clicks on summary so we can animate BOTH open and close
+      wrap.addEventListener('click', function(e) {
+        var summary = e.target.closest('summary');
+        if (!summary) return;
+
+        var detailsEl = summary.parentElement;
+        if (!detailsEl || detailsEl.tagName !== 'DETAILS') return;
+
+        // Prevent native toggle (native close is instant)
+        e.preventDefault();
+
+        var isOpen = detailsEl.hasAttribute('open');
+
+        if (isOpen) {
+          animate(detailsEl, false);
+        } else {
+          {% if section.settings.single_open %}
+            closeOthers(detailsEl);
+          {% endif %}
+          animate(detailsEl, true);
+        }
+      });
+
+      // Keep heights correct on resize (open items may wrap)
+      var t;
+      window.addEventListener('resize', function() {
+        clearTimeout(t);
+        t = setTimeout(function() {
+          wrap.querySelectorAll('details.po-faq__item[open]').forEach(function(d) {
+            var ans = d.querySelector('[data-po-answer]');
+            if (!ans) return;
+            // snap to natural height after resize
+            ans.style.height = 'auto';
+            var h = ans.scrollHeight;
+            ans.style.height = '';
+            ans.style.height = h + 'px';
+            // then clean up so layout stays natural
+            ans.style.height = '';
+            ans.style.overflow = '';
+          });
+        }, 150);
+      });
+
+      // Respect reduced motion: disable animations, use native behavior
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        wrap.removeEventListener('click', function() {});
+      }
+    })();
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ Accordion",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Products & Orders" },
+    { "type": "color", "id": "bg_color_1", "label": "Background color 1", "default": "#cfe1d6" },
+    { "type": "color", "id": "bg_color_2", "label": "Background color 2", "default": "#86b9a6" },
+    { "type": "color", "id": "bg_color_3", "label": "Background color 3", "default": "#f3efe7" },
+
+    { "type": "range", "id": "max_width", "min": 900, "max": 1600, "step": 20, "unit": "px", "label": "Max width", "default": 1400 },
+    { "type": "range", "id": "padding", "min": 12, "max": 64, "step": 2, "unit": "px", "label": "Section padding", "default": 32 },
+    { "type": "range", "id": "gap", "min": 8, "max": 40, "step": 2, "unit": "px", "label": "Gap between columns/rows", "default": 22 },
+    { "type": "range", "id": "radius", "min": 0, "max": 40, "step": 2, "unit": "px", "label": "Corner radius", "default": 18 },
+
+    { "type": "range", "id": "sticky_top", "min": 0, "max": 160, "step": 4, "unit": "px", "label": "Sticky heading offset (desktop)", "default": 24 },
+    { "type": "range", "id": "anim_speed", "min": 120, "max": 700, "step": 20, "unit": "ms", "label": "Accordion animation speed", "default": 220 },
+
+    { "type": "checkbox", "id": "single_open", "label": "Only allow one item open at a time", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "qa",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Where can I find the dosage information?" },
+        { "type": "richtext", "id": "answer", "label": "Answer", "default": "<p>Add your answer here.</p>" }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "FAQ Accordion",
+      "blocks": [
+        { "type": "qa" },
+        { "type": "qa" },
+        { "type": "qa" },
+        { "type": "qa" },
+        { "type": "qa" }
+      ]
+    }
+  ]
+}
+{% endschema %}

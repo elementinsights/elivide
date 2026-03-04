@@ -1,0 +1,478 @@
+{% comment %}
+  Section: Comparison table (metafield-driven)
+  Uses product metafield: comparison_table_items (list of metaobjects)
+  Metaobject type: comparison_table_item
+  Field: title
+{% endcomment %}
+
+{% assign items = product.metafields.custom.comparison_table_items.value %}
+
+<section
+  id="enhanced-comparison-{{ section.id }}"
+  class="enhanced-comparison-section"
+  style="
+    --bg: {{ section.settings.bg }};
+    --text: {{ section.settings.text }};
+    --badge_bg: {{ section.settings.badge_bg }};
+    --brand_bg: {{ section.settings.brand_bg }};
+    --border: {{ section.settings.border }};
+    --cta_bg: {{ section.settings.cta_bg }};
+    --cta_text: {{ section.settings.cta_text }};
+    --radius_lg: {{ section.settings.radius_lg }}px;
+    --radius_md: {{ section.settings.radius_md }}px;
+  "
+>
+  <div class="ec-page-padding">
+    <div class="ec-container">
+      <div class="ec-vertical ec-align-center">
+
+        {% if section.settings.show_badge %}
+          <div class="rating-badge-top">
+            <div class="rating-stars" aria-label="5 star rating">
+              {% render 'star-wrapper' %}
+            </div>
+            <div class="rating-text">{{ section.settings.badge_text }}</div>
+          </div>
+        {% endif %}
+
+        <h2 class="comparison-heading">
+          {{ section.settings.heading }}
+        </h2>
+
+        <div class="comparison-container">
+          <div class="comparison-header">
+            <div class="comparison-header-cell empty-cell"></div>
+
+            <div class="comparison-header-cell brand-cell">
+              {% if section.settings.brand_logo != blank %}
+                <img
+                  src="{{ section.settings.brand_logo | image_url: width: 260 }}"
+                  loading="lazy"
+                  alt="Brand Logo"
+                  class="brand-logo"
+                  width="140"
+                  height="48"
+                >
+              {% else %}
+                <div class="brand-logo-fallback">{{ section.settings.brand_label }}</div>
+                {% if section.settings.brand_label_subtext != blank %}
+                    <div class="brand-label-subtext">{{ section.settings.brand_label_subtext }}</div>
+                {% endif %}
+              {% endif %}
+            </div>
+
+            <div class="comparison-header-cell competitor-cell">
+              <div class="competitor-text">{{ section.settings.competitor_label }}</div>
+            </div>
+          </div>
+
+          <div class="feature-rows-container">
+            {% if items != blank %}
+              {% for item in items %}
+                {% assign feature_title = item.title | default: item.fields.title %}
+
+                <div class="comparison-row {% if forloop.first == false %}has-top-border{% endif %}">
+                  <div class="feature-name-cell">
+                    {{ feature_title }}
+                  </div>
+
+                  <div class="brand-feature-cell">
+                    {{ 'icon-tick.svg' | inline_asset_content }}
+                  </div>
+
+                  <div class="competitor-feature-cell">
+                    {{ 'icon-cross.svg' | inline_asset_content }}
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        {% if section.settings.show_cta == true %}
+            <div class="cta-section">
+                <a href="{{ section.settings.cta_link }}" class="cta-button">
+                    <span class="cta-text">{{ section.settings.cta_text_label }}</span>
+                    {% if section.settings.arrow_icon != blank %}
+                    <img
+                        src="{{ section.settings.arrow_icon | image_url: width: 40 }}"
+                        loading="lazy"
+                        alt="Button Icon"
+                        class="cta-icon"
+                        width="20"
+                        height="20"
+                    >
+                    {% endif %}
+                </a>
+
+                <div class="guarantee-section">
+                    {% if section.settings.guarantee_icon != blank %}
+                    <img
+                        src="{{ section.settings.guarantee_icon | image_url: width: 40 }}"
+                        loading="lazy"
+                        alt="Guarantee Icon"
+                        class="guarantee-icon"
+                        width="20"
+                        height="20"
+                    >
+                    {% endif %}
+                    <div class="guarantee-text">{{ section.settings.guarantee_text }}</div>
+                </div>
+            </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Base */
+    #enhanced-comparison-{{ section.id }}{
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    #enhanced-comparison-{{ section.id }} .ec-page-padding{
+      padding: 64px 20px 72px;
+    }
+
+    #enhanced-comparison-{{ section.id }} .ec-container{
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    #enhanced-comparison-{{ section.id }} .ec-vertical{
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    #enhanced-comparison-{{ section.id }} .ec-align-center{
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Rating badge */
+    #enhanced-comparison-{{ section.id }} .rating-badge-top{
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 18px;
+      background: var(--badge_bg);
+      border-radius: 999px;
+    }
+    #enhanced-comparison-{{ section.id }} .rating-stars{
+      display: inline-flex;
+      gap: 4px;
+      transform: translateY(-1.5px);
+    }
+    #enhanced-comparison-{{ section.id }} .rating-star-icon{
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+    #enhanced-comparison-{{ section.id }} .rating-text{
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      font-size: 14px;
+      color: var(--text);
+      white-space: nowrap;
+      position:relative;
+      top:.75px;
+    }
+
+    /* Heading */
+    #enhanced-comparison-{{ section.id }} .comparison-heading{
+      margin: 0;
+      padding: 0;
+      color: var(--text);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+      font-size: 52px;
+      max-width: 786px;
+    }
+
+    /* Table container */
+    #enhanced-comparison-{{ section.id }} .comparison-container{
+      width: 100%;
+      max-width: 786px;
+      margin-top: 6px;
+    }
+
+    /* Header row (no border) */
+    #enhanced-comparison-{{ section.id }} .comparison-header{
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr 0.95fr;
+      align-items: end;
+      column-gap: 0;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    #enhanced-comparison-{{ section.id }} .comparison-header-cell{
+      padding: 0;
+      min-height: 118px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #enhanced-comparison-{{ section.id }} .empty-cell{
+      justify-content: flex-start;
+    }
+
+    #enhanced-comparison-{{ section.id }} .brand-cell{
+      background: var(--brand_bg);
+      border-radius: var(--radius_lg) var(--radius_lg) 0 0;
+      min-height: 118px;
+      display:flex;
+      flex-direction:column;
+    }
+    #enhanced-comparison-{{ section.id }} .brand-logo{
+      max-width: 160px;
+      height: auto;
+      display: block;
+    }
+    #enhanced-comparison-{{ section.id }} .brand-logo-fallback{
+      color: #FFF;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      font-size: 26px;
+    }
+
+    #enhanced-comparison-{{ section.id }} .brand-label-subtext {
+        font-size:14px;
+        color:#FFF;
+    }
+
+    #enhanced-comparison-{{ section.id }} .competitor-cell{
+      background: transparent;
+    }
+    #enhanced-comparison-{{ section.id }} .competitor-text{
+      font-weight: 800;
+      color: var(--text);
+      font-size: 18px;
+      padding:0 10px;
+    }
+
+    /* Feature rows container (with border) */
+    #enhanced-comparison-{{ section.id }} .feature-rows-container{
+      border: 1px solid var(--border);
+      border-radius: var(--radius_lg);
+      overflow: hidden;
+    }
+
+    /* Rows */
+    #enhanced-comparison-{{ section.id }} .comparison-row{
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr 0.95fr;
+      align-items: stretch;
+      min-height: 98px;
+    }
+    #enhanced-comparison-{{ section.id }} .comparison-row.has-top-border{
+      border-top: 1px solid var(--border);
+    }
+
+    /* Cells */
+    #enhanced-comparison-{{ section.id }} .feature-name-cell{
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      padding: 20px 32px;
+      font-weight: 800;
+      font-size: 18px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+    }
+    
+    #enhanced-comparison-{{ section.id }} .brand-feature-cell svg, #enhanced-comparison-{{ section.id }} .competitor-feature-cell svg {
+        height: 40px;
+        width: 40px;
+    }
+
+    #enhanced-comparison-{{ section.id }} .brand-feature-cell{
+      background: var(--brand_bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid rgba(255,255,255,0.9);
+      position: relative;
+      z-index: 2;
+    }
+
+    #enhanced-comparison-{{ section.id }} .competitor-feature-cell{
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid var(--border);
+    }
+
+    #enhanced-comparison-{{ section.id }} .feature-icon{
+      width: 34px;
+      height: 34px;
+      display: block;
+    }
+
+    /* CTA + guarantee */
+    #enhanced-comparison-{{ section.id }} .cta-section{
+      margin-top: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    #enhanced-comparison-{{ section.id }} .cta-button{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: var(--cta_bg);
+      color: var(--cta_text);
+      text-decoration: none;
+      border-radius: var(--radius_md);
+      padding: 22px 36px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      width: 460px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    #enhanced-comparison-{{ section.id }} .cta-text{
+      font-size: 18px;
+    }
+
+    #enhanced-comparison-{{ section.id }} .cta-icon{
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+
+    #enhanced-comparison-{{ section.id }} .guarantee-section{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 16px;
+    }
+    #enhanced-comparison-{{ section.id }} .guarantee-icon{
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+    /* Mobile */
+    @media (max-width: 749px){
+
+        #enhanced-comparison-{{ section.id }} .rating-badge-top{
+            gap:7px;
+        }
+        
+      #enhanced-comparison-{{ section.id }} .ec-page-padding{
+        padding: 44px 16px 52px;
+      }
+
+        #enhanced-comparison-{{ section.id }} .brand-logo-fallback{
+            font-size:19px;
+        }
+
+        #enhanced-comparison-{{ section.id }} .brand-label-subtext {
+            font-size:11.5px;
+        }
+
+      #enhanced-comparison-{{ section.id }} .rating-text{
+        font-size: 10.5px;
+      }
+
+      #enhanced-comparison-{{ section.id }} .comparison-heading{
+        font-size: 40px;
+        max-width: 520px;
+      }
+
+      #enhanced-comparison-{{ section.id }} .comparison-container{
+        max-width: 560px;
+      }
+
+      #enhanced-comparison-{{ section.id }} .comparison-header,
+      #enhanced-comparison-{{ section.id }} .comparison-row{
+        grid-template-columns: 1.05fr 0.95fr 0.95fr;
+      }
+
+      #enhanced-comparison-{{ section.id }} .comparison-header-cell{
+        min-height: 104px;
+      }
+      #enhanced-comparison-{{ section.id }} .brand-cell{
+        min-height: 104px;
+        display:flex;
+        flex-direction:column;
+      }
+      #enhanced-comparison-{{ section.id }} .brand-logo{
+        max-width: 130px;
+      }
+
+      #enhanced-comparison-{{ section.id }} .competitor-text{
+        font-size: 16px;
+        text-wrap:wrap;
+      }
+
+      #enhanced-comparison-{{ section.id }} .feature-name-cell{
+        font-size: 14px;
+        padding: 22px 16px;
+      }
+
+      #enhanced-comparison-{{ section.id }} .comparison-row{
+        min-height: 94px;
+      }
+
+      #enhanced-comparison-{{ section.id }} .cta-button{
+        width: 100%;
+        padding: 22px 20px;
+        border-radius: 20px;
+      }
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Comparison table",
+  "settings": [
+    { "type": "color", "id": "bg", "label": "Background", "default": "#FFFBF2" },
+    { "type": "color", "id": "text", "label": "Text color", "default": "#212121" },
+    { "type": "color", "id": "badge_bg", "label": "Badge background", "default": "#F2EEDF" },
+    { "type": "color", "id": "brand_bg", "label": "Brand column background", "default": "#1D7879" },
+    { "type": "color", "id": "border", "label": "Border color", "default": "#212121" },
+    { "type": "checkbox", "id": "show_cta", "label": "Show CTA", "default": false },
+    { "type": "color", "id": "cta_bg", "label": "CTA background", "default": "#1D7879", "visible_if": "{{ section.settings.show_cta == true }}" },
+    { "type": "color", "id": "cta_text", "label": "CTA text color", "default": "#FFFFFF",  "visible_if": "{{ section.settings.show_cta == true }}" },
+
+    { "type": "range", "id": "radius_lg", "label": "Large radius (table)", "min": 10, "max": 40, "step": 1, "default": 24 },
+    { "type": "range", "id": "radius_md", "label": "Medium radius (button)", "min": 8, "max": 30, "step": 1, "default": 12, "visible_if": "{{ section.settings.show_cta == true }}" },
+
+    { "type": "checkbox", "id": "show_badge", "label": "Show rating badge", "default": true },
+    { "type": "text", "id": "badge_text", "label": "Badge text", "default": "OVER 100,000+ UNITS SOLD - RATED 5 STARS" },
+
+    { "type": "richtext", "id": "heading", "label": "Heading", "default": "<p><strong>Elivide Magnesium</strong> vs. Other Magnesium Brands</p>" },
+
+    { "type": "image_picker", "id": "brand_logo", "label": "Brand logo (SVG/PNG)" },
+    { "type": "text", "id": "brand_label", "label": "Brand label (fallback)", "default": "ELIVIDE" },
+    { "type": "text", "id": "brand_label_subtext", "label": "Brand label subtext", "default": "SUPPLEMENTS" },
+
+    { "type": "text", "id": "competitor_label", "label": "Competitor label", "default": "Other Brands" },
+
+    { "type": "text", "id": "cta_text_label", "label": "CTA button text", "default": "SHOP NOW",  "visible_if": "{{ section.settings.show_cta == true }}" },
+    { "type": "url", "id": "cta_link", "label": "CTA link",  "visible_if": "{{ section.settings.show_cta == true }}" },
+    { "type": "image_picker", "id": "arrow_icon", "label": "CTA arrow icon",  "visible_if": "{{ section.settings.show_cta == true }}" },
+
+    { "type": "image_picker", "id": "guarantee_icon", "label": "Guarantee icon",  "visible_if": "{{ section.settings.show_cta == true }}" },
+    { "type": "text", "id": "guarantee_text", "label": "Guarantee text", "default": "30 Day Money-Back Guarantee",  "visible_if": "{{ section.settings.show_cta == true }}" }
+  ],
+  "presets": [
+    { "name": "Comparison table" }
+  ]
+}
+{% endschema %}
