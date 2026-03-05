@@ -188,11 +188,11 @@
     margin-right: 6px;
   }
 
-  /* Desktop (>=768px):
+  /* Desktop (>=750px):
      Use FLEX for the grid so rows "stretch" and cards become equal-height.
      Flexbox will match heights within each row (each set of 3).
   */
-  @media screen and (min-width: 768px) {
+  @media screen and (min-width: 750px) {
     .cs__grid--desktop {
       display: flex;
       flex-wrap: wrap;
@@ -215,8 +215,8 @@
     }
   }
 
-  /* Mobile (<768px): show mobile list, up to 5 cards */
-  @media screen and (max-width: 767px) {
+  /* Mobile (<750px): show mobile list, up to 5 cards */
+  @media screen and (max-width: 749px) {
     .cs__heading {
       font-size: var(--cs-heading-font-size-mobile);
     }

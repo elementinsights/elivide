@@ -13,13 +13,13 @@
   overflow: hidden;
 }
 
-@media screen and (min-width:768px) {
+@media screen and (min-width:750px) {
   #product-review-panel div.R-flex-row.R-flex-row--noMargin.R-flex-between-xxs.R-flex-bottom-xxs > div:nth-child(1) {
     margin-bottom:0 !important;
   }
 }
 
-@media screen and (max-width:767px) {
+@media screen and (max-width:749px) {
   .ElementsWidget-prefix * {
     text-align:left;
   }
