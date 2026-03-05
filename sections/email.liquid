@@ -1,7 +1,7 @@
 <div class="shopify-section section-wrapper section-email"
 style="
         --e-bg: {{ section.settings.background_color }};
-        --e-color: {{ section.settings.font_color }};
+        --e-color: {{ section.settings.text_color }};
         --e-heading-size: {{ section.settings.heading_size }}px;
         --e-subheading-size: {{ section.settings.subheading_size }}px;
         --e-padding-top: {{ section.settings.padding_top }}px;
@@ -43,13 +43,13 @@ style="
         gap: var(--e-gap);
     }
 
-    .section-email email__heading {
+    .section-email .email__heading {
         font-size: var(--e-heading-size);
         text-wrap:balance;
     }
 
     .section-email .email__subheading {
-        font-size: var(--e-subheading_size);
+        font-size: var(--e-subheading-size);
         text-wrap:balance;
         margin-bottom: calc(var(--e-gap)/2*-1);
     }

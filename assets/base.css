@@ -47,49 +47,20 @@
 }
 
 @media (max-width: 749px) {
-  [id*="reviewsio-carousel-widget"] .CarouselWidget__inner {
-    flex-direction: column !important;
-  }
-
   [id*="reviewsio-carousel-widget"] .CarouselWidget__header {
-    width: calc(100% + 32px) !important;
-    max-width: calc(100% + 32px) !important;
-    margin-left: -16px !important;
-    margin-right: -16px !important;
-    order: -1 !important;
-    position: relative !important;
-    overflow: visible !important;
-    padding: 20px 16px !important;
-    box-sizing: border-box !important;
-  }
-
-  [id*="reviewsio-carousel-widget"] .CarouselWidget__header > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    position: relative !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    overflow: visible !important;
-  }
-
-  [id*="reviewsio-carousel-widget"] .CarouselWidget__header * {
-    position: relative !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-
-  [id*="reviewsio-carousel-widget"] .CarouselWidget__list,
-  [id*="reviewsio-carousel-widget"] .R-ReviewsList-container {
-    width: 100% !important;
-    max-width: 100% !important;
+    display: none !important;
   }
 }
 
+/* Currency/localization selector alignment */
+.dropdown-localization__button {
+  display: flex;
+  align-items: center;
+  gap: var(--margin-2xs, 0.25rem);
+}
+.dropdown-localization__button .currency-code {
+  transform: translateY(2px);
+}
 
 /* ============================
    Custom Font Declarations

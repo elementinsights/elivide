@@ -155,8 +155,9 @@ class HeaderComponent extends Component {
 
     // Fallback for IntersectionObserver: detect offscreen based on scroll position
     // This fixes mobile browsers where the observer may not fire reliably during fast scrolling
+    // Use offsetTop + offsetHeight to account for elements above the header (e.g. announcement bar)
     if (stickyMode === 'scroll-up' && !this.#offscreen) {
-      if (scrollTop > this.offsetHeight) {
+      if (scrollTop > this.offsetTop + this.offsetHeight) {
         this.#offscreen = true;
       }
     }
@@ -212,7 +213,8 @@ class HeaderComponent extends Component {
           this.dataset.stickyState = 'idle';
           this.removeAttribute('data-animating');
         }, this.#animationDelay);
-      } else {
+      } else if (this.dataset.stickyState !== 'inactive') {
+        // Only set idle if header was previously sticky, not when in natural flow
         this.dataset.scrollDirection = 'none';
         this.dataset.stickyState = 'idle';
       }
@@ -245,6 +247,10 @@ class HeaderComponent extends Component {
     if (this.#scrollRafId !== null) {
       cancelAnimationFrame(this.#scrollRafId);
       this.#scrollRafId = null;
+    }
+    if (this.#timeout) {
+      clearTimeout(this.#timeout);
+      this.#timeout = null;
     }
     document.body.style.setProperty('--header-height', '0px');
   }
