@@ -1,5 +1,8 @@
 {%- liquid
-  assign p = block.settings.product
+  assign p = section.settings.limited_time_product
+  if p == blank
+    assign p = block.settings.product
+  endif
   if p == blank
     assign p = collections.all.products.first
   endif
@@ -11,7 +14,7 @@
 
   if v and v.available
     assign can_add_to_cart = true
-    assign add_to_cart_text = 'products.product.add_to_cart' | t
+    assign add_to_cart_text = 'Add'
   elsif v and v.inventory_management == 'shopify' and v.inventory_quantity <= 0 and v.inventory_policy == 'deny'
     assign can_add_to_cart = false
     assign add_to_cart_text = 'products.product.sold_out' | t
@@ -24,7 +27,10 @@
     assign image_obj = p.featured_image
   endif
 
-  assign compare_price = block.settings.compare_price
+  assign compare_price = section.settings.limited_time_compare_price
+  if compare_price == blank
+    assign compare_price = block.settings.compare_price
+  endif
 
 -%}
 

@@ -114,13 +114,13 @@
           "type": "_limited-time",
           "static": true,
           "settings": {
-            "product": "skin-mineral",
+            "product": "eclipse-wholefood-vitamin-c",
             "border_color": "#679992",
             "button_color": "#679992",
             "image_border": true,
             "image_border_color": "#0000001f",
             "image_width": 98,
-            "compare_price": "£42.00"
+            "compare_price": "€50.00"
           },
           "blocks": {
             "add-to-cart": {
@@ -152,6 +152,8 @@
       "settings": {
         "section_width": "page-width",
         "color_scheme": "scheme-1",
+        "limited_time_product": "eclipse-wholefood-vitamin-c",
+        "limited_time_compare_price": "€50.00",
         "padding-block-start": 24,
         "padding-block-end": 0
       }
