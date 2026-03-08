@@ -73,6 +73,31 @@
   </div>
 </div>
 
+{% if faq_items != blank and faq_items.size > 0 %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for item in faq_items -%}
+          {%- assign q = item.question.value | default: item.question -%}
+          {%- if q != blank and item.answer != blank -%}
+            {%- unless forloop.first -%},{%- endunless -%}
+            {
+              "@type": "Question",
+              "name": {{ q | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ item.answer | metafield_tag | strip_html | strip | json }}
+              }
+            }
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{% endif %}
+
 {% style %}
   .cfq {
     width: 100%;

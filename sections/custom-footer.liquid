@@ -41,7 +41,7 @@
         {% endif %}
 
         {% if section.settings.show_socials %}
-            <h3 class="custom-footer__social-heading">Get social with Elivide.</h3>
+            <h3 class="custom-footer__social-heading">{{ section.settings.social_heading }}</h3>
           <div class="custom-footer__social" aria-label="Social links">
             {% assign has_social = false %}
 
@@ -330,6 +330,12 @@
       "id": "show_socials",
       "label": "Show social icons",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "social_heading",
+      "label": "Social heading",
+      "default": "Get social with Elivide."
     },
     {
         "type": "url",

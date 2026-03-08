@@ -2,6 +2,25 @@
   Authority Video — pill-shaped video + credibility statement, stars, branding.
 {% endcomment %}
 
+{% if section.settings.video != blank %}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": {{ section.settings.heading | strip_html | strip | json }},
+      "description": {{ section.settings.subtext | strip_html | strip | json }},
+      {%- if section.settings.cover_image != blank -%}
+        "thumbnailUrl": "https:{{ section.settings.cover_image | image_url: width: 1200 }}",
+      {%- endif -%}
+      {%- for source in section.settings.video.sources -%}
+        {%- if source.mime_type == 'video/mp4' -%}
+          "contentUrl": "{{ source.url }}",
+        {%- endif -%}
+      {%- endfor -%}
+      "uploadDate": "{{ section.settings.video.created_at | default: 'now' | date: '%Y-%m-%dT%H:%M:%S%z' }}"
+    }
+  </script>
+{% endif %}
 <section class="av" style="--av-bg: {{ section.settings.section_bg }};">
   <div class="av__wrap">
     {%- comment -%} Video side {%- endcomment -%}
