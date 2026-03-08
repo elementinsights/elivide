@@ -1,0 +1,1363 @@
+{% comment %}
+  Elivide Quiz — Full-page quiz experience
+  Rendered as a theme app extension block
+{% endcomment %}
+
+{% assign logo_url = "" %}
+{% if block.settings.logo != blank %}
+  {% assign logo_url = block.settings.logo | image_url: width: 300 %}
+{% elsif shop.brand.logo %}
+  {% assign logo_url = shop.brand.logo | image_url: width: 300 %}
+{% endif %}
+<div id="elivide-quiz" data-shop="{{ shop.permanent_domain }}" data-proxy-base="/apps/quiz" data-logo-url="{{ logo_url }}"></div>
+
+<style>
+  /* ─── Reset & Base ─── */
+  #elivide-quiz {
+    --eq-bg: #FFF7EF;
+    --eq-text: #1a1a1a;
+    --eq-text-muted: #666;
+    --eq-accent: rgb(103, 169, 160);
+    --eq-accent-hover: rgb(88, 150, 142);
+    --eq-border: #e5e5e5;
+    --eq-card-bg: #ffffff;
+    --eq-radius: 8px;
+    --eq-font: var(--font-body--family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    --eq-font-heading: var(--font-subheading--family, var(--font-heading--family, Georgia, serif));
+
+    background: var(--eq-bg);
+    font-family: var(--eq-font);
+    color: var(--eq-text);
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-top: 60px;
+    padding-bottom: 60px;
+    overflow: hidden;
+  }
+
+  #elivide-quiz * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .eq-hidden { display: none !important; }
+
+  /* ─── Screen container ─── */
+  #elivide-quiz .eq-screen {
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    max-width: 1172px;
+    margin: 0 auto;
+  }
+
+  /* ─── Top bar ─── */
+  .eq-topbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 24px;
+    position: relative;
+  }
+
+  #elivide-quiz .eq-topbar__center {
+    font-size: 16px;
+    color: #99948f;
+    font-weight: 700;
+    padding-bottom: 32px;
+  }
+
+  .eq-topbar__right {
+    position: absolute;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--eq-text);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--eq-font);
+  }
+
+  .eq-topbar__right:hover { opacity: 0.7; }
+
+  .eq-topbar__right svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* ─── Start Screen ─── */
+  .eq-start {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    gap: 80px;
+  }
+
+  .eq-start__content {
+    max-width: 400px;
+  }
+
+  .eq-start__heading {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    color: var(--eq-text);
+    letter-spacing: -0.02em;
+    text-align: left;
+  }
+
+  #elivide-quiz .eq-start__sub {
+    font-size: 16px;
+    color: var(--eq-text-muted);
+    margin-top: 16px;
+    margin-bottom: 40px;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  #elivide-quiz .eq-start__content .eq-btn {
+    width: 370px;
+    height: 62px;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #elivide-quiz .eq-start__content .eq-btn:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  #elivide-quiz .eq-start__content .eq-btn .eq-btn__arrow {
+    display: inline-flex;
+    margin-left: 0px;
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-8px);
+    position: relative;
+    top: 1px;
+  }
+
+  #elivide-quiz .eq-start__content .eq-btn .eq-btn__arrow svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  #elivide-quiz .eq-start__content .eq-btn:hover .eq-btn__arrow {
+    width: 22px;
+    margin-left: 7px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .eq-start__image {
+    width: 570px;
+    height: 570px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .eq-start__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ─── Buttons ─── */
+  .eq-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 48px;
+    border-radius: 8px;
+    font-family: var(--eq-font);
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 200px;
+  }
+
+  #elivide-quiz .eq-btn--primary {
+    background: var(--eq-accent);
+    color: #fff;
+  }
+
+  #elivide-quiz .eq-btn--primary:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  .eq-btn--disabled {
+    background: #e8e8e8;
+    color: #bbb;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  #elivide-quiz .eq-btn--active {
+    background: var(--eq-accent);
+    color: #fff;
+  }
+
+  #elivide-quiz .eq-btn--active:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  #elivide-quiz .eq-btn--active-locked {
+    background: var(--eq-accent);
+    color: #fff;
+  }
+
+  #elivide-quiz .eq-btn--active-locked:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  /* ─── Intro Screen ─── */
+  #elivide-quiz .eq-intro {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 48px 24px 60px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  #elivide-quiz .eq-intro__heading,
+  #elivide-quiz .eq-intro__sub,
+  #elivide-quiz .eq-intro__body {
+    max-width: 720px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #elivide-quiz .eq-intro__logo {
+    margin-bottom: 36px;
+  }
+
+  .eq-intro__logo img {
+    width: 238px;
+    height: 99.414px;
+  }
+
+  .eq-intro__logo-text {
+    font-family: var(--eq-font);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--eq-text);
+  }
+
+  #elivide-quiz .eq-intro__heading {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  #elivide-quiz .eq-intro__sub {
+    font-size: 16px;
+    color: var(--eq-text-muted);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  #elivide-quiz .eq-intro__body {
+    font-size: 16px;
+    line-height: 20.8px;
+    color: var(--eq-text);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  #elivide-quiz .eq-intro__body p {
+    margin-bottom: 18px;
+  }
+
+  #elivide-quiz .eq-intro .eq-btn {
+    width: 370px;
+    height: 62px;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #elivide-quiz .eq-intro .eq-btn:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  #elivide-quiz .eq-intro .eq-btn .eq-btn__arrow {
+    display: inline-flex;
+    margin-left: 0px;
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-8px);
+    position: relative;
+    top: 1px;
+  }
+
+  #elivide-quiz .eq-intro .eq-btn .eq-btn__arrow svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  #elivide-quiz .eq-intro .eq-btn:hover .eq-btn__arrow {
+    width: 22px;
+    margin-left: 7px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* ─── Progress Bar ─── */
+  #elivide-quiz .eq-progress {
+    width: 100%;
+    padding: 0;
+    margin-bottom: 8px;
+  }
+
+  #elivide-quiz .eq-progress__bar {
+    width: 100%;
+    height: 8px;
+    background: #f5ece7;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  #elivide-quiz .eq-progress__fill {
+    height: 8px;
+    background: var(--eq-accent);
+    border-radius: 4px;
+    transition: width 0.7s ease;
+    display: block;
+  }
+
+  #elivide-quiz .eq-progress__label {
+    font-size: 12px;
+    color: #000;
+    margin-top: 4px;
+    transition: margin-left 0.7s ease;
+    display: inline-block;
+    transform: translateX(-50%);
+  }
+
+  /* ─── Question Screen ─── */
+  .eq-question {
+    flex: 1;
+    padding: 0 24px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  #elivide-quiz .eq-question__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--eq-font);
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  #elivide-quiz .eq-question__back svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  #elivide-quiz .eq-question__back:hover svg {
+    transform: translateX(-4px);
+  }
+
+  #elivide-quiz .eq-question__title {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  #elivide-quiz .eq-question__subtitle {
+    font-size: 16px;
+    color: rgba(0,0,0,0.6);
+    margin-top: 16px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    max-width: 800px;
+  }
+
+  /* ─── Answer Cards ─── */
+  #elivide-quiz .eq-answers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(367px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  #elivide-quiz .eq-answer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    background: #ffffff;
+    border: 1.5px solid #e0dbd6;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 400;
+    height: 90px;
+  }
+
+  #elivide-quiz .eq-answer:hover {
+    border-color: var(--eq-accent);
+  }
+
+  #elivide-quiz .eq-answer--selected {
+    border-color: var(--eq-accent);
+    background: rgba(126, 168, 154, 0.06);
+  }
+
+  #elivide-quiz .eq-answer__radio {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  #elivide-quiz .eq-answer--selected .eq-answer__radio {
+    border-color: var(--eq-accent);
+    background: var(--eq-accent);
+  }
+
+  .eq-answer--selected .eq-answer__radio::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  /* ─── Next/Finish button area ─── */
+  .eq-question__actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  #elivide-quiz .eq-question__actions .eq-btn {
+    width: 370px;
+    height: 62px;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 0;
+    transition: background 0.6s ease, color 0.6s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #elivide-quiz .eq-question__actions .eq-btn:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  #elivide-quiz .eq-question__actions .eq-btn .eq-btn__arrow {
+    display: inline-flex;
+    margin-left: 0px;
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-8px);
+    position: relative;
+    top: 1px;
+  }
+
+  #elivide-quiz .eq-question__actions .eq-btn .eq-btn__arrow svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  #elivide-quiz .eq-question__actions .eq-btn:hover .eq-btn__arrow {
+    width: 22px;
+    margin-left: 7px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* ─── Results Screen ─── */
+  #elivide-quiz .eq-results {
+    flex: 1;
+    padding: 20px 24px 60px;
+    width: 100%;
+    text-align: center;
+  }
+
+  #elivide-quiz .eq-results__restart {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(0,0,0,0.4);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--eq-font);
+    margin-bottom: 24px;
+  }
+
+  #elivide-quiz .eq-results__restart svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  #elivide-quiz .eq-results__restart:hover svg {
+    transform: rotate(45deg);
+  }
+
+  #elivide-quiz .eq-results__heading {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+  }
+
+  #elivide-quiz .eq-results__sub {
+    font-size: 16px;
+    color: var(--eq-text-muted);
+    text-align: center;
+    max-width: 750px;
+    margin: 16px auto 40px;
+    line-height: 1.6;
+  }
+
+  /* ─── Product Cards ─── */
+  #elivide-quiz .eq-products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    text-align: left;
+  }
+
+  #elivide-quiz .eq-product {
+    background: var(--eq-card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1.5px solid #e8e3de;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  #elivide-quiz .eq-product:hover {
+    border-color: var(--eq-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+
+  #elivide-quiz .eq-product__match {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+  }
+
+  #elivide-quiz .eq-product__match-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--eq-text);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  #elivide-quiz .eq-product__match-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: italic;
+    font-family: Georgia, serif;
+    flex-shrink: 0;
+  }
+
+  #elivide-quiz .eq-product__tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 8px;
+    white-space: normal;
+    min-width: 200px;
+    max-width: 280px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+  }
+
+  #elivide-quiz .eq-product__tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #1a1a1a;
+  }
+
+  #elivide-quiz .eq-product__match-badge:hover .eq-product__tooltip {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #elivide-quiz .eq-product__image {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  #elivide-quiz .eq-product__image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .eq-product__title {
+    font-family: var(--eq-font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  #elivide-quiz .eq-product__price {
+    font-size: 14px;
+    color: var(--eq-text-muted);
+    margin-bottom: 10px;
+  }
+
+  #elivide-quiz .eq-product__variant {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 36px;
+    padding: 8px 30px 8px 10px;
+    border: 1px solid var(--eq-border);
+    border-radius: 6px;
+    font-family: var(--eq-font);
+    font-size: 13px;
+    background: var(--eq-card-bg);
+    color: var(--eq-text);
+    margin-bottom: 12px;
+    outline: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+  }
+
+  #elivide-quiz .eq-product__variant:focus,
+  #elivide-quiz .eq-product__variant:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  #elivide-quiz .eq-product__atc {
+    width: 100%;
+    max-width: 50%;
+    height: 48px;
+    background: var(--eq-accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--eq-font);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: auto;
+    padding: 0;
+  }
+
+  #elivide-quiz .eq-product__atc:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  /* ─── Transition animation ─── */
+  .eq-fade-enter {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .eq-fade-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .eq-fade-exit {
+    opacity: 0;
+    transform: translateY(-30px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  /* ─── Mobile ─── */
+  @media screen and (max-width: 768px) {
+    .eq-start {
+      flex-direction: column-reverse;
+      gap: 28px;
+      padding: 24px 20px;
+    }
+
+    .eq-start__content {
+      text-align: left;
+    }
+
+    .eq-start__content .eq-btn {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .eq-start__image {
+      width: 100%;
+      max-width: calc(100% - 40px);
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .eq-answers {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .eq-answer {
+      padding: 16px;
+    }
+
+    #elivide-quiz .eq-products {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    #elivide-quiz .eq-product {
+      padding: 16px;
+    }
+
+    #elivide-quiz .eq-product__image {
+      height: 200px;
+    }
+
+    #elivide-quiz .eq-product__atc {
+      max-width: 100%;
+    }
+
+    .eq-question__actions .eq-btn {
+      min-width: 100%;
+    }
+
+    #elivide-quiz .eq-screen {
+      padding: 0 20px;
+    }
+
+    .eq-question {
+      padding: 0 0 32px;
+    }
+
+    .eq-results {
+      padding: 12px 0 48px;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  const root = document.getElementById('elivide-quiz');
+  const SHOP = root.dataset.shop;
+  const PROXY = root.dataset.proxyBase;
+
+  // Try: block setting → brand logo → find logo from page header
+  let LOGO_URL = root.dataset.logoUrl || '';
+  if (!LOGO_URL) {
+    const headerLogo = document.querySelector('header img[src*="logo"], .header img[src*="logo"], .site-header img, header .logo img, header a img, .header__logo img, .header-logo img');
+    if (headerLogo) LOGO_URL = headerLogo.src;
+  }
+  const COOKIE_KEY = 'eq_quiz_results';
+  const VISITOR_KEY = 'eq_visitor_id';
+
+  let quizData = null;
+  let currentScreen = 'start'; // start, intro, question, results
+  let currentQuestion = 0;
+  let prevQuestion = -1;
+  let selectedAnswers = []; // array of answer IDs per question index
+  let sessionId = null;
+
+  // ─── Helpers ───
+  function getVisitorId() {
+    let id = localStorage.getItem(VISITOR_KEY);
+    if (!id) {
+      id = 'v_' + Math.random().toString(36).substr(2, 12) + Date.now().toString(36);
+      localStorage.setItem(VISITOR_KEY, id);
+    }
+    return id;
+  }
+
+  function getCachedResults() {
+    try {
+      const raw = localStorage.getItem(COOKIE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  function setCachedResults(results) {
+    localStorage.setItem(COOKIE_KEY, JSON.stringify(results));
+  }
+
+  function clearCachedResults() {
+    localStorage.removeItem(COOKIE_KEY);
+  }
+
+  async function trackEvent(eventType, extra = {}) {
+    try {
+      await fetch(PROXY + '/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          shop: SHOP,
+          sessionId,
+          eventType,
+          ...extra,
+        }),
+      });
+    } catch (e) { /* silent fail */ }
+  }
+
+  async function saveSession(completed = false) {
+    try {
+      const res = await fetch(PROXY + '/quiz-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          shop: SHOP,
+          quizId: quizData.id,
+          visitorId: getVisitorId(),
+          answers: selectedAnswers.filter(Boolean),
+          completed,
+        }),
+      });
+      const data = await res.json();
+      if (data.sessionId) sessionId = data.sessionId;
+    } catch (e) { /* silent fail */ }
+  }
+
+  function calculateResults() {
+    const scores = {};
+    quizData.products.forEach(p => { scores[p.id] = 0; });
+
+    // Calculate actual scores from selected answers
+    selectedAnswers.forEach(answerId => {
+      if (!answerId) return;
+      for (const q of quizData.questions) {
+        for (const a of q.answers) {
+          if (a.id === answerId) {
+            for (const pt of a.points) {
+              scores[pt.productId] = (scores[pt.productId] || 0) + pt.points;
+            }
+          }
+        }
+      }
+    });
+
+    // Total = number of questions answered
+    const totalAnswered = selectedAnswers.filter(Boolean).length;
+
+    const results = quizData.products.map(p => ({
+      ...p,
+      score: scores[p.id] || 0,
+      total: totalAnswered,
+    }));
+
+    results.sort((a, b) => b.score - a.score);
+    return results;
+  }
+
+  // ─── Icons ───
+  const icons = {
+    close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+    back: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.5 12H1.5" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"></path><path d="M8.25 18.75L1.5 12L8.25 5.25" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path></svg>',
+    refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+  };
+
+  // ─── Render Functions ───
+  function render() {
+    let html = '';
+    switch (currentScreen) {
+      case 'start': html = renderStart(); break;
+      case 'intro': html = renderIntro(); break;
+      case 'question': html = renderQuestion(); break;
+      case 'results': html = renderResults(); break;
+    }
+    root.innerHTML = `<div class="eq-screen">${html}</div>`;
+    bindEvents();
+
+    // Animate in
+    requestAnimationFrame(() => {
+      const content = root.querySelector('.eq-fade-enter');
+      if (content) {
+        requestAnimationFrame(() => {
+          content.classList.remove('eq-fade-enter');
+          content.classList.add('eq-fade-active');
+        });
+      }
+      // Animate progress bar and label from previous to current
+      const fill = root.querySelector('.eq-progress__fill[data-target]');
+      const label = root.querySelector('.eq-progress__label[data-target]');
+      if (fill) {
+        setTimeout(() => {
+          fill.style.width = fill.dataset.target + '%';
+          if (label) label.style.marginLeft = label.dataset.target + '%';
+        }, 50);
+      }
+      // Enable button after 1s if answer already selected (e.g. going back)
+      if (currentScreen === 'question' && selectedAnswers[currentQuestion]) {
+        setTimeout(() => {
+          const btn = root.querySelector('.eq-question__actions .eq-btn');
+          if (btn) {
+            btn.classList.remove('eq-btn--disabled');
+            btn.classList.add('eq-btn--active');
+          }
+        }, 1000);
+      }
+      // Load variants for product cards on results page
+      if (currentScreen === 'results') {
+        loadVariants();
+      }
+    });
+  }
+
+  async function loadVariants() {
+    const cards = root.querySelectorAll('.eq-product');
+    for (const card of cards) {
+      const handle = card.dataset.handle;
+      if (!handle) continue;
+      try {
+        const res = await fetch('/products/' + handle + '.js');
+        const product = await res.json();
+        const select = card.querySelector('.eq-product__variant');
+        if (product.variants && product.variants.length > 1 && select) {
+          select.innerHTML = product.variants.map(v =>
+            `<option value="${v.id}">${v.title}</option>`
+          ).join('');
+          select.classList.remove('eq-hidden');
+        }
+      } catch (e) { /* silent */ }
+    }
+  }
+
+  function renderTopbar(center, rightText, rightAction) {
+    return `
+      <div class="eq-topbar">
+        ${center ? `<span class="eq-topbar__center">${center}</span>` : ''}
+        <button class="eq-topbar__right" data-action="${rightAction}">
+          ${rightText} ${icons.close}
+        </button>
+      </div>`;
+  }
+
+  function renderStart() {
+    const img = quizData.imageUrl
+      ? `<div class="eq-start__image"><img src="${quizData.imageUrl}" alt=""></div>`
+      : '';
+    return `
+      <div class="eq-start eq-fade-enter">
+        <div class="eq-start__content">
+          <h1 class="eq-start__heading">${quizData.title}</h1>
+          <p class="eq-start__sub">${quizData.subtitle || ''}</p>
+          <button class="eq-btn eq-btn--primary" data-action="start">Start<span class="eq-btn__arrow"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.75 5.5L19.25 11M19.25 11L13.75 16.5M19.25 11H2.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></button>
+        </div>
+        ${img}
+      </div>`;
+  }
+
+  function renderIntro() {
+    const introSub = quizData.introSubtitle || 'Just so you know';
+    return `
+      <div class="eq-intro eq-fade-enter">
+        <div class="eq-intro__logo">
+          ${LOGO_URL ? `<img src="${LOGO_URL}" alt="Logo">` : ''}
+        </div>
+        <h2 class="eq-intro__heading">${quizData.introTitle || ''}</h2>
+        <p class="eq-intro__sub">${introSub}</p>
+        <div class="eq-intro__body">${quizData.introBody || ''}</div>
+        <button class="eq-btn eq-btn--primary" data-action="begin">Let's begin<span class="eq-btn__arrow"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.75 5.5L19.25 11M19.25 11L13.75 16.5M19.25 11H2.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></button>
+      </div>`;
+  }
+
+  function renderQuestion() {
+    const q = quizData.questions[currentQuestion];
+    const total = quizData.questions.length;
+    const pct = Math.round(((currentQuestion + 1) / total) * 100);
+    const startPct = prevQuestion >= 0 ? Math.round(((prevQuestion + 1) / total) * 100) : pct;
+    const selected = selectedAnswers[currentQuestion];
+    const isLast = currentQuestion === total - 1;
+    const btnText = isLast ? 'Finish' : 'Next question';
+    const btnClass = 'eq-btn eq-btn--disabled';
+
+    return `
+      <div class="eq-topbar">
+        <span class="eq-topbar__center">Question ${currentQuestion + 1} / ${total}</span>
+      </div>
+      <div class="eq-progress">
+        <div class="eq-progress__bar">
+          <div class="eq-progress__fill" style="width:${startPct}%" data-target="${pct}"></div>
+        </div>
+        <div class="eq-progress__label" style="margin-left:${startPct}%" data-target="${pct}">${pct}%</div>
+      </div>
+      <div class="eq-question eq-fade-enter">
+        <button class="eq-question__back" data-action="back">
+          ${icons.back} Go back
+        </button>
+        <h2 class="eq-question__title">${q.title}</h2>
+        ${q.subtitle ? `<p class="eq-question__subtitle">${q.subtitle}</p>` : ''}
+        <div class="eq-answers">
+          ${q.answers.map(a => `
+            <div class="eq-answer ${selected === a.id ? 'eq-answer--selected' : ''}" data-answer-id="${a.id}">
+              <div class="eq-answer__radio"></div>
+              <span>${a.text}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="eq-question__actions">
+          <button class="${btnClass}" data-action="${isLast ? 'finish' : 'next'}">${btnText}<span class="eq-btn__arrow"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.75 5.5L19.25 11M19.25 11L13.75 16.5M19.25 11H2.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span></button>
+        </div>
+      </div>`;
+  }
+
+  function renderResults() {
+    const results = calculateResults();
+    const total = quizData.questions.length;
+
+    return `
+      <div class="eq-results eq-fade-enter">
+        <button class="eq-results__restart" data-action="restart">
+          ${icons.refresh} Start over
+        </button>
+        <h2 class="eq-results__heading">${quizData.resultsTitle || 'Our top picks for you'}</h2>
+        <p class="eq-results__sub">${quizData.resultsSubtitle || ''}</p>
+        <div class="eq-products">
+          ${results.map(p => `
+            <div class="eq-product" data-product-id="${p.shopifyProductId}" data-handle="${p.handle || ''}">
+              <div class="eq-product__match">
+                <span class="eq-product__match-badge">${p.score}/${p.total} match <span class="eq-product__match-icon">i</span>${p.tooltipHtml ? `<span class="eq-product__tooltip">${p.tooltipHtml}</span>` : ''}</span>
+              </div>
+              <div class="eq-product__image">
+                ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}">` : ''}
+              </div>
+              <h3 class="eq-product__title">${p.title}</h3>
+              <p class="eq-product__price">${p.price || ''}</p>
+              <select class="eq-product__variant eq-hidden"></select>
+              <button class="eq-product__atc" data-product-title="${p.title}" data-product-id="${p.shopifyProductId}">Add to cart</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+  }
+
+  // ─── Event Binding ───
+  function bindEvents() {
+    // Action buttons
+    root.querySelectorAll('[data-action]').forEach(el => {
+      el.addEventListener('click', handleAction);
+    });
+
+    // Answer cards
+    root.querySelectorAll('.eq-answer').forEach(el => {
+      el.addEventListener('click', handleAnswerSelect);
+    });
+
+    // Add to cart buttons
+    root.querySelectorAll('.eq-product__atc').forEach(el => {
+      el.addEventListener('click', handleAddToCart);
+    });
+
+    // Product card click → open product page (except ATC button and variant select)
+    root.querySelectorAll('.eq-product').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('.eq-product__atc') || e.target.closest('.eq-product__variant')) return;
+        const handle = el.dataset.handle;
+        if (handle) window.open('/products/' + handle, '_blank');
+      });
+      el.style.cursor = 'pointer';
+    });
+  }
+
+  function handleAction(e) {
+    const action = e.currentTarget.dataset.action;
+
+    switch (action) {
+      case 'close':
+        window.history.back();
+        break;
+
+      case 'start':
+        trackEvent('start');
+        if (quizData.introTitle || quizData.introBody) {
+          currentScreen = 'intro';
+        } else {
+          currentScreen = 'question';
+          currentQuestion = 0;
+        }
+        render();
+        break;
+
+      case 'begin':
+        currentScreen = 'question';
+        prevQuestion = -1;
+        currentQuestion = 0;
+        render();
+        root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        break;
+
+      case 'back':
+        if (currentQuestion > 0) {
+          prevQuestion = currentQuestion;
+          currentQuestion--;
+          render();
+        } else if (quizData.introTitle || quizData.introBody) {
+          currentScreen = 'intro';
+          render();
+        } else {
+          currentScreen = 'start';
+          render();
+        }
+        break;
+
+      case 'next':
+        if (!btnLocked && selectedAnswers[currentQuestion]) {
+          prevQuestion = currentQuestion;
+          currentQuestion++;
+          render();
+        }
+        break;
+
+      case 'finish':
+        if (!btnLocked && selectedAnswers[currentQuestion]) {
+          const results = calculateResults();
+          setCachedResults({ answers: selectedAnswers, results });
+          saveSession(true);
+          trackEvent('complete');
+          currentScreen = 'results';
+          render();
+          window.scrollTo(0, 0);
+        }
+        break;
+
+      case 'restart':
+        clearCachedResults();
+        selectedAnswers = [];
+        prevQuestion = -1;
+        currentQuestion = 0;
+        sessionId = null;
+        currentScreen = 'start';
+        render();
+        break;
+    }
+  }
+
+  let autoAdvanceTimer = null;
+  let btnLocked = false;
+
+  function handleAnswerSelect(e) {
+    const card = e.currentTarget;
+    const answerId = card.dataset.answerId;
+    selectedAnswers[currentQuestion] = answerId;
+
+    // Clear any existing auto-advance timer
+    if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+
+    // Update UI without full re-render
+    root.querySelectorAll('.eq-answer').forEach(el => {
+      el.classList.toggle('eq-answer--selected', el.dataset.answerId === answerId);
+    });
+
+    // Show green but lock clicks for 1.5s
+    btnLocked = true;
+    const btn = root.querySelector('.eq-question__actions .eq-btn');
+    if (btn) {
+      btn.classList.remove('eq-btn--disabled');
+      btn.classList.add('eq-btn--active');
+    }
+    setTimeout(() => { btnLocked = false; }, 1500);
+
+    // Auto-advance after 1 second
+    const total = quizData.questions.length;
+    const isLast = currentQuestion === total - 1;
+
+    autoAdvanceTimer = setTimeout(() => {
+      if (isLast) {
+        const results = calculateResults();
+        setCachedResults({ answers: selectedAnswers, results });
+        saveSession(true);
+        trackEvent('complete');
+        currentScreen = 'results';
+        render();
+      } else {
+        prevQuestion = currentQuestion;
+        currentQuestion++;
+        render();
+      }
+    }, 1000);
+  }
+
+  async function handleAddToCart(e) {
+    const btn = e.currentTarget;
+    const productId = btn.dataset.productId;
+    const productTitle = btn.dataset.productTitle;
+    const productCard = btn.closest('.eq-product');
+    const handle = productCard?.dataset.handle;
+
+    btn.textContent = 'Adding...';
+    btn.disabled = true;
+
+    trackEvent('add_to_cart', { productId, productTitle });
+
+    try {
+      // Use selected variant from dropdown, or fetch first variant
+      const variantSelect = productCard?.querySelector('.eq-product__variant');
+      let variantId = variantSelect?.value;
+      if (!variantId) {
+        const res = await fetch(`/products/${handle}.js`);
+        const product = await res.json();
+        variantId = product.variants[0]?.id;
+      }
+
+      if (variantId) {
+        const res = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ id: parseInt(variantId), quantity: 1 }),
+        });
+        if (!res.ok) throw new Error('Add to cart failed');
+        btn.textContent = 'Added!';
+        window.location.href = '/cart';
+      }
+    } catch (err) {
+      btn.textContent = 'Error';
+      setTimeout(() => {
+        btn.textContent = 'Add to cart';
+        btn.disabled = false;
+      }, 2000);
+    }
+  }
+
+  // ─── Init ───
+  async function init() {
+    trackEvent('view');
+
+    // Check for cached results
+    const cached = getCachedResults();
+    if (cached && cached.results) {
+      // Fetch quiz data first for rendering
+      try {
+        const res = await fetch(PROXY + '/quiz-data?shop=' + SHOP);
+        quizData = await res.json();
+        if (quizData.error) throw new Error(quizData.error);
+        selectedAnswers = cached.answers || [];
+        currentScreen = 'results';
+        render();
+        return;
+      } catch (e) {
+        clearCachedResults();
+      }
+    }
+
+    // Load fresh quiz data
+    try {
+      const res = await fetch(PROXY + '/quiz-data?shop=' + SHOP);
+      quizData = await res.json();
+      if (quizData.error) throw new Error(quizData.error);
+      render();
+    } catch (e) {
+      root.innerHTML = '<p style="padding:40px;text-align:center;">Quiz not available right now.</p>';
+    }
+  }
+
+  init();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Elivide Quiz",
+  "target": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo",
+      "info": "Upload or select a logo image. If blank, the store brand logo is used."
+    }
+  ]
+}
+{% endschema %}

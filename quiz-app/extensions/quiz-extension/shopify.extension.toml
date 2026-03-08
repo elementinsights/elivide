@@ -1,0 +1,7 @@
+api_version = "2025-01"
+
+[[extensions]]
+uid = "fff12fa7-5fec-bb2d-7a0d-4cef52c60f1b19fea948"
+type = "theme"
+name = "Elivide Quiz"
+handle = "elivide-quiz"

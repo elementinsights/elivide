@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Shopify auth session (required by Shopify app template)
+model Session {
+  id                  String    @id
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+}
+
+// ─── Quiz Configuration ───
+
+model Quiz {
+  id          String     @id @default(uuid())
+  shop        String
+  title       String     // "Confused about which magnesium is best for you?"
+  subtitle    String?    // "We're here to offer some guidance."
+  introTitle    String?    // "But before we start, here's the lowdown on magnesium"
+  introSubtitle String?    // "Just so you know"
+  introBody       String?    // The educational text before questions
+  resultsTitle    String?    // "Our top picks for you"
+  resultsSubtitle String?    // Description on results page
+  imageUrl        String?    // Start screen image
+  active      Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  questions   Question[]
+  products    QuizProduct[]
+  sessions    QuizSession[]
+}
+
+model Question {
+  id          String   @id @default(uuid())
+  quizId      String
+  order       Int      // 1-7 etc
+  title       String   // "What is your top wellness goal right now?"
+  subtitle    String?  // "Stress burns through magnesium..."
+  createdAt   DateTime @default(now())
+
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+
+  @@index([quizId])
+}
+
+model Answer {
+  id          String   @id @default(uuid())
+  questionId  String
+  order       Int      // 1, 2, 3
+  text        String   // "Boost daily energy and reduce fatigue"
+  createdAt   DateTime @default(now())
+
+  question    Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  points      AnswerPoint[]
+  responses   QuizResponse[]
+
+  @@index([questionId])
+}
+
+// How many points an answer gives to a specific product
+model AnswerPoint {
+  id            String      @id @default(uuid())
+  answerId      String
+  quizProductId String
+  points        Int         @default(1) // 0, 1, or 2
+
+  answer        Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  quizProduct   QuizProduct @relation(fields: [quizProductId], references: [id], onDelete: Cascade)
+
+  @@unique([answerId, quizProductId])
+  @@index([answerId])
+  @@index([quizProductId])
+}
+
+// Products that can be recommended by a quiz
+model QuizProduct {
+  id              String   @id @default(uuid())
+  quizId          String
+  shopifyProductId String  // Shopify product GID
+  title           String
+  imageUrl        String?
+  price           String?
+  handle          String?  // For linking to product page
+  tooltipHtml     String?  // Tooltip text for results page
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  quiz            Quiz          @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answerPoints    AnswerPoint[]
+
+  @@index([quizId])
+}
+
+// ─── Quiz Sessions & Responses ───
+
+model QuizSession {
+visitorId   String   // Cookie-based anonymous ID
+  id          String   @id @default(uuid())
+  quizId      String
+  shop        String
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+
+  quiz        Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  responses   QuizResponse[]
+  events      AnalyticsEvent[]
+
+  @@index([quizId])
+  @@index([shop])
+  @@index([visitorId])
+}
+
+model QuizResponse {
+  id             String   @id @default(uuid())
+  quizSessionId  String
+  answerId       String
+  createdAt      DateTime @default(now())
+
+  session        QuizSession @relation(fields: [quizSessionId], references: [id], onDelete: Cascade)
+  answer         Answer      @relation(fields: [answerId], references: [id], onDelete: Cascade)
+
+  @@index([quizSessionId])
+}
+
+// ─── Analytics ───
+
+model AnalyticsEvent {
+  id             String   @id @default(uuid())
+  shop           String
+  quizSessionId  String?
+  eventType      String   // "view", "start", "complete", "add_to_cart"
+  productId      String?  // For add_to_cart events
+  productTitle   String?  // For add_to_cart events
+  metadata       String?  // JSON string for extra data
+  createdAt      DateTime @default(now())
+
+  session        QuizSession? @relation(fields: [quizSessionId], references: [id], onDelete: SetNull)
+
+  @@index([shop])
+  @@index([eventType])
+  @@index([createdAt])
+  @@index([quizSessionId])
+}
