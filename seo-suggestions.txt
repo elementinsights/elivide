@@ -1,0 +1,79 @@
+Elivide.com — What I'd Fix & Why
+=================================
+
+THE BIG STUFF
+-------------
+
+Google can't see our product details in search.
+Right now when our products show up in Google, they're just plain links. No price, no ratings, no "in stock" label — nothing. Competitors who have this set up get way more clicks because their listings actually show useful info. We just need to add some behind-the-scenes code that tells Google what our products cost, whether they're available, and what customers are rating them. Biggest single win on this list.
+
+Sharing links on Twitter looks broken.
+If someone shares an Elivide link on Twitter/X right now, there's no image preview. Facebook works fine — we just missed the Twitter one. Easy fix.
+
+Some pages have no meta description.
+If nobody's manually typed one in for a specific page, Google just grabs whatever random text it wants from the page. We should have a default brand description that kicks in as a backup.
+
+We're not explicitly telling Google to index us.
+It's probably fine since Shopify handles this by default, but we should just declare it properly so there's no question.
+
+
+IMPORTANT BUT NOT URGENT
+-------------------------
+
+The heading structure is a bit messy in places.
+Some sections use the wrong heading size — not visually, but in the code. Google reads these to understand what's important on the page, so when a section title is marked as less important than it should be, that's a missed signal. Just needs tidying up in a few spots.
+
+We have breadcrumbs on the site but Google doesn't know that.
+You know those little navigation trails that show up under some Google results — like "Home > Collections > Magnesium"? We have the breadcrumbs on the site already, we just haven't told Google about them in a way it understands. Once we do, those show up in search results and make us look more legit.
+
+The site could load a bit faster.
+We're connecting to a bunch of external services (reviews, email marketing, analytics) but we're not giving the browser a heads up that those connections are coming. One small addition and the browser can start connecting earlier. Free speed improvement.
+
+Some product images are missing descriptions.
+Most are fine, but if someone forgot to add alt text when uploading an image in Shopify, it just shows up blank. Worth doing a quick pass through the admin to fill in any gaps. Helps with Google image search and accessibility.
+
+
+WHEN WE GET TO IT
+-----------------
+
+Blog posts could perform better in search.
+The basics are there but we're missing things like article categories, publish dates in the metadata, and keywords. If we're putting effort into writing content, we should make sure Google can fully understand and rank it.
+
+The "Five Reasons" section isn't structured properly.
+It looks like a numbered list but the code doesn't treat it as one. Search engines care about this — a proper list tells them it's structured, sequential content.
+
+Some text on the site is hardcoded.
+Things like "Free & takes 60 seconds" and "Get social with Elivide" are baked directly into the code. Not a problem today, but if we ever want to support another language or just update the wording, it's harder than it needs to be.
+
+Our video content is invisible to Google.
+The authority video section looks great but Google has no idea there's a video there. Adding the right markup could get us into video search results.
+
+FAQ content could show up directly in Google.
+If we have FAQ pages, there's a way to get those questions and answers to appear right in the search results as expandable dropdowns. Good for visibility and click-through.
+
+A few tracking scripts are slowing things down slightly.
+Some analytics stuff loads before it needs to. Not a huge deal but cleaning it up would help page speed scores.
+
+
+WHAT'S ALREADY SOLID
+---------------------
+
+- Facebook sharing previews work properly
+- Images are responsive and optimised across devices
+- Below-the-fold images load lazily (good for speed)
+- Hero images are prioritised to load first
+- Basic business info is structured for Google
+- Accessibility fundamentals are in place
+- Clean URL structure throughout
+
+
+HOW I'D TACKLE IT
+-----------------
+
+1. Product structured data + breadcrumb markup — most impact
+2. Twitter image fix + meta description fallback + robots tag — quick wins
+3. Heading hierarchy cleanup
+4. Preconnect hints for speed
+5. Image alt text audit in Shopify admin
+6. Blog and video enhancements
+7. Rest as we go

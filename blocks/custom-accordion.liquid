@@ -317,9 +317,27 @@
 
     function closeOthers(opening) {
       if (!singleOpen) return;
+
+      // Remember where the opening accordion sits in the viewport
+      const openingTop = opening.getBoundingClientRect().top;
+
       detailsEls.forEach((d) => {
-        if (d !== opening && d.open) animateClose(d);
+        if (d !== opening && d.open) {
+          // Snap close (no animation) to avoid gradual height shift
+          const content = d.querySelector("[data-ca-content]");
+          if (content) {
+            if (content.__caAnim) content.__caAnim.cancel();
+            content.style.height = "0px";
+            content.__caAnim = null;
+          }
+          d.open = false;
+          d.classList.remove("is-opening", "is-closing");
+        }
       });
+
+      // Compensate scroll so the opening element stays in the same viewport position
+      const shift = opening.getBoundingClientRect().top - openingTop;
+      if (shift) window.scrollBy(0, shift);
     }
 
     // Init + click handling (prevent native snap open)

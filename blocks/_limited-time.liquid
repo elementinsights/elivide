@@ -1,9 +1,6 @@
 {%- liquid
   assign p = section.settings.limited_time_product
   if p == blank
-    assign p = block.settings.product
-  endif
-  if p == blank
     assign p = collections.all.products.first
   endif
 
@@ -28,9 +25,6 @@
   endif
 
   assign compare_price = section.settings.limited_time_compare_price
-  if compare_price == blank
-    assign compare_price = block.settings.compare_price
-  endif
 
 -%}
 
@@ -239,11 +233,6 @@
   "tag": null,
   "settings": [
     {
-      "type": "product",
-      "id": "product",
-      "label": "Choose product"
-    },
-    {
       "type": "color",
       "id": "border_color",
       "label": "Border color",
@@ -278,16 +267,6 @@
       "label": "Image width",
       "default": 98
     },
-    {
-      "type": "header",
-      "content": "Price"
-    },
-    {
-      "type": "text",
-      "id": "compare_price",
-      "label": "Compare price (optional)",
-      "default": "€44,95"
-    }
   ],
   "presets": [
     {

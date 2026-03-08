@@ -41,7 +41,7 @@
         {% endif %}
 
         {% if section.settings.show_socials %}
-            <h2 class="custom-footer__social-heading">Get social with Elivide.</h2>
+            <h3 class="custom-footer__social-heading">Get social with Elivide.</h3>
           <div class="custom-footer__social" aria-label="Social links">
             {% assign has_social = false %}
 
@@ -90,9 +90,9 @@
                 {% assign menu = block.settings.menu %}
                 <nav class="custom-footer__col" {{ block.shopify_attributes }} aria-label="{{ block.settings.heading | escape }}">
                   {% if block.settings.heading != blank %}
-                    <h2 class="custom-footer__heading">{{ block.settings.heading }}</h2>
+                    <h3 class="custom-footer__heading">{{ block.settings.heading }}</h3>
                   {% elsif menu != blank %}
-                    <h2 class="custom-footer__heading">{{ menu.title }}</h2>
+                    <h3 class="custom-footer__heading">{{ menu.title }}</h3>
                   {% endif %}
 
                   {% if menu != blank and menu.links.size > 0 %}

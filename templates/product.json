@@ -349,7 +349,7 @@
                 "heading": "",
                 "dividers": true,
                 "open_first": true,
-                "single_open": true,
+                "single_open": false,
                 "show_icon": true,
                 "icon_style": "caret",
                 "icon_size": 22,

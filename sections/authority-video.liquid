@@ -1,0 +1,456 @@
+{% comment %}
+  Authority Video — pill-shaped video + credibility statement, stars, branding.
+{% endcomment %}
+
+<section class="av" style="--av-bg: {{ section.settings.section_bg }};">
+  <div class="av__wrap">
+    {%- comment -%} Video side {%- endcomment -%}
+    <div class="av__video-col">
+      <div class="av__video-pill">
+        {% if section.settings.video != blank %}
+          <div class="av__video-player" data-av-video>
+            {{ section.settings.video | video_tag:
+              autoplay: false,
+              loop: true,
+              muted: false,
+              controls: false,
+              preload: 'metadata',
+              class: 'av__video'
+            }}
+            {% if section.settings.cover_image != blank %}
+              <img
+                src="{{ section.settings.cover_image | image_url: width: 1200 }}"
+                alt="{{ section.settings.cover_image.alt | escape }}"
+                class="av__poster-overlay"
+                data-av-poster
+              >
+            {% endif %}
+            <button class="av__play" aria-label="Play video" data-av-play>
+              <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+                <circle cx="28" cy="28" r="27" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1.5"/>
+                <path d="M22 17V39L40 28L22 17Z" fill="white"/>
+              </svg>
+            </button>
+          </div>
+        {% elsif section.settings.cover_image != blank %}
+          <img
+            src="{{ section.settings.cover_image | image_url: width: 1200 }}"
+            alt="{{ section.settings.cover_image.alt | escape }}"
+            loading="lazy"
+            class="av__poster-img"
+          >
+        {% else %}
+          <div class="av__placeholder"></div>
+        {% endif %}
+      </div>
+    </div>
+
+    {%- comment -%} Content side {%- endcomment -%}
+    <div class="av__content-col">
+      <div class="av__content">
+        {% if section.settings.kicker != blank %}
+          <div class="av__kicker">
+            <span class="av__kicker-line" aria-hidden="true"></span>
+            <span>{{ section.settings.kicker }}</span>
+          </div>
+        {% endif %}
+
+        <h2 class="av__heading">{{ section.settings.heading }}</h2>
+
+        {% if section.settings.subtext != blank %}
+          <p class="av__subtext">{{ section.settings.subtext }}</p>
+        {% endif %}
+
+        <div class="av__proof">
+          {% if section.settings.show_stars %}
+            <div class="av__stars" aria-label="{{ section.settings.star_count }} out of 5 stars">
+              {% for i in (1..5) %}
+                {% if i <= section.settings.star_count %}
+                  <svg class="av__star av__star--filled" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor"/></svg>
+                {% else %}
+                  <svg class="av__star" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="currentColor" opacity="0.15"/></svg>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if section.settings.logo != blank %}
+            <div class="av__logo-wrap">
+              <img
+                src="{{ section.settings.logo | image_url: width: 200 }}"
+                alt="{{ section.settings.logo.alt | default: shop.name | escape }}"
+                loading="lazy"
+                class="av__logo"
+                width="120"
+              >
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function() {
+    document.addEventListener('click', function(e) {
+      /* Play button click */
+      var btn = e.target.closest('[data-av-play]');
+      if (btn) {
+        var wrapper = btn.closest('[data-av-video]');
+        var video = wrapper.querySelector('video');
+        var poster = wrapper.querySelector('[data-av-poster]');
+        if (video) {
+          video.play();
+          btn.style.display = 'none';
+          if (poster) poster.classList.add('av--hidden');
+        }
+        return;
+      }
+
+      /* Tap video to pause/play */
+      var video = e.target.closest('video.av__video');
+      if (!video) return;
+      var wrapper = video.closest('[data-av-video]');
+      var playBtn = wrapper.querySelector('[data-av-play]');
+      var poster = wrapper.querySelector('[data-av-poster]');
+      if (video.paused) {
+        video.play();
+        if (playBtn) playBtn.style.display = 'none';
+        if (poster) poster.classList.add('av--hidden');
+      } else {
+        video.pause();
+        if (playBtn) playBtn.style.display = 'flex';
+      }
+    });
+  })();
+</script>
+
+{% style %}
+  .av {
+    padding: 72px 24px;
+    background: var(--av-bg);
+  }
+
+  .av__wrap {
+    display: grid;
+    grid-template-columns: 5fr 6fr;
+    align-items: center;
+    gap: 56px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  /* ── Video pill ── */
+  .av__video-col {
+    display: flex;
+    justify-content: center;
+  }
+
+  .av__video-pill {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 3 / 4;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #2a3d35;
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.12),
+      0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .av__video-player {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .av__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .av__poster-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .av__poster-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .av__poster-overlay.av--hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .av__placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(160deg, #4a7a6a 0%, #2a3d35 100%);
+  }
+
+  .av__play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    z-index: 2;
+  }
+
+  .av__play:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .av__play svg {
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 2px 12px rgba(0,0,0,0.35));
+  }
+
+  .av__play:hover svg {
+    transform: scale(1.1);
+  }
+
+  /* ── Content ── */
+  .av__content-col {
+    display: flex;
+    align-items: center;
+  }
+
+  .av__content {
+    max-width: 440px;
+  }
+
+  /* Kicker with accent line */
+  .av__kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-body--family, sans-serif);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #679992;
+    margin: 0 0 24px;
+  }
+
+  .av__kicker-line {
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: #679992;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  /* Heading */
+  .av__heading {
+    font-family: var(--font-subheading--family, var(--font-heading--family, serif));
+    font-size: clamp(2rem, 3.8vw, 2.8rem);
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.15;
+    letter-spacing: -0.4px;
+    margin: 0 0 18px;
+    text-wrap: balance;
+  }
+
+  .av__heading strong,
+  .av__heading b {
+    color: #1a1a1a;
+    font-weight: 800;
+  }
+
+  .av__heading em,
+  .av__heading i {
+    font-style: italic;
+    color: #679992;
+  }
+
+  /* Subtext */
+  .av__subtext {
+    font-family: var(--font-body--family, sans-serif);
+    font-size: 1.02rem;
+    color: #666;
+    line-height: 1.6;
+    margin: 0 0 32px;
+    max-width: 360px;
+  }
+
+  /* Proof block (stars + logo) */
+  .av__proof {
+    padding-top: 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .av__stars {
+    display: flex;
+    gap: 4px;
+  }
+
+  .av__star {
+    color: #d4c9b8;
+  }
+
+  .av__star.av__star--filled {
+    color: #f7d12f;
+    filter: drop-shadow(0 1px 2px rgba(247, 209, 47, 0.3));
+  }
+
+  .av__logo-wrap {
+    display: flex;
+  }
+
+  .av__logo {
+    height: auto;
+    opacity: 0.85;
+  }
+
+  /* ── Mobile ── */
+  @media screen and (max-width: 768px) {
+    .av {
+      padding: 48px 20px;
+    }
+
+    .av__wrap {
+      grid-template-columns: 1fr;
+      gap: 36px;
+      max-width: 400px;
+    }
+
+    .av__video-pill {
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .av__content {
+      text-align: center;
+      margin: 0 auto;
+    }
+
+    .av__kicker {
+      justify-content: center;
+    }
+
+    .av__subtext {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .av__stars {
+      justify-content: center;
+    }
+
+    .av__proof {
+      align-items: center;
+    }
+
+    .av__logo-wrap {
+      justify-content: center;
+    }
+  }
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "Authority Video",
+  "tag": "div",
+  "class": "section-wrapper",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video (Shopify hosted)"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "Cover / thumbnail image"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "kicker",
+      "label": "Kicker (small text above heading)",
+      "default": "TRUSTED BY EXPERTS"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading (bold & italic supported)",
+      "default": "<p>Recommended by over 100 registered <strong>Nutritionists</strong></p>"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Gentle & bioavailable formulations that can be used daily."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stars",
+      "label": "Show star rating",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "star_count",
+      "label": "Stars (filled)",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo / badge image"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section background",
+      "default": "#fff7ef"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Authority Video"
+    }
+  ]
+}
+{% endschema %}

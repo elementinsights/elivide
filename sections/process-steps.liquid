@@ -6,6 +6,8 @@
   class="process-steps color-{{ section.settings.color_scheme }}"
   style="
     --ps-bg: {{ section.settings.bg_color }};
+    --ps-kicker-color: {{ section.settings.kicker_color }};
+    --ps-heading-color: {{ section.settings.heading_color }};
     --ps-pad-y-desktop: {{ section.settings.pad_y_desktop }}px;
     --ps-pad-y-mobile: {{ section.settings.pad_y_mobile }}px;
     --ps-max-width: {{ section.settings.max_width }}px;
@@ -103,6 +105,8 @@
     { "type": "text", "id": "heading_highlight", "label": "Highlighted ending", "default": "the fungi we grow and love." },
 
     { "type": "color", "id": "bg_color", "label": "Background", "default": "#f5f6ef" },
+    { "type": "color", "id": "kicker_color", "label": "Kicker text color", "default": "#ad724f" },
+    { "type": "color", "id": "heading_color", "label": "Heading text color", "default": "#5b3615" },
     { "type": "range", "id": "pad_y_desktop", "label": "Padding Y (desktop)", "min": 40, "max": 180, "step": 4, "default": 128 },
     { "type": "range", "id": "pad_y_mobile", "label": "Padding Y (mobile)", "min": 24, "max": 120, "step": 4, "default": 64 },
     { "type": "range", "id": "max_width", "label": "Max width", "min": 900, "max": 1400, "step": 20, "default": 1100 },
@@ -177,7 +181,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 11px;
-  color: #ad724f;
+  color: var(--ps-kicker-color, #ad724f);
 }
 
 @media (min-width: 1024px) {
@@ -192,7 +196,7 @@
   font-weight: 800;
   text-transform: uppercase;
   line-height: 1.1;
-  color: #5b3615;
+  color: var(--ps-heading-color, #5b3615);
   font-size: 26px;
 }
 

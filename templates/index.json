@@ -365,184 +365,29 @@
         "button_2_link": "#"
       }
     },
-    "section_RrzbQi": {
-      "type": "section",
-      "blocks": {
-        "image_3UAeqQ": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/Metabolic_Flow_Mitochondrial_Support_Nutrients.png",
-            "link": "",
-            "image_ratio": "adapt",
-            "width": "fill",
-            "custom_width": 100,
-            "width_mobile": "fill",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "group_VGjdrP": {
-          "type": "group",
-          "settings": {
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
-            "width": "custom",
-            "custom_width": 100,
-            "width_mobile": "fill",
-            "custom_width_mobile": 100,
-            "height": "fit",
-            "custom_height": 100,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "background_media": "none",
-            "video_position": "cover",
-            "background_image_position": "cover",
-            "border": "none",
-            "border_width": 1,
-            "border_opacity": 100,
-            "border_radius": 0,
-            "toggle_overlay": false,
-            "overlay_color": "#00000026",
-            "overlay_style": "solid",
-            "gradient_direction": "to top",
-            "link": "",
-            "open_in_new_tab": false,
-            "placeholder": "",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {
-            "text_piHy4h": {
-              "type": "text",
-              "name": "t:names.heading",
-              "settings": {
-                "text": "<h2>Meet Metabolic Flow</h2>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "list_style_checkmark": false,
-                "list_to_row": false,
-                "before_stars": false,
-                "checkmark_text_color": "#111111",
-                "checkmark_text_size_desktop": 16,
-                "alignment": "left",
-                "type_preset": "h3",
-                "font": "var(--font-body--family)",
-                "font_size_px": 16,
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "text_JtnYYx": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Metabolic health is at the core of how our bodies create, distribute, and use energy. Every heartbeat, breath, and thought depends on thousands of coordinated reactions - turning nutrients into usable energy, clearing cellular waste, and maintaining balance between our major systems. </p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "list_style_checkmark": false,
-                "list_to_row": false,
-                "before_stars": false,
-                "checkmark_text_color": "#111111",
-                "checkmark_text_size_desktop": 16,
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size_px": 16,
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "button_7hyXNF": {
-              "type": "button",
-              "settings": {
-                "label": "Shop now",
-                "link": "shopify://products/metabolic-flow-mitochondrial-support",
-                "open_in_new_tab": false,
-                "style_class": "button",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "text_piHy4h",
-            "text_JtnYYx",
-            "button_7hyXNF"
-          ]
-        }
-      },
-      "block_order": [
-        "image_3UAeqQ",
-        "group_VGjdrP"
-      ],
-      "name": "t:names.image_with_text",
+    "quiz_cta": {
+      "type": "quiz-cta",
       "settings": {
-        "content_direction": "row",
-        "vertical_on_mobile": true,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "center",
-        "align_baseline": false,
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "vertical_alignment_flex_direction_column": "center",
-        "gap": 32,
-        "section_width": "page-width",
-        "section_height": "",
-        "section_height_custom": 50,
-        "color_scheme": "scheme-1",
-        "background_media": "none",
-        "video_position": "cover",
-        "background_image_position": "cover",
-        "border": "none",
-        "border_width": 1,
-        "border_opacity": 100,
-        "border_radius": 0,
-        "toggle_overlay": false,
-        "overlay_color": "#00000026",
-        "overlay_style": "solid",
-        "gradient_direction": "to top",
-        "padding-block-start": 40,
-        "padding-block-end": 40
+        "kicker": "PERSONALIZED FOR YOU",
+        "heading": "<p>Not sure where to <em>start<\/em>?<\/p>",
+        "subheading": "Take our 60-second quiz and discover the perfect supplement routine for your goals.",
+        "button1_label": "Take the Quiz",
+        "button1_link": "",
+        "button2_label": "Shop All Products",
+        "button2_link": "shopify://collections/all",
+        "trust_1": "Free & takes 60 seconds",
+        "trust_2": "Personalized results",
+        "trust_3": "10,000+ quizzes completed",
+        "section_bg": "#fff7ef",
+        "card_bg": "#1a1f2e",
+        "accent_color": "#679992",
+        "heading_color": "#ffffff",
+        "emphasis_color": "#8CC5A2",
+        "subtext_color": "#ffffffa0",
+        "kicker_color": "#8CC5A2",
+        "button1_bg": "#2D5A3D",
+        "button1_text": "#ffffff",
+        "trust_color": "#ffffff70"
       }
     },
     "five_reasons_UAYbpg": {
@@ -727,6 +572,17 @@
         "padding_y": 20,
         "padding_x": 0
       }
+    },
+    "authority_video": {
+      "type": "authority-video",
+      "settings": {
+        "kicker": "TRUSTED BY EXPERTS",
+        "heading": "<p>Recommended by over 100 registered <strong>Nutritionists</strong></p>",
+        "subtext": "Gentle & bioavailable formulations that can be used daily.",
+        "show_stars": true,
+        "star_count": 5,
+        "section_bg": "#ffffff"
+      }
     }
   },
   "order": [
@@ -735,7 +591,8 @@
     "featured_collection_custom",
     "usp_marquee_rALPhd",
     "process_steps_hqFmMg",
-    "section_RrzbQi",
+    "quiz_cta",
+    "authority_video",
     "five_reasons_UAYbpg",
     "section_Ck7ECx",
     "email_PHxzPF",

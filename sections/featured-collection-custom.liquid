@@ -87,7 +87,13 @@
 
               <div class="fcc-card__info">
                 <div class="fcc-card__stars">
-                  {%- render 'star-wrapper' -%}
+                  <div class="fcc-stars-fallback">{%- render 'star-wrapper' -%}</div>
+                  <div class="fcc-stars-rio" style="display:none;">
+                    <div
+                      class="ruk_rating_snippet"
+                      data-sku="{{ product.variants | map: 'sku' | reject: '' | join: ';' }}"
+                    ></div>
+                  </div>
                 </div>
 
                 <a href="{{ product.url }}" class="fcc-card__title">{{ product.title }}</a>
@@ -271,6 +277,18 @@
   .fcc-card__stars svg {
     width: 16px;
     height: 16px;
+  }
+
+  .fcc-card__stars .ruk-rating-snippet-count {
+    display: none;
+  }
+
+  .fcc-card__stars .ruk_rating_snippet {
+    line-height: 1;
+  }
+
+  .fcc-card__stars .ruk-icon-percentage-star--100 {
+    color: #f7d12f;
   }
 
   /* Card info */
@@ -471,6 +489,51 @@
     }
   }
 </style>
+
+<script>
+  (function() {
+    var section = document.getElementById('shopify-section-{{ section.id }}');
+    if (!section) return;
+    var maxAttempts = 40;
+    var attempt = 0;
+
+    function tryInit() {
+      attempt++;
+      if (typeof ratingSnippet === 'function' && typeof reviewsIoStore !== 'undefined') {
+        ratingSnippet("ruk_rating_snippet", {
+          store: reviewsIoStore,
+          color: '#000000',
+          textClr: '#333333',
+          linebreak: false,
+          usePolaris: true,
+          text: 'Reviews',
+          lang: 'en',
+          mode: 'default',
+          showEmptyStars: false,
+          enableSyndication: false
+        });
+        /* After a short delay, check if Reviews.io populated any snippets and swap visibility */
+        setTimeout(function() {
+          var rios = section.querySelectorAll('.fcc-stars-rio .ruk_rating_snippet');
+          rios.forEach(function(el) {
+            if (el.innerHTML.trim().length > 0) {
+              el.closest('.fcc-card__stars').querySelector('.fcc-stars-fallback').style.display = 'none';
+              el.closest('.fcc-stars-rio').style.display = '';
+            }
+          });
+        }, 1500);
+      } else if (attempt < maxAttempts) {
+        setTimeout(tryInit, 300);
+      }
+    }
+
+    if (document.readyState === 'complete') {
+      setTimeout(tryInit, 200);
+    } else {
+      window.addEventListener('load', function() { setTimeout(tryInit, 200); });
+    }
+  })();
+</script>
 
 {% schema %}
 {
