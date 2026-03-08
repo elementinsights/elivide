@@ -5,6 +5,28 @@
   - Bottom bar with tags, author, print & share
   - Sidebar supports list of products via article metafield (custom.featured_product) with fallback to single section setting
 {% endcomment %}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": {{ article.title | json }},
+    "url": "{{ request.origin }}{{ article.url }}",
+    "datePublished": "{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+    "dateModified": "{{ article.updated_at | date: '%Y-%m-%dT%H:%M:%S%z' }}",
+    {%- if article.image -%}
+      "image": "https:{{ article.image | image_url: width: 1200 }}",
+    {%- endif -%}
+    "author": {
+      "@type": "Person",
+      "name": {{ article.author | json }}
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": {{ shop.name | json }}
+    },
+    "description": {{ article.excerpt_or_content | strip_html | truncate: 160 | json }}
+  }
+</script>
 <div class="shopify-section section-wrapper section-blog-post">
   <div class="section section--page-width">
     <article class="blog-article" itemscope itemtype="http://schema.org/BlogPosting">

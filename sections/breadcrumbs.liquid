@@ -79,6 +79,46 @@
       </nav>
     </div>
   </div>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {%- assign pos = 1 -%}
+        {
+          "@type": "ListItem",
+          "position": {{ pos }},
+          "name": "Home",
+          "item": "{{ request.origin }}{{ routes.root_url }}"
+        }
+        {%- if section.settings.show_shop -%}
+          {%- assign pos = pos | plus: 1 -%}
+          ,{
+            "@type": "ListItem",
+            "position": {{ pos }},
+            "name": {{ shop_label | json }},
+            "item": "{{ request.origin }}{{ shop_url }}"
+          }
+        {%- endif -%}
+        {%- if section.settings.show_collection and current_collection != blank -%}
+          {%- assign pos = pos | plus: 1 -%}
+          ,{
+            "@type": "ListItem",
+            "position": {{ pos }},
+            "name": {{ current_collection.title | json }},
+            "item": "{{ request.origin }}{{ current_collection.url }}"
+          }
+        {%- endif -%}
+        {%- assign pos = pos | plus: 1 -%}
+        ,{
+          "@type": "ListItem",
+          "position": {{ pos }},
+          "name": {{ product.title | json }}
+        }
+      ]
+    }
+  </script>
 {%- endif -%}
 
 <style>

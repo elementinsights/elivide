@@ -24,7 +24,7 @@
       </div>
       <div class="five-reason-desktop-right">
         <h2>{{ section.settings.heading }}</h2>
-        <ul>
+        <ol>
           <li>
             <div class="number-circle" aria-hidden="true">
               <span class="number-white">1</span>
@@ -69,7 +69,7 @@
               <p>{{ section.settings.reason_five }}</p>
             </div>
           </li>
-        </ul>
+        </ol>
         {% if section.settings.show_quiz != false %}
             <div class="dtc-not-sure">
             <span>{{ section.settings.quiz_title }}</span>
@@ -102,7 +102,7 @@
 
       <div class="section section--page-width">
         <div class="five-reason-mobile-bot">
-          <ul>
+          <ol>
             <li>
               <div class="number-circle" aria-hidden="true">
                 <span class="number-white">1</span>
@@ -147,7 +147,7 @@
                 <p>{{ section.settings.reason_five }}</p>
               </div>
             </li>
-          </ul>
+          </ol>
         {% if section.settings.show_quiz != false %}
           <div class="dtc-not-sure">
             <span>{{ section.settings.quiz_title }}</span>
@@ -199,7 +199,7 @@
   margin-bottom: 0;
 }
 
-.reasons-list-section-element .five-reason-desktop-right ul {
+.reasons-list-section-element .five-reason-desktop-right ol {
   list-style: none;
   display: flex;
   flex-direction: column;
@@ -208,7 +208,7 @@
   padding: 0;
 }
 
-.reasons-list-section-element .five-reason-desktop-right ul li {
+.reasons-list-section-element .five-reason-desktop-right ol li {
   display: flex;
   gap: 10px;
 }
@@ -316,7 +316,7 @@
 }
 
 @media (max-width: 1200px) {
-  .reasons-list-section-element .five-reason-desktop-right ul {
+  .reasons-list-section-element .five-reason-desktop-right ol {
     gap: 10px;
   }
 }
@@ -391,7 +391,7 @@
     align-items: center;
   }
 
-  .reasons-list-section-element .five-reason-mobile-bot ul {
+  .reasons-list-section-element .five-reason-mobile-bot ol {
     display: flex;
     flex-direction: column;
     padding: 20px 0;
@@ -402,7 +402,7 @@
     max-width: 600px;
   }
 
-  .reasons-list-section-element .five-reason-mobile-bot ul li {
+  .reasons-list-section-element .five-reason-mobile-bot ol li {
     display: flex;
     gap: 10px;
   }
@@ -445,7 +445,7 @@
 }
 
 @media (max-width: 576px) {
-  .reasons-list-section-element .five-reason-mobile-bot ul {
+  .reasons-list-section-element .five-reason-mobile-bot ol {
     margin-bottom: 0;
   }
 
