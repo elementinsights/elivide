@@ -59,8 +59,8 @@
   <div class="benefits-hero">
     <div class="benefits-hero__content{% if bh_main_image == blank %} benefits-hero__content-no-padding{% endif %}">
       <div class="benefits-hero__text">
-        <h2>{{ bh_preheading }}</h2>
-        <h3>{{ bh_heading }}</h3>
+        <span class="benefits-hero__preheading">{{ bh_preheading }}</span>
+        <h2>{{ bh_heading }}</h2>
         <p>{{ bh_subheading }}</p>
       </div>
       
@@ -124,7 +124,8 @@
   width: 100%;
 }
 
-.benefits-hero__text h2 {
+.benefits-hero__text .benefits-hero__preheading {
+    display: block;
     font-size: 24px;
     color: var(--bh-text-color, #FFFFFF);
     margin: 0;
@@ -132,7 +133,7 @@
     font-weight: 400;
 }
 
-.benefits-hero__text h3 {
+.benefits-hero__text h2 {
     font-size: 44px;
     color: var(--bh-text-color, #FFFFFF);
     margin: 0;
@@ -188,11 +189,11 @@
     padding-right: var(--bh-padding-side-mobile, 20px);
   }
 
-  .benefits-hero__text h2 {
+  .benefits-hero__text .benefits-hero__preheading {
     font-size:16px;
   }
 
-  .benefits-hero__text h3 {
+  .benefits-hero__text h2 {
     font-size:26px;
   }
 

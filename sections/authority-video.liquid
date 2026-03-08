@@ -42,6 +42,8 @@
                 alt="{{ section.settings.cover_image.alt | escape }}"
                 class="av__poster-overlay"
                 data-av-poster
+                width="{{ section.settings.cover_image.width }}"
+                height="{{ section.settings.cover_image.height }}"
               >
             {% endif %}
             <button class="av__play" aria-label="Play video" data-av-play>
@@ -57,6 +59,8 @@
             alt="{{ section.settings.cover_image.alt | escape }}"
             loading="lazy"
             class="av__poster-img"
+            width="{{ section.settings.cover_image.width }}"
+            height="{{ section.settings.cover_image.height }}"
           >
         {% else %}
           <div class="av__placeholder"></div>
@@ -101,6 +105,7 @@
                 loading="lazy"
                 class="av__logo"
                 width="120"
+                height="{{ section.settings.logo.height | times: 120 | divided_by: section.settings.logo.width }}"
               >
             </div>
           {% endif %}
