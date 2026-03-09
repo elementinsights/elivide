@@ -1498,9 +1498,11 @@ button.shopify-payment-button__button--unbranded {
 
 @media screen and (max-width: 749px) {
   .product-card .button,
-  .quick-add .button,
-  .add-to-cart-button {
+  .quick-add .button {
     font-size: 0.75rem;
+  }
+  .add-to-cart-button {
+    font-size: 1rem;
   }
 }
 

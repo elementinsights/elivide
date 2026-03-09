@@ -21,13 +21,14 @@
     <div class="qz__image-wrap">
       {% if section.settings.image != blank %}
         <img
-          src="{{ section.settings.image | image_url: width: 900 }}"
+          src="{{ section.settings.image | image_url: width: 700 }}"
           srcset="
-            {{ section.settings.image | image_url: width: 450 }} 450w,
-            {{ section.settings.image | image_url: width: 680 }} 680w,
-            {{ section.settings.image | image_url: width: 900 }} 900w
+            {{ section.settings.image | image_url: width: 400 }} 400w,
+            {{ section.settings.image | image_url: width: 550 }} 550w,
+            {{ section.settings.image | image_url: width: 700 }} 700w,
+            {{ section.settings.image | image_url: width: 1100 }} 1100w
           "
-          sizes="(max-width: 768px) 100vw, 45vw"
+          sizes="(max-width: 768px) calc(100vw - 32px), 550px"
           alt="{{ section.settings.image.alt | escape }}"
           loading="lazy"
           class="qz__image"

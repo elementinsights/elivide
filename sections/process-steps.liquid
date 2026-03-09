@@ -43,13 +43,14 @@
             <div class="process-steps__card">
               {% if block.settings.image != blank %}
                 <div class="process-steps__image">
+                  {%- assign ps_sizes = '(min-width: 1024px) ' | append: section.settings.image_size_desktop | append: 'px, ' | append: section.settings.image_size_mobile | append: 'px' -%}
                   {{
                     block.settings.image
-                    | image_url: width: 1200
+                    | image_url: width: 800
                     | image_tag:
                       loading: 'lazy',
-                      widths: '240, 320, 400, 500, 640, 800, 1000, 1200',
-                      sizes: '(min-width: 1024px) var(--ps-img-size-desktop), var(--ps-img-size-mobile)'
+                      widths: '240, 320, 400, 520, 800',
+                      sizes: ps_sizes
                   }}
                 </div>
               {% endif %}
