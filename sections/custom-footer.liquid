@@ -25,13 +25,14 @@
       <div class="custom-footer__left">
         {% if section.settings.footer_image != blank %}
           <a class="custom-footer__brand" href="{{ routes.root_url }}" aria-label="{{ shop.name }} - Home">
+            {%- assign footer_logo_alt = section.settings.footer_image.alt | default: shop.name -%}
             {{
               section.settings.footer_image
               | image_url: width: 1600
               | image_tag:
                 loading: 'lazy',
                 class: 'custom-footer__logo',
-                alt: section.settings.footer_image.alt | default: shop.name
+                alt: footer_logo_alt
             }}
           </a>
         {% else %}

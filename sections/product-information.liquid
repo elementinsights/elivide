@@ -121,6 +121,7 @@
         class="sticky-add-to-cart__button add-to-cart-button button button--primary"
         ref="addToCartButton"
         on:click="/handleAddToCartClick"
+        aria-label="{{ 'actions.add_to_cart' | t }}"
         {% unless current_variant.available %}
           disabled
         {% endunless %}
