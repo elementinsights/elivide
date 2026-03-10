@@ -1,0 +1,1528 @@
+{% comment %}
+  Elivide Quiz — Standalone full-page quiz experience
+  No external API calls, no app dependency.
+  All content editable from Theme Editor (settings + question blocks).
+  GA4 analytics: quiz_view, quiz_start, quiz_question_view, quiz_complete, quiz_add_to_cart
+{% endcomment %}
+
+{% assign logo_url = "" %}
+{% if section.settings.logo != blank %}
+  {% assign logo_url = section.settings.logo | image_url: width: 300 %}
+{% elsif shop.brand.logo %}
+  {% assign logo_url = shop.brand.logo | image_url: width: 300 %}
+{% endif %}
+
+{% assign start_image_url = "" %}
+{% if section.settings.start_image != blank %}
+  {% assign start_image_url = section.settings.start_image | image_url: width: 1140 %}
+{% endif %}
+
+{% comment %} Resolve products from handles {% endcomment %}
+{% assign p1_handle = section.settings.product_1 %}
+{% assign p2_handle = section.settings.product_2 %}
+{% assign p3_handle = section.settings.product_3 %}
+{% assign p1 = all_products[p1_handle] %}
+{% assign p2 = all_products[p2_handle] %}
+{% assign p3 = all_products[p3_handle] %}
+
+{% comment %} Build quiz data JSON from settings + blocks {% endcomment %}
+<script type="application/json" id="quiz-data-{{ section.id }}">
+{
+  "title": {{ section.settings.start_title | json }},
+  "subtitle": {{ section.settings.start_subtitle | json }},
+  "imageUrl": {{ start_image_url | json }},
+  "introTitle": {{ section.settings.intro_title | json }},
+  "introSubtitle": {{ section.settings.intro_subtitle | json }},
+  "introBody": {{ section.settings.intro_body | json }},
+  "resultsTitle": {{ section.settings.results_title | json }},
+  "resultsSubtitle": {{ section.settings.results_subtitle | json }},
+  "products": [
+    {% if p1 %}
+    {
+      "id": "product_1",
+      "shopifyProductId": {{ p1.id | json }},
+      "title": {{ p1.title | json }},
+      "price": {{ p1.price | money | json }},
+      "handle": {{ p1.handle | json }},
+      "tooltipHtml": {{ section.settings.product_1_tooltip | json }},
+      "imageUrl": {{ p1.featured_image | image_url: width: 600 | json }}
+    }{% if p2 %},{% endif %}
+    {% endif %}
+    {% if p2 %}
+    {
+      "id": "product_2",
+      "shopifyProductId": {{ p2.id | json }},
+      "title": {{ p2.title | json }},
+      "price": {{ p2.price | money | json }},
+      "handle": {{ p2.handle | json }},
+      "tooltipHtml": {{ section.settings.product_2_tooltip | json }},
+      "imageUrl": {{ p2.featured_image | image_url: width: 600 | json }}
+    }{% if p3 %},{% endif %}
+    {% endif %}
+    {% if p3 %}
+    {
+      "id": "product_3",
+      "shopifyProductId": {{ p3.id | json }},
+      "title": {{ p3.title | json }},
+      "price": {{ p3.price | money | json }},
+      "handle": {{ p3.handle | json }},
+      "tooltipHtml": {{ section.settings.product_3_tooltip | json }},
+      "imageUrl": {{ p3.featured_image | image_url: width: 600 | json }}
+    }
+    {% endif %}
+  ],
+  "questions": [
+    {% for block in section.blocks %}
+      {% if block.type == 'question' %}
+        {% unless forloop.first %},{% endunless %}
+        {
+          "id": {{ block.id | json }},
+          "title": {{ block.settings.title | json }},
+          "subtitle": {{ block.settings.subtitle | json }},
+          "answers": [
+            {
+              "id": "{{ block.id }}_a1",
+              "text": {{ block.settings.answer_1 | json }},
+              "points": [
+                { "productId": "product_1", "points": {{ block.settings.answer_1_p1 }} },
+                { "productId": "product_2", "points": {{ block.settings.answer_1_p2 }} },
+                { "productId": "product_3", "points": {{ block.settings.answer_1_p3 }} }
+              ]
+            },
+            {
+              "id": "{{ block.id }}_a2",
+              "text": {{ block.settings.answer_2 | json }},
+              "points": [
+                { "productId": "product_1", "points": {{ block.settings.answer_2_p1 }} },
+                { "productId": "product_2", "points": {{ block.settings.answer_2_p2 }} },
+                { "productId": "product_3", "points": {{ block.settings.answer_2_p3 }} }
+              ]
+            },
+            {
+              "id": "{{ block.id }}_a3",
+              "text": {{ block.settings.answer_3 | json }},
+              "points": [
+                { "productId": "product_1", "points": {{ block.settings.answer_3_p1 }} },
+                { "productId": "product_2", "points": {{ block.settings.answer_3_p2 }} },
+                { "productId": "product_3", "points": {{ block.settings.answer_3_p3 }} }
+              ]
+            }
+          ]
+        }
+      {% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+
+<div id="elivide-quiz-{{ section.id }}"
+  data-section-id="{{ section.id }}"
+  data-logo-url="{{ logo_url }}"
+  style="
+    --eq-bg: {{ section.settings.bg_color }};
+    --eq-accent: {{ section.settings.accent_color }};
+    --eq-accent-hover: {{ section.settings.accent_color | color_darken: 10 }};
+    --eq-heading-color: {{ section.settings.heading_color }};
+  ">
+</div>
+
+<style>
+  /* ─── Reset & Base ─── */
+  #elivide-quiz-{{ section.id }} {
+    --eq-text: #1a1a1a;
+    --eq-text-muted: #666;
+    --eq-border: #e5e5e5;
+    --eq-card-bg: #ffffff;
+    --eq-radius: 8px;
+    --eq-font: var(--font-body--family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    --eq-font-heading: var(--font-subheading--family, var(--font-heading--family, Georgia, serif));
+
+    background: var(--eq-bg);
+    font-family: var(--eq-font);
+    color: var(--eq-text);
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    overflow: hidden;
+  }
+
+  #elivide-quiz-{{ section.id }} * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  #elivide-quiz-{{ section.id }} .eq-hidden { display: none !important; }
+
+  /* ─── Screen container ─── */
+  #elivide-quiz-{{ section.id }} .eq-screen {
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    max-width: 1172px;
+    margin: 0 auto;
+  }
+
+  /* ─── Top bar ─── */
+  #elivide-quiz-{{ section.id }} .eq-topbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 24px;
+    position: relative;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-topbar__center {
+    font-size: 16px;
+    color: #99948f;
+    font-weight: 700;
+    padding-bottom: 32px;
+  }
+
+  /* ─── Start Screen ─── */
+  #elivide-quiz-{{ section.id }} .eq-start {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    gap: 80px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-start__content {
+    max-width: 400px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-start__heading {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    color: var(--eq-heading-color);
+    letter-spacing: -0.02em;
+    text-align: left;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-start__sub {
+    font-size: 16px;
+    color: var(--eq-text-muted);
+    margin-top: 16px;
+    margin-bottom: 40px;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-start__content .eq-btn {
+    width: 370px;
+    height: 62px;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-start__content .eq-btn:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-start__image {
+    width: 570px;
+    height: 570px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-start__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ─── Buttons ─── */
+  #elivide-quiz-{{ section.id }} .eq-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 48px;
+    border-radius: 8px;
+    font-family: var(--eq-font);
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 200px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-btn--primary {
+    background: var(--eq-accent);
+    color: #fff;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-btn--primary:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-btn--disabled {
+    background: #e8e8e8;
+    color: #bbb;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-btn--active {
+    background: var(--eq-accent);
+    color: #fff;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-btn--active:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  /* ─── Arrow animation (all CTA buttons) ─── */
+  #elivide-quiz-{{ section.id }} .eq-btn .eq-btn__arrow {
+    display: inline-flex;
+    margin-left: 0px;
+    width: 0;
+    opacity: 0;
+    transition: width 0.3s ease, margin-left 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(-8px);
+    position: relative;
+    top: 1px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-btn .eq-btn__arrow svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-btn:hover .eq-btn__arrow {
+    width: 22px;
+    margin-left: 7px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* ─── Intro Screen ─── */
+  #elivide-quiz-{{ section.id }} .eq-intro {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 48px 24px 60px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro__heading,
+  #elivide-quiz-{{ section.id }} .eq-intro__sub,
+  #elivide-quiz-{{ section.id }} .eq-intro__body {
+    max-width: 720px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro__logo {
+    margin-bottom: 36px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro__logo img {
+    width: 238px;
+    height: 99.414px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro__heading {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--eq-heading-color);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro__sub {
+    font-size: 16px;
+    color: var(--eq-text-muted);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro__body {
+    font-size: 16px;
+    line-height: 20.8px;
+    color: var(--eq-text);
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro__body p {
+    margin-bottom: 18px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-intro .eq-btn {
+    width: 370px;
+    height: 62px;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ─── Progress Bar ─── */
+  #elivide-quiz-{{ section.id }} .eq-progress {
+    width: 100%;
+    padding: 0;
+    margin-bottom: 8px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-progress__bar {
+    width: 100%;
+    height: 8px;
+    background: #f5ece7;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-progress__fill {
+    height: 8px;
+    background: var(--eq-accent);
+    border-radius: 4px;
+    transition: width 0.7s ease;
+    display: block;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-progress__label {
+    font-size: 12px;
+    color: #000;
+    margin-top: 4px;
+    transition: margin-left 0.7s ease;
+    display: inline-block;
+    transform: translateX(-50%);
+  }
+
+  /* ─── Question Screen ─── */
+  #elivide-quiz-{{ section.id }} .eq-question {
+    flex: 1;
+    padding: 0 24px 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-question__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--eq-font);
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-question__back svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-question__back:hover svg {
+    transform: translateX(-4px);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-question__title {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: var(--eq-heading-color);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-question__subtitle {
+    font-size: 16px;
+    color: rgba(0,0,0,0.6);
+    margin-top: 16px;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    max-width: 800px;
+  }
+
+  /* ─── Answer Cards ─── */
+  #elivide-quiz-{{ section.id }} .eq-answers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-answer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    background: #ffffff;
+    border: 1.5px solid #e0dbd6;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 400;
+    height: 90px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-answer:hover {
+    border-color: var(--eq-accent);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-answer--selected {
+    border-color: var(--eq-accent);
+    background: rgba(126, 168, 154, 0.06);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-answer__radio {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-answer--selected .eq-answer__radio {
+    border-color: var(--eq-accent);
+    background: var(--eq-accent);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-answer--selected .eq-answer__radio::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  /* ─── Next/Finish button area ─── */
+  #elivide-quiz-{{ section.id }} .eq-question__actions {
+    display: flex;
+    justify-content: center;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-question__actions .eq-btn {
+    width: 370px;
+    height: 62px;
+    border-radius: 10px;
+    font-size: 18px;
+    padding: 0;
+    transition: background 0.6s ease, color 0.6s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ─── Results Screen ─── */
+  #elivide-quiz-{{ section.id }} .eq-results {
+    flex: 1;
+    padding: 20px 24px 60px;
+    width: 100%;
+    text-align: center;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-results__restart {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(0,0,0,0.4);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--eq-font);
+    margin-bottom: 24px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-results__restart svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-results__restart:hover svg {
+    transform: rotate(45deg);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-results__heading {
+    font-family: var(--eq-font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+    color: var(--eq-heading-color);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-results__sub {
+    font-size: 16px;
+    color: var(--eq-text-muted);
+    text-align: center;
+    max-width: 750px;
+    margin: 16px auto 40px;
+    line-height: 1.6;
+  }
+
+  /* ─── Product Cards ─── */
+  #elivide-quiz-{{ section.id }} .eq-products {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    text-align: left;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product {
+    background: var(--eq-card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1.5px solid #e8e3de;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product:hover {
+    border-color: var(--eq-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__match {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__match-badge {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--eq-text);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__match-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-style: italic;
+    font-family: Georgia, serif;
+    flex-shrink: 0;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    padding: 10px 14px;
+    border-radius: 8px;
+    white-space: normal;
+    min-width: 200px;
+    max-width: 280px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #1a1a1a;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__match-badge:hover .eq-product__tooltip {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__image {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__title {
+    font-family: var(--eq-font-heading);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__price {
+    font-size: 14px;
+    color: var(--eq-text-muted);
+    margin-bottom: 10px;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__variant {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 36px;
+    padding: 8px 30px 8px 10px;
+    border: 1px solid var(--eq-border);
+    border-radius: 6px;
+    font-family: var(--eq-font);
+    font-size: 13px;
+    background: var(--eq-card-bg);
+    color: var(--eq-text);
+    margin-bottom: 12px;
+    outline: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__variant:focus,
+  #elivide-quiz-{{ section.id }} .eq-product__variant:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__atc {
+    width: 100%;
+    max-width: 50%;
+    height: 48px;
+    background: var(--eq-accent);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: var(--eq-font);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: auto;
+    padding: 0;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-product__atc:hover {
+    background: var(--eq-accent-hover) !important;
+    background-color: var(--eq-accent-hover) !important;
+  }
+
+  /* ─── Transition animation ─── */
+  #elivide-quiz-{{ section.id }} .eq-fade-enter {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-fade-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  #elivide-quiz-{{ section.id }} .eq-fade-exit {
+    opacity: 0;
+    transform: translateY(-30px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  /* ─── Mobile ─── */
+  @media screen and (max-width: 768px) {
+    #elivide-quiz-{{ section.id }} .eq-start {
+      flex-direction: column-reverse;
+      gap: 36px;
+      padding: 0 20px;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-start__content {
+      text-align: center;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-start__heading,
+    #elivide-quiz-{{ section.id }} .eq-start__sub {
+      text-align: center;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-start__content .eq-btn {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-start__image {
+      width: 100%;
+      max-width: 280px;
+      height: 200px;
+      border-radius: 12px;
+      margin: 0 auto;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-answers {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-answer {
+      padding: 16px;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-products {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-product {
+      padding: 16px;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-product__image {
+      height: 200px;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-product__atc {
+      max-width: 100%;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-intro .eq-btn {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-question__actions .eq-btn {
+      min-width: 100%;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-screen {
+      padding: 0 20px;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-question {
+      padding: 0 0 32px;
+    }
+
+    #elivide-quiz-{{ section.id }} .eq-results {
+      padding: 12px 0 48px;
+    }
+  }
+</style>
+
+<script>
+(function() {
+  var root = document.getElementById('elivide-quiz-{{ section.id }}');
+  if (!root) return;
+
+  /* ─── GA4 Analytics ─── */
+  function trackGA4(eventName, params) {
+    if (typeof gtag === 'function') {
+      gtag('event', eventName, params || {});
+    }
+  }
+
+  /* ─── Logo detection ─── */
+  var LOGO_URL = root.dataset.logoUrl || '';
+  if (!LOGO_URL) {
+    var headerLogo = document.querySelector('header img[src*="logo"], .header img[src*="logo"], .site-header img, header .logo img, header a img, .header__logo img, .header-logo img');
+    if (headerLogo) LOGO_URL = headerLogo.src;
+  }
+
+  var COOKIE_KEY = 'eq_quiz_results';
+
+  /* ─── Load Quiz Data from Liquid-rendered JSON ─── */
+  var dataEl = document.getElementById('quiz-data-{{ section.id }}');
+  if (!dataEl) return;
+  var quizData;
+  try {
+    quizData = JSON.parse(dataEl.textContent);
+  } catch(e) {
+    root.innerHTML = '<p style="padding:40px;text-align:center;">Quiz configuration error.</p>';
+    return;
+  }
+
+  if (!quizData.questions || quizData.questions.length === 0) {
+    root.innerHTML = '<p style="padding:40px;text-align:center;">No quiz questions configured. Add question blocks in the theme editor.</p>';
+    return;
+  }
+
+  var currentScreen = 'start';
+  var currentQuestion = 0;
+  var prevQuestion = -1;
+  var selectedAnswers = [];
+  var autoAdvanceTimer = null;
+  var btnLocked = false;
+
+  /* ─── Helpers ─── */
+  function getCachedResults() {
+    try {
+      var raw = localStorage.getItem(COOKIE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }
+
+  function setCachedResults(results) {
+    localStorage.setItem(COOKIE_KEY, JSON.stringify(results));
+  }
+
+  function clearCachedResults() {
+    localStorage.removeItem(COOKIE_KEY);
+  }
+
+  function calculateResults() {
+    var scores = {};
+    quizData.products.forEach(function(p) { scores[p.id] = 0; });
+
+    selectedAnswers.forEach(function(answerId) {
+      if (!answerId) return;
+      quizData.questions.forEach(function(q) {
+        q.answers.forEach(function(a) {
+          if (a.id === answerId) {
+            a.points.forEach(function(pt) {
+              scores[pt.productId] = (scores[pt.productId] || 0) + pt.points;
+            });
+          }
+        });
+      });
+    });
+
+    var totalAnswered = selectedAnswers.filter(Boolean).length;
+
+    var results = quizData.products.map(function(p) {
+      return {
+        id: p.id,
+        shopifyProductId: p.shopifyProductId,
+        title: p.title,
+        price: p.price,
+        handle: p.handle,
+        tooltipHtml: p.tooltipHtml,
+        imageUrl: p.imageUrl,
+        score: scores[p.id] || 0,
+        total: totalAnswered
+      };
+    });
+
+    results.sort(function(a, b) { return b.score - a.score; });
+    return results;
+  }
+
+  /* ─── Icons ─── */
+  var icons = {
+    back: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.5 12H1.5" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"></path><path d="M8.25 18.75L1.5 12L8.25 5.25" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="square"></path></svg>',
+    refresh: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>',
+    arrow: '<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.75 5.5L19.25 11M19.25 11L13.75 16.5M19.25 11H2.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>'
+  };
+
+  /* ─── Render Functions ─── */
+  function render() {
+    var html = '';
+    switch (currentScreen) {
+      case 'start': html = renderStart(); break;
+      case 'intro': html = renderIntro(); break;
+      case 'question': html = renderQuestion(); break;
+      case 'results': html = renderResults(); break;
+    }
+    root.innerHTML = '<div class="eq-screen">' + html + '</div>';
+    bindEvents();
+
+    requestAnimationFrame(function() {
+      var content = root.querySelector('.eq-fade-enter');
+      if (content) {
+        requestAnimationFrame(function() {
+          content.classList.remove('eq-fade-enter');
+          content.classList.add('eq-fade-active');
+        });
+      }
+      var fill = root.querySelector('.eq-progress__fill[data-target]');
+      var label = root.querySelector('.eq-progress__label[data-target]');
+      if (fill) {
+        setTimeout(function() {
+          fill.style.width = fill.dataset.target + '%';
+          if (label) label.style.marginLeft = label.dataset.target + '%';
+        }, 50);
+      }
+      if (currentScreen === 'question' && selectedAnswers[currentQuestion]) {
+        setTimeout(function() {
+          var btn = root.querySelector('.eq-question__actions .eq-btn');
+          if (btn) {
+            btn.classList.remove('eq-btn--disabled');
+            btn.classList.add('eq-btn--active');
+          }
+        }, 1000);
+      }
+      if (currentScreen === 'question') {
+        trackGA4('quiz_question_view', { question_number: currentQuestion + 1 });
+      }
+      if (currentScreen === 'results') {
+        loadVariants();
+      }
+    });
+  }
+
+  function loadVariants() {
+    var cards = root.querySelectorAll('.eq-product');
+    cards.forEach(function(card) {
+      var handle = card.dataset.handle;
+      if (!handle) return;
+      fetch('/products/' + handle + '.js')
+        .then(function(res) { return res.json(); })
+        .then(function(product) {
+          var select = card.querySelector('.eq-product__variant');
+          var imgEl = card.querySelector('.eq-product__image img');
+          if (imgEl && product.featured_image) {
+            imgEl.setAttribute('src', product.featured_image);
+            imgEl.setAttribute('alt', product.title);
+          }
+          var priceEl = card.querySelector('.eq-product__price');
+          if (priceEl && product.price) {
+            var formatted = (product.price / 100).toFixed(2);
+            priceEl.textContent = '\u00a3' + formatted;
+          }
+          if (product.variants && product.variants.length > 1 && select) {
+            select.innerHTML = product.variants.map(function(v) {
+              return '<option value="' + v.id + '">' + v.title + '</option>';
+            }).join('');
+            select.classList.remove('eq-hidden');
+          } else if (product.variants && product.variants.length === 1 && select) {
+            select.innerHTML = '<option value="' + product.variants[0].id + '">' + product.variants[0].title + '</option>';
+          }
+        })
+        .catch(function() { /* silent */ });
+    });
+  }
+
+  function renderStart() {
+    var img = quizData.imageUrl
+      ? '<div class="eq-start__image"><img src="' + quizData.imageUrl + '" alt="Quiz"></div>'
+      : '';
+    return '<div class="eq-start eq-fade-enter">' +
+      '<div class="eq-start__content">' +
+        '<h2 class="eq-start__heading">' + quizData.title + '</h2>' +
+        '<p class="eq-start__sub">' + (quizData.subtitle || '') + '</p>' +
+        '<button class="eq-btn eq-btn--primary" data-action="start">Start<span class="eq-btn__arrow">' + icons.arrow + '</span></button>' +
+      '</div>' +
+      img +
+    '</div>';
+  }
+
+  function renderIntro() {
+    var introSub = quizData.introSubtitle || 'Just so you know';
+    return '<div class="eq-intro eq-fade-enter">' +
+      '<div class="eq-intro__logo">' +
+        (LOGO_URL ? '<img src="' + LOGO_URL + '" alt="Logo">' : '') +
+      '</div>' +
+      '<h2 class="eq-intro__heading">' + (quizData.introTitle || '') + '</h2>' +
+      '<p class="eq-intro__sub">' + introSub + '</p>' +
+      '<div class="eq-intro__body">' + (quizData.introBody || '') + '</div>' +
+      '<button class="eq-btn eq-btn--primary" data-action="begin">Let\'s begin<span class="eq-btn__arrow">' + icons.arrow + '</span></button>' +
+    '</div>';
+  }
+
+  function renderQuestion() {
+    var q = quizData.questions[currentQuestion];
+    var total = quizData.questions.length;
+    var pct = Math.round(((currentQuestion + 1) / total) * 100);
+    var startPct = prevQuestion >= 0 ? Math.round(((prevQuestion + 1) / total) * 100) : pct;
+    var selected = selectedAnswers[currentQuestion];
+    var isLast = currentQuestion === total - 1;
+    var btnText = isLast ? 'Finish' : 'Next question';
+    var btnClass = 'eq-btn eq-btn--disabled';
+
+    var answersHtml = q.answers.map(function(a) {
+      var selClass = selected === a.id ? ' eq-answer--selected' : '';
+      return '<div class="eq-answer' + selClass + '" data-answer-id="' + a.id + '">' +
+        '<div class="eq-answer__radio"></div>' +
+        '<span>' + a.text + '</span>' +
+      '</div>';
+    }).join('');
+
+    return '<div class="eq-topbar">' +
+        '<span class="eq-topbar__center">Question ' + (currentQuestion + 1) + ' / ' + total + '</span>' +
+      '</div>' +
+      '<div class="eq-progress">' +
+        '<div class="eq-progress__bar">' +
+          '<div class="eq-progress__fill" style="width:' + startPct + '%" data-target="' + pct + '"></div>' +
+        '</div>' +
+        '<div class="eq-progress__label" style="margin-left:' + startPct + '%" data-target="' + pct + '">' + pct + '%</div>' +
+      '</div>' +
+      '<div class="eq-question eq-fade-enter">' +
+        '<button class="eq-question__back" data-action="back">' +
+          icons.back + ' Go back' +
+        '</button>' +
+        '<h2 class="eq-question__title">' + q.title + '</h2>' +
+        (q.subtitle ? '<p class="eq-question__subtitle">' + q.subtitle + '</p>' : '') +
+        '<div class="eq-answers">' + answersHtml + '</div>' +
+        '<div class="eq-question__actions">' +
+          '<button class="' + btnClass + '" data-action="' + (isLast ? 'finish' : 'next') + '">' + btnText + '<span class="eq-btn__arrow">' + icons.arrow + '</span></button>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function renderResults() {
+    var results = calculateResults();
+
+    var productsHtml = results.map(function(p) {
+      return '<div class="eq-product" data-product-id="' + p.shopifyProductId + '" data-handle="' + (p.handle || '') + '">' +
+        '<div class="eq-product__match">' +
+          '<span class="eq-product__match-badge">' + p.score + '/' + p.total + ' match <span class="eq-product__match-icon">i</span>' +
+            (p.tooltipHtml ? '<span class="eq-product__tooltip">' + p.tooltipHtml + '</span>' : '') +
+          '</span>' +
+        '</div>' +
+        '<div class="eq-product__image">' +
+          (p.imageUrl ? '<img src="' + p.imageUrl + '" alt="' + p.title + '">' : '<img src="" alt="' + p.title + '">') +
+        '</div>' +
+        '<h3 class="eq-product__title">' + p.title + '</h3>' +
+        '<p class="eq-product__price">' + (p.price || '') + '</p>' +
+        '<select class="eq-product__variant eq-hidden"></select>' +
+        '<button class="eq-product__atc" data-product-title="' + p.title + '" data-product-id="' + p.shopifyProductId + '">Add to cart</button>' +
+      '</div>';
+    }).join('');
+
+    return '<div class="eq-results eq-fade-enter">' +
+      '<button class="eq-results__restart" data-action="restart">' +
+        icons.refresh + ' Start over' +
+      '</button>' +
+      '<h2 class="eq-results__heading">' + (quizData.resultsTitle || 'Our top picks for you') + '</h2>' +
+      '<p class="eq-results__sub">' + (quizData.resultsSubtitle || '') + '</p>' +
+      '<div class="eq-products">' + productsHtml + '</div>' +
+    '</div>';
+  }
+
+  /* ─── Event Binding ─── */
+  function bindEvents() {
+    root.querySelectorAll('[data-action]').forEach(function(el) {
+      el.addEventListener('click', handleAction);
+    });
+
+    root.querySelectorAll('.eq-answer').forEach(function(el) {
+      el.addEventListener('click', handleAnswerSelect);
+    });
+
+    root.querySelectorAll('.eq-product__atc').forEach(function(el) {
+      el.addEventListener('click', handleAddToCart);
+    });
+
+    root.querySelectorAll('.eq-product').forEach(function(el) {
+      el.addEventListener('click', function(e) {
+        if (e.target.closest('.eq-product__atc') || e.target.closest('.eq-product__variant') || e.target.closest('.eq-product__match-badge')) return;
+        var handle = el.dataset.handle;
+        if (handle) window.open('/products/' + handle, '_blank');
+      });
+      el.style.cursor = 'pointer';
+    });
+  }
+
+  function handleAction(e) {
+    var action = e.currentTarget.dataset.action;
+
+    switch (action) {
+      case 'start':
+        trackGA4('quiz_start');
+        if (quizData.introTitle || quizData.introBody) {
+          currentScreen = 'intro';
+        } else {
+          currentScreen = 'question';
+          currentQuestion = 0;
+        }
+        render();
+        break;
+
+      case 'begin':
+        currentScreen = 'question';
+        prevQuestion = -1;
+        currentQuestion = 0;
+        render();
+        root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        break;
+
+      case 'back':
+        if (currentQuestion > 0) {
+          prevQuestion = currentQuestion;
+          currentQuestion--;
+          render();
+        } else if (quizData.introTitle || quizData.introBody) {
+          currentScreen = 'intro';
+          render();
+        } else {
+          currentScreen = 'start';
+          render();
+        }
+        break;
+
+      case 'next':
+        if (!btnLocked && selectedAnswers[currentQuestion]) {
+          prevQuestion = currentQuestion;
+          currentQuestion++;
+          render();
+        }
+        break;
+
+      case 'finish':
+        if (!btnLocked && selectedAnswers[currentQuestion]) {
+          var results = calculateResults();
+          setCachedResults({ answers: selectedAnswers, results: results });
+          trackGA4('quiz_complete');
+          currentScreen = 'results';
+          render();
+          window.scrollTo(0, 0);
+        }
+        break;
+
+      case 'restart':
+        clearCachedResults();
+        selectedAnswers = [];
+        prevQuestion = -1;
+        currentQuestion = 0;
+        currentScreen = 'start';
+        render();
+        break;
+    }
+  }
+
+  function handleAnswerSelect(e) {
+    var card = e.currentTarget;
+    var answerId = card.dataset.answerId;
+    selectedAnswers[currentQuestion] = answerId;
+
+    if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+
+    root.querySelectorAll('.eq-answer').forEach(function(el) {
+      if (el.dataset.answerId === answerId) {
+        el.classList.add('eq-answer--selected');
+      } else {
+        el.classList.remove('eq-answer--selected');
+      }
+    });
+
+    btnLocked = true;
+    var btn = root.querySelector('.eq-question__actions .eq-btn');
+    if (btn) {
+      btn.classList.remove('eq-btn--disabled');
+      btn.classList.add('eq-btn--active');
+    }
+    setTimeout(function() { btnLocked = false; }, 1500);
+
+    var total = quizData.questions.length;
+    var isLast = currentQuestion === total - 1;
+
+    autoAdvanceTimer = setTimeout(function() {
+      if (isLast) {
+        var results = calculateResults();
+        setCachedResults({ answers: selectedAnswers, results: results });
+        trackGA4('quiz_complete');
+        currentScreen = 'results';
+        render();
+        window.scrollTo(0, 0);
+      } else {
+        prevQuestion = currentQuestion;
+        currentQuestion++;
+        render();
+      }
+    }, 1000);
+  }
+
+  function handleAddToCart(e) {
+    e.stopPropagation();
+    var btn = e.currentTarget;
+    var productTitle = btn.dataset.productTitle;
+    var productCard = btn.closest('.eq-product');
+    var handle = productCard ? productCard.dataset.handle : '';
+
+    btn.textContent = 'Adding...';
+    btn.disabled = true;
+
+    trackGA4('quiz_add_to_cart', { product_title: productTitle });
+
+    var variantSelect = productCard ? productCard.querySelector('.eq-product__variant') : null;
+    var variantId = variantSelect ? variantSelect.value : null;
+
+    function doAdd(vid) {
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ id: parseInt(vid), quantity: 1 })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Add to cart failed');
+        return res.json();
+      })
+      .then(function(data) {
+        btn.textContent = 'Added!';
+        /* Dispatch cart:update event — opens cart drawer & refreshes cart contents */
+        document.dispatchEvent(new CustomEvent('cart:update', {
+          bubbles: true,
+          detail: { resource: data, sourceId: 'quiz-section', data: { source: 'quiz-section' } }
+        }));
+        setTimeout(function() {
+          btn.textContent = 'Add to cart';
+          btn.disabled = false;
+        }, 2000);
+      })
+      .catch(function() {
+        btn.textContent = 'Error';
+        setTimeout(function() {
+          btn.textContent = 'Add to cart';
+          btn.disabled = false;
+        }, 2000);
+      });
+    }
+
+    if (variantId) {
+      doAdd(variantId);
+    } else if (handle) {
+      fetch('/products/' + handle + '.js')
+        .then(function(res) { return res.json(); })
+        .then(function(product) {
+          var vid = product.variants[0] ? product.variants[0].id : null;
+          if (vid) {
+            doAdd(vid);
+          } else {
+            throw new Error('No variants');
+          }
+        })
+        .catch(function() {
+          btn.textContent = 'Error';
+          setTimeout(function() {
+            btn.textContent = 'Add to cart';
+            btn.disabled = false;
+          }, 2000);
+        });
+    }
+  }
+
+  /* ─── Init ─── */
+  function init() {
+    trackGA4('quiz_view');
+
+    var cached = getCachedResults();
+    if (cached && cached.results) {
+      selectedAnswers = cached.answers || [];
+      currentScreen = 'results';
+      render();
+      return;
+    }
+
+    render();
+  }
+
+  init();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Elivide Quiz",
+  "tag": "section",
+  "class": "elivide-quiz-section",
+  "settings": [
+    { "type": "header", "content": "Start screen" },
+    { "type": "text", "id": "start_title", "label": "Heading", "default": "Confused about which magnesium is best for you?" },
+    { "type": "text", "id": "start_subtitle", "label": "Subtitle", "default": "We're here to offer some guidance." },
+    { "type": "image_picker", "id": "start_image", "label": "Image", "info": "Displayed beside the heading. Recommended 570x570 or larger." },
+
+    { "type": "header", "content": "Intro screen" },
+    { "type": "text", "id": "intro_subtitle", "label": "Kicker text", "default": "Just so you know", "info": "Small text shown above the intro heading." },
+    { "type": "text", "id": "intro_title", "label": "Heading", "default": "But before we start, here's the lowdown on magnesium" },
+    { "type": "richtext", "id": "intro_body", "label": "Body text", "default": "<p>Magnesium is one of the most essential minerals in the human body, playing a pivotal role in both energy production and nervous system regulation.</p><p>Well done for making it this far! Now onto a quick quiz.</p>" },
+
+    { "type": "header", "content": "Results screen" },
+    { "type": "text", "id": "results_title", "label": "Heading", "default": "Our top picks for you" },
+    { "type": "textarea", "id": "results_subtitle", "label": "Subtitle", "default": "You will see a scoring system below for each product in the top right, the higher the number, the higher the recommendation. The highest recommended product will always be first on the left or top if you are on mobile." },
+
+    { "type": "header", "content": "Product 1" },
+    { "type": "product", "id": "product_1", "label": "Product" },
+    { "type": "text", "id": "product_1_tooltip", "label": "Tooltip text", "default": "Magnesium bisglycinate is a combination of magnesium and glycine, gentle and easy to absorb." },
+
+    { "type": "header", "content": "Product 2" },
+    { "type": "product", "id": "product_2", "label": "Product" },
+    { "type": "text", "id": "product_2_tooltip", "label": "Tooltip text", "default": "Magnesium taurate is a combination of magnesium and taurine, perfect for those starting out with supplementation." },
+
+    { "type": "header", "content": "Product 3" },
+    { "type": "product", "id": "product_3", "label": "Product" },
+    { "type": "text", "id": "product_3_tooltip", "label": "Tooltip text", "default": "Magnesium malate is a combination of magnesium and malic, perfect for active individuals." },
+
+    { "type": "header", "content": "Design" },
+    { "type": "image_picker", "id": "logo", "label": "Logo", "info": "Shown on the intro screen. Falls back to the store brand logo if blank." },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#FFF7EF" },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#67A9A0" },
+    { "type": "color", "id": "heading_color", "label": "Heading text color", "default": "#1a1a1a" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Question" },
+        { "type": "textarea", "id": "subtitle", "label": "Subtitle / fun fact", "info": "Shown below the question as a supporting note." },
+        { "type": "header", "content": "Answer 1" },
+        { "type": "text", "id": "answer_1", "label": "Answer text" },
+        { "type": "number", "id": "answer_1_p1", "label": "Points to Product 1", "default": 0 },
+        { "type": "number", "id": "answer_1_p2", "label": "Points to Product 2", "default": 0 },
+        { "type": "number", "id": "answer_1_p3", "label": "Points to Product 3", "default": 0 },
+        { "type": "header", "content": "Answer 2" },
+        { "type": "text", "id": "answer_2", "label": "Answer text" },
+        { "type": "number", "id": "answer_2_p1", "label": "Points to Product 1", "default": 0 },
+        { "type": "number", "id": "answer_2_p2", "label": "Points to Product 2", "default": 0 },
+        { "type": "number", "id": "answer_2_p3", "label": "Points to Product 3", "default": 0 },
+        { "type": "header", "content": "Answer 3" },
+        { "type": "text", "id": "answer_3", "label": "Answer text" },
+        { "type": "number", "id": "answer_3_p1", "label": "Points to Product 1", "default": 0 },
+        { "type": "number", "id": "answer_3_p2", "label": "Points to Product 2", "default": 0 },
+        { "type": "number", "id": "answer_3_p3", "label": "Points to Product 3", "default": 0 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Elivide Quiz",
+      "blocks": [
+        {
+          "type": "question",
+          "settings": {
+            "title": "What is your top wellness goal right now?",
+            "subtitle": "Stress burns through magnesium – The more stressed you are, the faster your body depletes magnesium.",
+            "answer_1": "Boost daily energy and reduce fatigue",
+            "answer_1_p1": 1, "answer_1_p2": 0, "answer_1_p3": 0,
+            "answer_2": "Support heart health, blood pressure or stress",
+            "answer_2_p1": 0, "answer_2_p2": 1, "answer_2_p3": 0,
+            "answer_3": "Improve sleep, calm the nervous system or reduce tension",
+            "answer_3_p1": 0, "answer_3_p2": 0, "answer_3_p3": 1
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "How are your energy levels during the day?",
+            "subtitle": "Magnesium helps regulate blood sugar – It improves insulin sensitivity, making it a quiet but powerful player in metabolic and hormonal health.",
+            "answer_1": "I often feel sluggish",
+            "answer_1_p1": 0, "answer_1_p2": 0, "answer_1_p3": 1,
+            "answer_2": "I have steady energy but feel mentally wired or anxious",
+            "answer_2_p1": 0, "answer_2_p2": 1, "answer_2_p3": 0,
+            "answer_3": "I'm tired and tense, especially at night",
+            "answer_3_p1": 1, "answer_3_p2": 0, "answer_3_p3": 0
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "Do you struggle with sleep?",
+            "subtitle": "Magnesium calms your nervous system – It helps regulate GABA, a key calming neurotransmitter, making it essential for relaxation, mood, and sleep.",
+            "answer_1": "Yes, falling or staying asleep is hard",
+            "answer_1_p1": 1, "answer_1_p2": 0, "answer_1_p3": 0,
+            "answer_2": "Not really, my sleep is okay",
+            "answer_2_p1": 0, "answer_2_p2": 0, "answer_2_p3": 1,
+            "answer_3": "I sleep fine but wake unrefreshed",
+            "answer_3_p1": 0, "answer_3_p2": 1, "answer_3_p3": 0
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "Do you experience muscle cramps, tension or headaches?",
+            "subtitle": "Low magnesium can cause muscle twitches – Tingling, spasms, and eyelid twitches are classic signs your cells may be magnesium-starved.",
+            "answer_1": "Yes but mostly muscle cramps",
+            "answer_1_p1": 0, "answer_1_p2": 0, "answer_1_p3": 1,
+            "answer_2": "Yes but mostly general tension",
+            "answer_2_p1": 1, "answer_2_p2": 0, "answer_2_p3": 0,
+            "answer_3": "Yes but mostly headaches",
+            "answer_3_p1": 0, "answer_3_p2": 1, "answer_3_p3": 0
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "How active are you on a weekly basis?",
+            "subtitle": "Your bones store 60% of your magnesium – It's not just about calcium, magnesium is crucial for bone density and protecting against age-related bone loss.",
+            "answer_1": "Rarely active, maybe once a week",
+            "answer_1_p1": 0, "answer_1_p2": 1, "answer_1_p3": 0,
+            "answer_2": "I keep active occasionally during the week",
+            "answer_2_p1": 1, "answer_2_p2": 1, "answer_2_p3": 1,
+            "answer_3": "I'm very active throughout the week",
+            "answer_3_p1": 0, "answer_3_p2": 0, "answer_3_p3": 1
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "Are you looking to support hormone balance or PMS symptoms?",
+            "subtitle": "Magnesium is nature's original calcium channel blocker – It helps relax blood vessels, regulate heart rhythm, and prevent excessive calcium buildup.",
+            "answer_1": "Yes, especially around my cycle or mood",
+            "answer_1_p1": 1, "answer_1_p2": 0, "answer_1_p3": 0,
+            "answer_2": "Not specifically",
+            "answer_2_p1": 0, "answer_2_p2": 0, "answer_2_p3": 0,
+            "answer_3": "I'm unsure",
+            "answer_3_p1": 1, "answer_3_p2": 1, "answer_3_p3": 1
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "title": "How is your digestion and gut health?",
+            "subtitle": "Magnesium supports smooth muscle movement in the gut – It helps regulate peristalsis, the wave-like contractions that move food through your digestive tract.",
+            "answer_1": "I have a very sensitive gut and react easily",
+            "answer_1_p1": 1, "answer_1_p2": 0, "answer_1_p3": 0,
+            "answer_2": "My digestion is generally fine",
+            "answer_2_p1": 0, "answer_2_p2": 0, "answer_2_p3": 1,
+            "answer_3": "I'm sensitive to acidic forms but tolerate calming nutrients well",
+            "answer_3_p1": 0, "answer_3_p2": 1, "answer_3_p3": 0
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

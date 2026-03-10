@@ -1,0 +1,85 @@
+<div id="quiz-hero-{{ section.id }}" class="quiz-hero" style="--qh-bg: {{ section.settings.bg_color }}; --qh-heading: {{ section.settings.heading_color }}; --qh-sub: {{ section.settings.subtext_color }};">
+  <div class="quiz-hero__inner">
+    <h1 class="quiz-hero__title">{{ section.settings.title }}</h1>
+    {% if section.settings.subtext != blank %}
+      <p class="quiz-hero__sub">{{ section.settings.subtext }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  #quiz-hero-{{ section.id }} {
+    background: var(--qh-bg);
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    padding: {{ section.settings.padding_top }}px 24px {{ section.settings.padding_bottom }}px;
+    text-align: center;
+  }
+
+  #quiz-hero-{{ section.id }} .quiz-hero__inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  #quiz-hero-{{ section.id }} .quiz-hero__title {
+    font-family: var(--font-subheading--family, var(--font-heading--family, Georgia, serif));
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--qh-heading);
+    margin: 0 0 16px;
+  }
+
+  #quiz-hero-{{ section.id }} .quiz-hero__sub {
+    font-family: var(--font-body--family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--qh-sub);
+    margin: 0;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .quiz-hero-section + .elivide-quiz-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  @media screen and (max-width: 768px) {
+    #quiz-hero-{{ section.id }} {
+      padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+      margin-bottom: -50px;
+    }
+
+    #quiz-hero-{{ section.id }} .quiz-hero__title {
+      font-size: 32px;
+    }
+
+    #quiz-hero-{{ section.id }} .quiz-hero__sub {
+      font-size: 15px;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Quiz Hero",
+  "tag": "section",
+  "class": "quiz-hero-section",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Find Your Magnesium Match" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Not all magnesium is created equal. Answer a few quick questions and we'll recommend the best type for your body, lifestyle and goals." },
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#FFF7EF" },
+    { "type": "color", "id": "heading_color", "label": "Heading color", "default": "#1a1a1a" },
+    { "type": "color", "id": "subtext_color", "label": "Subtext color", "default": "#666666" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 60 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [
+    { "name": "Quiz Hero" }
+  ]
+}
+{% endschema %}
